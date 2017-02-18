@@ -73,7 +73,7 @@ This Git Style Guide directly borrows, extends, and adapts from the following gu
 
   ```shell
   # good
-  $ git checkout -b bug-fix/utf-enconding
+  $ git checkout -b issue/18-utf-enconding
 
   #bad
   $ git checkout -b fix-utf-encoding
@@ -93,6 +93,9 @@ This Git Style Guide directly borrows, extends, and adapts from the following gu
 
 * Delete your branch from the upstream repository after it's merged, unless
   there is a specific reason not to.
+
+ [How to delete a branch via de terminal](https://makandracards.com/makandra/621-git-delete-a-branch-local-or-remote)
+ [How to delete a branch from the upstream repository via github's GUI](https://github.com/blog/1377-create-and-delete-branches)
 
   Tip: Use the following command while being on "master", to list merged
   branches:
@@ -183,6 +186,12 @@ This Git Style Guide directly borrows, extends, and adapts from the following gu
   also be stated in the message of *commit A*.
 
 # Merging and Pull Requests
+
+* When creating your pull request you will be prompted with a section where you will be able to name it, as well as adding a description. This section will be prefilled with the contents of the PULL_REQUEST_TEMPLATE.md, it'll look something like this.
+
+![example of prefilled pull request description](https://help.github.com/assets/images/help/pull_requests/pr-template-sample.png)
+
+For more information on templates refere to [github's documentation](https://help.github.com/articles/creating-a-pull-request-template-for-your-repository/)
 
 * **Test and document before you push:** Do not pull request half-done work
 * Create a pull request via the github online interface, fill the pull request template, and select the person that will code review your code.
