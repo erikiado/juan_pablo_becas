@@ -131,9 +131,11 @@ This Git Style Guide directly borrows, extends, and adapts from the following gu
   $ git commit -m "Quick fix"
   ```
 
+  This means just writing ```git commit``` instead of ```git commit -m``` your prefered editor will appear automatically, and your comment will be saved as soon as you close your editor.
+
   Committing from the terminal encourages a mindset of having to fit everything
   in a single line which usually results in non-informative, ambiguous commit
-  messages.
+  messages. The ```git commit``` command defaults to vi; in case you are not familiar with vi, or prefer another text editor, follow [these instructions](https://help.github.com/articles/associating-text-editors-with-git/) in order to change your default editor.
 
 * The summary line (ie. the first line of the message) should be
   *descriptive* yet *succinct*. Ideally, it should be no longer than
