@@ -563,12 +563,12 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/Users/csssaz/Desktop/jp2_online"
-	],
 	"file_history":
 	[
+		"/Users/csssaz/Desktop/jp2_online/.gitignore",
+		"/Users/csssaz/Desktop/jp2_online/.git/MERGE_MSG",
+		"/Users/csssaz/Desktop/jp2_online/.git/COMMIT_EDITMSG",
+		"/Users/csssaz/Desktop/notebook_wlog/code/geometry/convexhull.cpp",
 		"/Users/csssaz/Desktop/jp2_online/jp2_online/urls.py",
 		"/Users/csssaz/Desktop/jp2_online/nameChanger.py",
 		"/Users/csssaz/Desktop/jp2_online/jp.sublime-project",
@@ -576,7 +576,6 @@
 		"/Users/csssaz/Desktop/jp2_online/HOWTOUSE.md",
 		"/Users/csssaz/Desktop/ed/cv/cv.tex",
 		"/Users/csssaz/Downloads/lab2/main.cpp",
-		"/Users/csssaz/Desktop/notebook_wlog/code/geometry/convexhull.cpp",
 		"/Users/csssaz/Desktop/ed/TEC_UNIVERSIDAD/OCTAVO_SEMESTRE/becario/clubcp.github.io/Gemfile",
 		"/Users/csssaz/Desktop/ed/TEC_UNIVERSIDAD/OCTAVO_SEMESTRE/becario/clubcp.github.io/_posts/2017-02-08-soluciones-primera-sesion.md",
 		"/Users/csssaz/Desktop/ed/TEC_UNIVERSIDAD/OCTAVO_SEMESTRE/becario/clubcp.github.io/Gemfile.lock",
@@ -693,10 +692,7 @@
 		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/d.in",
 		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/d.cpp",
 		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/c.cpp",
-		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/e.in",
-		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/e.cpp",
-		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/c.in",
-		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/b.cpp"
+		"/Users/csssaz/Desktop/cp/codeforces/contests/round387/e.in"
 	],
 	"find":
 	{
