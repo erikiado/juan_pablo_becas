@@ -28,6 +28,8 @@ ALTER USER project_db_admin CREATEDB;
 
 ## Virtual Environments
 
+### Virtualenv
+
 You will need to create a virtual environment in order to isolate all the packages that are required for the project. We provide instructions on how to do it with [`virtualenv`](https://virtualenv.pypa.io/en/stable/)
 
 First find the path to your `python 3.5` installation by running
@@ -43,6 +45,7 @@ $ virtualenv --python='PATH TO PYTHON 3.5' /path/to/your/venv/NAME_OF_YOUR_ENV
 ```
 
 We use environment variables to separate sensitive information and keys from the code, you should set the following ones.
+
 
 ```bash
 DJANGO_SETTINGS_MODULE='jp2_online.settings.development' // The last part depends on the environment you are on
@@ -82,6 +85,40 @@ $ source /path/to/your/venv/NAME_OF_YOUR_ENV/bin/activate
 And deactivate it just by running this command on the terminal
 ```bash
 $ deactivate
+```
+
+
+### (Ana)Conda
+
+If you prefer, you can create a virtual environment using conda.
+
+Create the environment as follows:
+
+```bash
+$ conda install --name [the name of the environment] python=3.5
+```
+
+Afterwards, setup the scripts for activating the environment variables, and unsetting them when we activate and deactivate the virtual environment. To do it, first locate the directory of your environment which will be something like ```/anaconda/envs/[name_environment]``` (depends on your installation) and create the following subdirectories:
+
+```bash
+cd /anaconda/envs/[name_environment]
+mkdir -p ./etc/conda/activate.d
+mkdir -p ./etc/conda/deactivate.d
+touch ./etc/conda/activate.d/env_vars.sh
+touch ./etc/conda/deactivate.d/env_vars.sh
+```
+
+Then, modify ```activate.d/env_vars.sh``` to set the necessary environment variables, and ```deactivate.d/env_vars.sh``` to unset them (refer to the [virtualenv section](#virtualenv) to check which variables to set). These two scripts will be executed each time you activate and deactivate your environment.
+
+
+Finally, you can activate the environment by running
+```bash
+$ source activate [environment_name]
+```
+
+And deactivate it by running
+```bash
+$ source deactivate
 ```
 
 ## Installing the Project Requirements
