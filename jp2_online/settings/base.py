@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
-    'tosp_auth.apps.TospAuthConfig'
+    'tosp_auth.apps.TospAuthConfig',
+    'administracion.apps.AdministracionConfig'
 ]
 
 MIDDLEWARE = [
