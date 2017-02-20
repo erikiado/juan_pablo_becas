@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    jp2_online.settings
 
 Submodules
 ----------

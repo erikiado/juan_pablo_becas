@@ -10,6 +10,8 @@ Welcome to San Juan Pablo Segundo's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   jp2_online
+   modules
 
 
 Indices and tables

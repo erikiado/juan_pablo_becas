@@ -1,4 +1,4 @@
-base package
+base
 ============
 
 Subpackages
@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    base.migrations
 
 Submodules
 ----------

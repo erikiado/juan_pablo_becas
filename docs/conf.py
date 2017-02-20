@@ -19,8 +19,11 @@
 
 import os
 import sys
+import django
 sys.path.insert(0, os.path.abspath('../'))
 
+os.environ['DJANGO_SETTINGS_MODULE'] = 'jp2_online.settings.development'
+django.setup()
 
 # -- General configuration ------------------------------------------------
 
@@ -32,10 +35,13 @@ sys.path.insert(0, os.path.abspath('../'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'numpydoc']
+              'sphinx.ext.coverage',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.viewcode',
+              'numpydoc',
+              'sphinx.ext.autosummary']
+
+numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -73,7 +79,7 @@ language = 'es'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**/migrations/*']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -156,6 +162,3 @@ texinfo_documents = [
      author, 'SanJuanPabloSegundo', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

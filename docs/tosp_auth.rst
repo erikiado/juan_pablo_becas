@@ -1,4 +1,4 @@
-tosp_auth package
+tosp_auth
 =================
 
 Subpackages
@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    tosp_auth.migrations
 
 Submodules
 ----------
