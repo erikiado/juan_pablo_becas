@@ -9,13 +9,20 @@ from perfiles_usuario.models import Capturista
 
 class FormaUsuario(forms.ModelForm):
     """ ModelForm for Users.
-    
+
     This is the general model form for creating users.
     """
-    
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        labels = {
+            'username': ('Nombre de Usuario'),
+            'first_name': ('Nombre'),
+            'last_name': ('Apellido'),
+            'email': ('Email'),
+            'password': ('Contraseña')
+        }
 
 
 class FormaCreacionUsuario(FormaUsuario):
