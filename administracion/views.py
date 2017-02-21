@@ -14,10 +14,11 @@ def crear_usuario(request):
             last_name   = forma.cleaned_data['last_name']
             email       = forma.cleaned_data['email']
             password    = forma.cleaned_data['password']
-            tipo_usuario = forma.cleaned_data['tipo_usuario']
+            rol_usuario = forma.cleaned_data['rol_usuario']
+            forma.save()
             # Direccionar a dashboard 'administracion'
             # Checar reverse de urls
-            return HttpResponseRedirect('/administracion/')
+            return HttpResponseRedirect('/administracion/crear_usuario/?us=1')
 
     # if a GET  we'll create a blank form
     else:
