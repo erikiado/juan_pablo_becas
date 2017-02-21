@@ -11,8 +11,7 @@ class Capturista(models.Model):
     activo = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        """ assigns corresponding group
-        after saving.
+        """ Override the save method to add the capturista group.
         """
         user_group = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
         self.user.groups.add(user_group)
