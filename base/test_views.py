@@ -1,7 +1,9 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from splinter import Browser
 
+
 test_url = 'http://localhost:8081/'
+
 
 class TestBaseViews(StaticLiveServerTestCase):
 
