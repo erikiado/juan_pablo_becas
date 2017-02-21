@@ -9,8 +9,26 @@ from .models import Capturista
 
 
 class PermisosTestCase(TestCase):
+    """ Suite to test the validation functions inside utils.py.
+
+    This Suite tests the functions designed to validate permissions of users in order
+    to grant them access to views across the project.
+
+    Attributes:
+    ----------
+    user : django.contrib.auth.models.User
+        A mock user to use across all tests.
+    directivo_group : django.contrib.auth.models.Group
+        The group used to identify users that are directivos.
+    administrador_group : django.contrib.auth.models.Group
+        The group used to identify users that are administradores
+    servicios_group : : django.contrib.auth.models.Group
+        The group used to identify users that are servicios_escolares
+    """
 
     def setUp(self):
+        """ Initialize the attributes.
+        """
         self.user = get_user_model().objects.create_user(
                                         username='some_user',
                                         email='temporary@gmail.com',
@@ -19,11 +37,8 @@ class PermisosTestCase(TestCase):
         self.administrador_group = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
         self.servicios_group = Group.objects.get_or_create(name=SERVICIOS_ESCOLARES_GROUP)[0]
 
-    def tearDown(self):
-        pass
-
     def test_is_administrador(self):
-        """ Test if the is_administrador works for the administrador group
+        """ Test if the is_administrador works for the administrador group.
 
         Test if the is_administrador function works properly for a user which has
         the administrador group, and also if the same user gets some other group.
@@ -36,7 +51,7 @@ class PermisosTestCase(TestCase):
         self.assertTrue(is_administrador(self.user))
 
     def test_not_admin(self):
-        """ Test if the is_administrador fails for a user w/o the group
+        """ Test if the is_administrador fails for a user w/o the group.
 
         Test if the is_administrador fails for a user which does not have the
         administrador group assigned. We also add a different group and check that
@@ -47,7 +62,7 @@ class PermisosTestCase(TestCase):
         self.assertFalse(is_administrador(self.user))
 
     def test_is_directivo(self):
-        """ Test if the is_directivo works for the directivo group
+        """ Test if the is_directivo works for the directivo group.
 
         Test if the is_directivo function works properly for a user which has
         the directivo group, and also if the same user gets some other group.
@@ -60,7 +75,7 @@ class PermisosTestCase(TestCase):
         self.assertTrue(is_directivo(self.user))
 
     def test_not_directivo(self):
-        """ Test if the is_directivo fails for a user w/o the group
+        """ Test if the is_directivo fails for a user w/o the group.
 
         Test if the is_directivo fails for a user which does not have the
         directivo group assigned. We also add a different group and check that
@@ -71,7 +86,7 @@ class PermisosTestCase(TestCase):
         self.assertFalse(is_directivo(self.user))
 
     def test_is_servicios(self):
-        """ Test if the is_servicios_escolares works for the servicios_escolares group
+        """ Test if the is_servicios_escolares works for the servicios_escolares group.
 
         Test if the is_servicios_escolares function works properly for a user which has
         the servicios_escolares group, and also if the same user gets some other group.
@@ -84,7 +99,7 @@ class PermisosTestCase(TestCase):
         self.assertTrue(is_servicios_escolares(self.user))
 
     def test_not_servicios(self):
-        """ Test if the is_servicios_escolares fails for a user w/o the group
+        """ Test if the is_servicios_escolares fails for a user w/o the group.
 
         Test if the is_servicios_escolares fails for a user which does not have the
         servicios_escolares group assigned. We also add a different group and check that
@@ -95,7 +110,7 @@ class PermisosTestCase(TestCase):
         self.assertFalse(is_servicios_escolares(self.user))
 
     def test_is_capturista(self):
-        """ Test if the is_capturista works for the capturista group
+        """ Test if the is_capturista works for the capturista group.
 
         Test if the is_capturista function works properly for a Capturista.
         """
@@ -103,7 +118,7 @@ class PermisosTestCase(TestCase):
         self.assertTrue(is_capturista(capturista.user))
 
     def test_not_capturista(self):
-        """ Test if the is_capturista fails for a user w/o the group
+        """ Test if the is_capturista fails for a user w/o the group.
 
         Test if the is_capturista fails for a user which does not have the
         capturista group assigned. We also add a different group and check that

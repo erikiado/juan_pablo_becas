@@ -19,7 +19,7 @@ def is_member(user, groups):
     user : django.contrib.auth.models.User
         The user which we are trying to identify that belongs to a certain group
     groups : list of str
-        A list of the groups we are checking if the user belongs to
+        A list of the groups we are checking if the user belongs to.
 
     Returns
     ---------
@@ -30,7 +30,7 @@ def is_member(user, groups):
 
 
 def is_administrador(user):
-    """ Test if a user has the administrador group
+    """ Test if a user has the administrador group.
 
     This function is meant to be used by the user_passes_test decorator to control access
     to views. It uses the is_member function with a predefined list of groups.
@@ -38,7 +38,7 @@ def is_administrador(user):
     Parameters
     ----------
     user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to a certain group
+        The user which we are trying to identify that belongs to administrador.
 
     Returns
     ---------
@@ -49,7 +49,7 @@ def is_administrador(user):
 
 
 def is_capturista(user):
-    """ Test if a user has the capturista group
+    """ Test if a user has the capturista group.
 
     This function is meant to be used by the user_passes_test decorator to control access
     to views. It uses the is_member function with a predefined list of groups.
@@ -57,7 +57,7 @@ def is_capturista(user):
     Parameters
     ----------
     user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to a certain group
+        The user which we are trying to identify that belongs to capturista.
 
     Returns
     ---------
@@ -68,7 +68,7 @@ def is_capturista(user):
 
 
 def is_directivo(user):
-    """ Test if a user has the directivo group
+    """ Test if a user has the directivo group.
 
     This function is meant to be used by the user_passes_test decorator to control access
     to views. It uses the is_member function with a predefined list of groups.
@@ -76,18 +76,18 @@ def is_directivo(user):
     Parameters
     ----------
     user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to a certain group
+        The user which we are trying to identify that belongs to directivo.
 
     Returns
     ---------
     bool
-        True if the user has directivo as a group
+        True if the user has directivo as a group.
     """
     return is_member(user, [DIRECTIVO_GROUP])
 
 
 def is_servicios_escolares(user):
-    """ Test if a user has the servicios_escolares group
+    """ Test if a user has the servicios_escolares group.
 
     This function is meant to be used by the user_passes_test decorator to control access
     to views. It uses the is_member function with a predefined list of groups.
@@ -95,11 +95,11 @@ def is_servicios_escolares(user):
     Parameters
     ----------
     user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to a certain group
+        The user which we are trying to identify that belongs to servicios_escolares.
 
     Returns
     ---------
     bool
-        True if the user has servicios_escolares as a group
+        True if the user has servicios_escolares as a group.
     """
     return is_member(user, [SERVICIOS_ESCOLARES_GROUP])
