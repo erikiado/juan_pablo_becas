@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
+from perfiles_usuario.models import Capturista
 
 
 class FormaUsuario(forms.ModelForm):
@@ -14,22 +15,26 @@ class FormaUsuario(forms.ModelForm):
         (SERVICIOS_ESCOLARES_GROUP, ('Servicios Escolares'))
     )
 
-    # rol_usuario = forms.ChoiceField(choices=ROLES_USUARIO, label='Tipo de usuario', required=True)
+    rol_usuario = forms.ChoiceField(choices=ROLES_USUARIO, label='Tipo de usuario', required=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['first_name', 'last_name', 'email', 'password']
-        exclude = ['username',]
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
 
-    def save(self, commit=True, *args, **kwargs):
-        nuevo_usuario = super(FormaUsuario, self).save(commit=False, *args, **kwargs)
-        nuevo_usuario.first_name = self.cleaned_data['first_name']
-        nuevo_usuario.last_name = self.cleaned_data['last_name']
-        nuevo_usuario.email = self.cleaned_data['email']
-        nuevo_usuario.password = self.cleaned_data['password']
-        # rol = Group.objects.get_or_create(name=self.cleaned_data['rol_usuario'])[0]
-        # nuevo_usuario.groups.add(rol)
-        if commit:
-            nuevo_usuario.save()
-        return nuevo_usuario
-
+    def save(self, *args, **kwargs):
+        data = self.cleaned_data
+        user = get_user_model()(
+                    username=data['username'],
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    password=data['password'])
+        user.save()
+        if data['rol_usuario'] == CAPTURISTA_GROUP:
+            capturista = Capturista(user=user)
+            capturista.save()
+        else:
+            user_group = Group.objects.get_or_create(name=data['rol_usuario'])[0]
+            user.groups.add(user_group)
+            user.save()
+        return user
