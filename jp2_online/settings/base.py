@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'familias.apps.FamiliasConfig',
     'indicadores.apps.IndicadoresConfig',
     'tosp_auth.apps.TospAuthConfig',
-    'administracion.apps.AdministracionConfig'
+    'administracion.apps.AdministracionConfig',
+    'perfiles_usuario.apps.PerfilesUsuarioConfig',
+    'estudios_socioeconomicos.apps.EstudiosSocioeconomicosConfig',
+    'captura.apps.CapturaConfig'
 ]
 
 MIDDLEWARE = [
