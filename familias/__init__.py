@@ -1,4 +1,5 @@
-""" En esta app se implementa la lógica relacionada con el almacenamiento de familia.
+""" App for the implementation of all the logic related to family data storage.
 
-Para implementar las vistas y modelos necesarias para almacenar la información de una familia.
+This app is for the implementation of auxiliary views and models
+to family data storage.
 """
