@@ -22,17 +22,17 @@ class Familia(models.Model):
         The content of this field needs to be clarified with the stake holder, wether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
-	
-	explicacion_solvencia : TextField
-		This field should be filled in their net mensual income is negative. It serves as an
-		explanation on how the family deals with the deficit.
 
-	estado_civil : TextField
-		This field stores the information regarding the legal relationship status of the
-		parents in a family.
+    explicacion_solvencia : TextField
+        This field should be filled in their net mensual income is negative. It serves as an
+        explanation on how the family deals with the deficit.
 
-	localidad : Text Field
-		This field stores the town in which a family resides.
+    estado_civil : TextField
+        This field stores the information regarding the legal relationship status of the
+        parents in a family.
+
+    localidad : Text Field
+        This field stores the town in which a family resides.
 
     TODO:
     -----
