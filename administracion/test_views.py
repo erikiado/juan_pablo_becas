@@ -24,7 +24,7 @@ class TestAdministracionViews(StaticLiveServerTestCase):
             username='thelma', email='juan@pablo.com', password='junipero')
 
     def tearDown(self):
-        """At the end of tests, close the browser
+        """At the end of tests, close the browser.
         """
         self.browser.quit()
 
