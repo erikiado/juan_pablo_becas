@@ -36,7 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
-    'tosp_auth.apps.TospAuthConfig'
+    'becas.apps.BecasConfig',
+    'familias.apps.FamiliasConfig',
+    'indicadores.apps.IndicadoresConfig',
+    'tosp_auth.apps.TospAuthConfig',
+    'administracion.apps.AdministracionConfig',
+    'perfiles_usuario.apps.PerfilesUsuarioConfig',
+    'estudios_socioeconomicos.apps.EstudiosSocioeconomicosConfig',
+    'captura.apps.CapturaConfig'
 ]
 
 MIDDLEWARE = [
