@@ -5,8 +5,7 @@ from django.contrib.auth.models import User
 
 
 class TestAdministracionViews(StaticLiveServerTestCase):
-    """
-    Suite de integracion para probar las rutas administracion.
+    """Suite de integracion para probar las rutas administracion.
 
     Probar los urls de administracion que componen el panel administrativo en sus distintas
     vistas. Se crea un usuario para comprobar su despliegue en el panel de usuarios.
@@ -18,8 +17,7 @@ class TestAdministracionViews(StaticLiveServerTestCase):
     """
 
     def setUp(self):
-        """
-        Inicializar el navegador, antes de correr las pruebas y crear un usuario.
+        """Inicializar el navegador, antes de correr las pruebas y crear un usuario.
         """
         self.browser = Browser('chrome')
         # Se crea usuario para comprobar despliegue de usuarios
@@ -27,14 +25,12 @@ class TestAdministracionViews(StaticLiveServerTestCase):
             username='thelma', email='juan@pablo.com', password='junipero')
 
     def tearDown(self):
-        """
-        Al terminar, cerrar el navegador.
+        """Al terminar, cerrar el navegador.
         """
         self.browser.quit()
 
     def test_panel_principal(self):
-        """
-        Prueba sobre url 'administracion:administracion_principal'.
+        """Prueba sobre url 'administracion:administracion_principal'.
 
         Visitar el url de 'administracion:administracion_principal' y comprobar que cargue el
         contenido del panel principal.
@@ -48,8 +44,7 @@ class TestAdministracionViews(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_panel_usuarios(self):
-        """
-        Prueba sobre url 'administracion:administracion_usuarios'.
+        """Prueba sobre url 'administracion:administracion_usuarios'.
 
         Visitar el url de 'administracion:administracion_usuarios' y comprobar que cargue el
         contenido del panel de usuarios.
