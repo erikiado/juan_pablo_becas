@@ -21,9 +21,9 @@ class PermisosTestCase(TestCase):
     directivo_group : django.contrib.auth.models.Group
         The group used to identify users that are directivos.
     administrador_group : django.contrib.auth.models.Group
-        The group used to identify users that are administradores
+        The group used to identify users that are administradores.
     servicios_group : : django.contrib.auth.models.Group
-        The group used to identify users that are servicios_escolares
+        The group used to identify users that are servicios_escolares.
     """
 
     def setUp(self):

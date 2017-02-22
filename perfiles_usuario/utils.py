@@ -17,7 +17,7 @@ def is_member(user, groups):
     Parameters
     ----------
     user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to a certain group
+        The user which we are trying to identify that belongs to a certain group.
     groups : list of str
         A list of the groups we are checking if the user belongs to.
 
@@ -62,7 +62,7 @@ def is_capturista(user):
     Returns
     ---------
     bool
-        True if the user has capturista as a group
+        True if the user has capturista as a group.
     """
     return is_member(user, [CAPTURISTA_GROUP])
 

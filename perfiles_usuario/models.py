@@ -6,6 +6,18 @@ from .utils import CAPTURISTA_GROUP
 
 
 class Capturista(models.Model):
+    """ Extension of Django's User Model for Capturistas.
+
+    We extend the Django User Model to identify Capturistas since they have relations with
+    other models and close interaction with the API.
+
+    Attributes:
+    ----------
+    user : django.contrib.auth.models.User
+        A mock user to use across all tests.
+    activo : BooleanField
+        Indicates whether the profile is active or not.
+    """
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
 
     activo = models.BooleanField(default=True)
