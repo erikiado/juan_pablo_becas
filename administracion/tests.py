@@ -3,10 +3,10 @@ from django.core.urlresolvers import reverse
 
 
 class TestAdministracion(TestCase):
-    """Suite unitario para probar las rutas administracion.
+    """Unit test suite for testing the views in the app: administracion.
 
-    Probar que los views de administracion regresen de manera correcta y que se utilice
-    el template correcto.
+    Test that the views for 'administracion' are correctly received as a response and that
+    they use the correct template.
     """
 
     def test_view_panel_principal(self):

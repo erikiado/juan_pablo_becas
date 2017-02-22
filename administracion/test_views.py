@@ -5,60 +5,57 @@ from django.contrib.auth.models import User
 
 
 class TestAdministracionViews(StaticLiveServerTestCase):
-    """Suite de integracion para probar las rutas administracion.
+    """Integration test suite for testing the views in the app: administracion.
 
-    Probar los urls de administracion que componen el panel administrativo en sus distintas
-    vistas. Se crea un usuario para comprobar su despliegue en el panel de usuarios.
+    Test the urls for 'administracion' which make up the administration dashboard.
+    A user is created in order to test they are displayed.
 
     Attributes
     ----------
     browser : Browser
-        Driver para navegar por paginas web y para correr pruebas de integracion.
+        Driver to navigate through websites and to run integration tests.
     """
 
     def setUp(self):
-        """Inicializar el navegador, antes de correr las pruebas y crear un usuario.
+        """Initialize the browser and create a user, before running the tests.
         """
         self.browser = Browser('chrome')
-        # Se crea usuario para comprobar despliegue de usuarios
         User.objects.create_user(
             username='thelma', email='juan@pablo.com', password='junipero')
 
     def tearDown(self):
-        """Al terminar, cerrar el navegador.
+        """At the end of tests, close the browser
         """
         self.browser.quit()
 
     def test_panel_principal(self):
-        """Prueba sobre url 'administracion:administracion_principal'.
+        """Test for url 'administracion:administracion_principal'.
 
-        Visitar el url de 'administracion:administracion_principal' y comprobar que cargue el
-        contenido del panel principal.
+        Visit the url of name 'administracion:administracion_principal' and check it loads the
+        content of the main dashboard panel.
         """
         test_url_name = 'administracion:administracion_principal'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
-        # Se comprueba que la pagina despliegue los textos esperados en el panel principal
+        # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        # Se prueba si el include de la side_nav
+        # Check for side_nav partial
         self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_panel_usuarios(self):
-        """Prueba sobre url 'administracion:administracion_usuarios'.
+        """Test for url 'administracion:administracion_usuarios'.
 
-        Visitar el url de 'administracion:administracion_usuarios' y comprobar que cargue el
-        contenido del panel de usuarios.
+        Visit the url of name 'administracion:administracion_usuarios' and check it loads the
+        content of the user dashboard panel.
         """
         test_url_name = 'administracion:administracion_usuarios'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
-        # Se comprueba que la pagina despliegue los textos esperados en el panel usuarios
+        # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        # Se prueba si el include de la side_nav
+        # Check for side_nav partial
         self.assertTrue(self.browser.is_text_present('Usuarios'))
 
-        # Se revisa que el usuario se haya creado
+        # Check that the only user is displayed
         self.assertEqual(User.objects.count(), 1)
-
-        # Se comprueba que se despliegue el usuario
         self.assertTrue(self.browser.is_text_present('thelma'))
