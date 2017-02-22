@@ -14,7 +14,7 @@ class Capturista(models.Model):
     Attributes:
     ----------
     user : django.contrib.auth.models.User
-        A mock user to use across all tests.
+        The django User related to Capturista (i.e. contains the actual user information).
     activo : BooleanField
         Indicates whether the profile is active or not.
     """
