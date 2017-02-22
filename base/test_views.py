@@ -4,8 +4,7 @@ from splinter import Browser
 
 
 class TestBaseViews(StaticLiveServerTestCase):
-    """
-    Suite de integracion para probar las rutas base.
+    """Suite de integracion para probar las rutas base.
 
     Probar los urls de home, y los accesos a los archivos de robots y humans.
 
@@ -16,20 +15,17 @@ class TestBaseViews(StaticLiveServerTestCase):
     """
 
     def setUp(self):
-        """
-        Inicializar el navegador, antes de correr las pruebas.
+        """Inicializar el navegador, antes de correr las pruebas.
         """
         self.browser = Browser('chrome')
 
     def tearDown(self):
-        """
-        Al terminar, cerrar el navegador.
+        """Al terminar, cerrar el navegador.
         """
         self.browser.quit()
 
     def test_home(self):
-        """
-        Prueba sobre url 'base:home'.
+        """Prueba sobre url 'base:home'.
 
         Visitar el url de nombre 'home' y comprobar que cargue el contenido.
         """
@@ -37,8 +33,7 @@ class TestBaseViews(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Hello, world!'))
 
     def test_robots(self):
-        """
-        Prueba sobre url 'base:base_files'(robots.txt).
+        """Prueba sobre url 'base:base_files'(robots.txt).
 
         Visitar el url de robots.txt y comprobar que cargue el archivo.
         """
@@ -46,8 +41,7 @@ class TestBaseViews(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('robotstxt'))
 
     def test_humans(self):
-        """
-        Prueba sobre url 'base:base_files'(humans.txt).
+        """Prueba sobre url 'base:base_files'(humans.txt).
 
         Visitar el url de humans.txt y comprobar que cargue el archivo.
         """
