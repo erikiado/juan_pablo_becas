@@ -4,46 +4,48 @@ from splinter import Browser
 
 
 class TestBaseViews(StaticLiveServerTestCase):
-    """Suite de integracion para probar las rutas base.
+    """Integration test suite for testing the views in the app: base.
 
-    Probar los urls de home, y los accesos a los archivos de robots y humans.
+    Test the url for home and the basefiles like robots.txt and humans.txt
 
     Attributes
     ----------
     browser : Browser
-        Driver para navegar por paginas web y para correr pruebas de integracion.
+        Driver to navigate through websites and to run integration tests.
     """
 
     def setUp(self):
-        """Inicializar el navegador, antes de correr las pruebas.
+        """Initialize the browser, before running the tests.
         """
         self.browser = Browser('chrome')
 
     def tearDown(self):
-        """Al terminar, cerrar el navegador.
+        """At the end of tests, close the browser
         """
         self.browser.quit()
 
     def test_home(self):
-        """Prueba sobre url 'base:home'.
+        """Test for url 'base:home'.
 
-        Visitar el url de nombre 'home' y comprobar que cargue el contenido.
+        Visit the url of name 'home' and check it loads the content
         """
         self.browser.visit(self.live_server_url + reverse('home'))
         self.assertTrue(self.browser.is_text_present('Hello, world!'))
 
     def test_robots(self):
-        """Prueba sobre url 'base:base_files'(robots.txt).
+        """Test for url 'base:base_files(robots.txt)'.
 
-        Visitar el url de robots.txt y comprobar que cargue el archivo.
+        Visit the url of robots.txt and check it loads the file
         """
-        self.browser.visit(self.live_server_url + '/robots.txt')
+        self.browser.visit(self.live_server_url + reverse('base_files',
+                           kwargs={'filename': 'robots.txt'}))
         self.assertTrue(self.browser.is_text_present('robotstxt'))
 
     def test_humans(self):
-        """Prueba sobre url 'base:base_files'(humans.txt).
+        """Test for url 'base:base_files(humans.txt)'.
 
-        Visitar el url de humans.txt y comprobar que cargue el archivo.
+        Visit the url of humans.txt and check it loads the file
         """
-        self.browser.visit(self.live_server_url + '/humans.txt')
+        self.browser.visit(self.live_server_url + reverse('base_files',
+                           kwargs={'filename': 'humans.txt'}))
         self.assertTrue(self.browser.is_text_present('humanstxt'))
