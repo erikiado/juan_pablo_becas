@@ -52,7 +52,7 @@ class FormaCreacionUsuario(FormaUsuario):
         user = super(FormaCreacionUsuario, self).save(*args, **kwargs)
         data = self.cleaned_data
         if data['rol_usuario'] == CAPTURISTA_GROUP:
-            # capturista's group is added in the save method of the Model
+            # capturista's group is added in the save method of the Model.
             capturista = Capturista(user=user)
             capturista.save()
         else:
