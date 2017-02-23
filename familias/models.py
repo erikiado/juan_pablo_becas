@@ -19,7 +19,7 @@ class Familia(models.Model):
         This is a field that stores the list of options to be stored in the localidad field.
 
     numero_hijos_diferentes_papas : IntegerField
-        The content of this field needs to be clarified with the stakeholder, wether this
+        The content of this field needs to be clarified with the stakeholder, whether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
 
