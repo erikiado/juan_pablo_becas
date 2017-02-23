@@ -1,4 +1,5 @@
 from django.db import models
+from core.validators import PHONE_REGEX
 
 
 class Familia(models.Model):
@@ -67,7 +68,7 @@ class Comentario(models.Model):
 
     Attributes:
     -----------
-    familia: ForeignKey
+    familia : ForeignKey
         This represents the relationship with an instance of the Family class.
     fecha : DateTimeField
         This stores the data about the date of creation of an instantce of this class.
@@ -89,3 +90,63 @@ class Comentario(models.Model):
         """
 
         return self.texto
+
+
+class Integrante(models.Model):
+    """ This is the parent class for all members of a family.
+
+    Every single member of a family is an instance of this class. Some family may be
+    extended with OneToOne relationships to instances of this class.
+
+    Attributes:
+    -----------
+    OPCIONES_NIVEL_ESTUDIOS : tuple(tuple)
+        This are the options for the nivel_studios attribute.
+    familia : ForeignKey
+        This establishes the pertenence of a family member to a family.
+    nombres : TextField
+        This attribute stores the name(s) of a family member.
+    apellidos : TextField
+        This attribute stores the lastname(s) of a family member.
+    telefono : CharField
+        This attribute stores the phone number of a family member; phone number must
+        be compliant with E.164 standard.
+    correo : EmailField
+        This attribute stores the email of a family member.
+    nivel_estudios : TextField
+        Stores the scholarity level of a family member.
+    fecha_de_nacimiento : DateField
+        Store the date of birth of a family member.
+    activo: BooleanField
+        This attribute stores information about the involvment of a family member
+        with the family itself.
+
+    TODO:
+    -----
+    - Implement foreign key relationship with oficio.
+    """
+
+    OPCIONES_NIVEL_ESTUDIOS = (('ninguno', 'Ninguno'),
+                               ('1º grado', 'Primero de Primaria'),
+                               ('2º grado', 'Segundo de Primaria'),
+                               ('3º grado', 'Tercero de Primaria'),
+                               ('4º grado', 'Cuarto de Primaria'),
+                               ('5º grado', 'Quinto de Primaria'),
+                               ('6º grado', 'Sexto de Primaria'),
+                               ('7º grado', 'Primero de Secundaria'),
+                               ('8º grado', 'Segundo de Secundaria'),
+                               ('9º grado', 'Tercero de Secundaria'),
+                               ('10º grado', 'Primero de Pecundaria'),
+                               ('11º grado', 'Segundo de Preparatoria'),
+                               ('12º grado', 'Tercero de Preparatoria'),
+                               ('universidad', 'Universidad'),
+                               ('maestria', 'Maestría'),
+                               ('doctorado', 'Doctorado'))
+    familia = models.ForeignKey(Familia)
+    nombres = models.TextField()
+    apellidos = models.TextField()
+    telefono = models.CharField(validators=[PHONE_REGEX], null=True, max_length=16)
+    correo = models.EmailField(null=True)
+    nivel_estudios = models.TextField(choices=OPCIONES_NIVEL_ESTUDIOS)
+    fecha_de_nacimiento = models.DateField()
+    activo = models.BooleanField(default=True)
