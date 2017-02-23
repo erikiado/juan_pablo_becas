@@ -18,8 +18,8 @@ class Familia(models.Model):
     OPCIONES_LOCALIDAD : tuple(tuple())
         This is a field that stores the list of options to be stored in the localidad field.
 
-    numero_hijos_differentes_papas : IntegerField
-        The content of this field needs to be clarified with the stake holder, wether this
+    numero_hijos_diferentes_papas : IntegerField
+        The content of this field needs to be clarified with the stakeholder, wether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
 
@@ -40,7 +40,7 @@ class Familia(models.Model):
     - Implement total_neto field, total_egresos, and total_ingresos, once the ingresos and
     egresos tables are created.d
 
-    - Clarify the contents of the number_hijos_differentes_papas field
+    - Clarify the contents of the number_hijos_diferentes_papas field
 
     """
     OPCIONES_ESTADO_CIVIL = (('soltero', 'Soltero'),
@@ -56,7 +56,7 @@ class Familia(models.Model):
                           ('La Campana', 'La Campana'),
                           ('otro', 'Otro'))
 
-    numero_hijos_differentes_papas = models.IntegerField(default=0)
+    numero_hijos_diferentes_papas = models.IntegerField(default=0)
     explicacion_solvencia = models.TextField()
     estado_civil = models.TextField(choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.TextField(choices=OPCIONES_LOCALIDAD)
