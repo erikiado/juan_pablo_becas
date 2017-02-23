@@ -36,13 +36,7 @@ class Familia(models.Model):
 
     - Implement total_neto field, total_egresos, and total_ingresos, once the ingresos and
     egresos tables are created.
-
-<<<<<<< HEAD
     - Clarify the contents of the number_hijos_diferentes_papas field
-=======
-    - Clarify the contents of the number_hijos_differentes_papas field.
->>>>>>> Add Comentario model to app familia.
-
     """
     OPCIONES_ESTADO_CIVIL = (('soltero', 'Soltero'),
                              ('viudo', 'Viudo'),
