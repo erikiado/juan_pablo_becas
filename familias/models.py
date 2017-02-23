@@ -149,6 +149,14 @@ class Integrante(models.Model):
     fecha_de_nacimiento = models.DateField()
     activo = models.BooleanField(default=True)
 
+    def __str__(self):
+        """ Returns the concatenation of nombres and apellidos.
+
+        The concatenation of nombres and apellidos generates the full name of
+        a family member.
+        """
+        return '{nombres} {apellidos}'.format(nombres=self.nombres, apellidos=self.apellidos)
+
 
 class Alumno(models.Model):
     """ This class extends the Integrante model, creating the Student profile.
@@ -178,6 +186,13 @@ class Alumno(models.Model):
     activo = models.BooleanField(default=True)
     # escuela = models.ForeignKey(Escuela)
 
+    def __str__(self):
+        """ Returns the name of the student
+
+        This return value is taken directly from the Integrante class.
+        """
+        return '{}'.format(self.integrante)
+
 
 class Tutor(models.Model):
     """ This class extends the Integrante model, creating the Tutor profile.
@@ -199,3 +214,10 @@ class Tutor(models.Model):
                          ('tutor', 'Tutor'))
     integrante = models.OneToOneField(Integrante)
     relacion = models.TextField(choices=OPCIONES_RELACION)
+
+    def __str__(self):
+        """ Return the name of the tutor.
+
+        The return value is taken direclty form the Integrante class.
+        """
+        return '{}'.format(self.integrante)
