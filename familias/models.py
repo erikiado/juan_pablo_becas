@@ -1,5 +1,6 @@
 from django.db import models
 from core.validators import PHONE_REGEX
+# from administracion.models import Escuela
 
 
 class Familia(models.Model):
@@ -88,7 +89,6 @@ class Comentario(models.Model):
         """ Prints the texto attribute of this class.
 
         """
-
         return self.texto
 
 
@@ -150,3 +150,54 @@ class Integrante(models.Model):
     nivel_estudios = models.TextField(choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
     activo = models.BooleanField(default=True)
+
+
+class Alumno(models.Model):
+    """ This class extends the Integrante model, creating the Student profile.
+
+    The purpose of this class is to extend the Integrante model, in order to
+    store information that is only required of actual students at the
+    institution.
+
+    Attributes:
+    -----------
+    integrante : OneToOneField
+        This directly extends the Integrante model, in order to have access to all
+        the other information that is stored about all of the family members.
+
+    activo : BooleanField
+        This field is different from the activo field in integrante, this field
+        marks whether the student is currently enrolled at the institution or not.
+    escuela : ForeignKey
+        This field stores the actual school in which the student is enrolled, or is
+        planned to attend once the inscription process is over.
+
+    TODO: activate the ManyToOne with Escuela once the model is declared in the
+    administracion app.
+    """
+
+    integrante = models.OneToOneField(Integrante)
+    activo = models.BooleanField(default=True)
+    # escuela = models.ForeignKey(Escuela)
+
+
+class Tutor(models.Model):
+    """ This class extends the Integrante model, creating the Tutor profile.
+
+    The purpose of this class is to extend the Integrante model, in order
+    to store information that is only required of the tutors of students.
+
+    Attributes:
+    -----------
+    OPCIONES_RELACION : tuple(tuple)
+        This attribute stores all the options for the relacoin field.
+    integrante : OneToOneField
+        This directly extends the Integrante model, in order to have access to all
+        the other information that is stored about all of the family members.
+    relacion : TextField
+    """
+    OPCIONES_RELACION = (('madre', 'Madre'),
+                         ('padre', 'Padre'),
+                         ('tutor', 'Tutor'))
+    integrante = models.OneToOneField(Integrante)
+    relacion = models.TextField(choices=OPCIONES_RELACION)
