@@ -56,6 +56,12 @@ This Git Style Guide directly borrows, extends, and adapts from the following gu
       <td>docs/short-desc</td>
       <td>Branches off develop, and will contain documentation that does not refer to any specific piece of code i.e. this guide.</td>
     </tr>
+    <tr>
+      <td>Refactoring</td>
+      <td>refactoring/short-desc</td>
+      <td>Branches off develop, this type of branch restructures an existing
+      piece of code.</td>
+    </tr>
   </tbody>
 </table>
 
