@@ -1,5 +1,7 @@
+import decimal
 from django.db import models
-from familias.models import Familia
+from familias.models import Familia, Tutor
+
 
 class Oficio(models.Model):
     """ This model stores the list of all possible jobs.
@@ -17,6 +19,9 @@ class Oficio(models.Model):
     nombre = models.TextField()
 
     def __str__(self):
+        """ This returns the name of the Oficio
+
+        """
         return '{}'.format(self.nombre)
 
 
@@ -60,6 +65,8 @@ class Transaccion(models.Model):
 
     Attributes:
     -----------
+    familia : ForeignKey
+        This field matches a transaction with a family.
     activo : boolean
         This field indicates whether a certain transaction is currently
         being transacted by the family.
@@ -91,8 +98,11 @@ class Transaccion(models.Model):
         """
         valor_transaccion = self.monto
         if self.es_ingreso is not True:
-            valor_transaccion = valor_transaccion * -1.0
-        return valor_transaccion
+            valor_transaccion = valor_transaccion * decimal.Decimal(-1.0)
+        if self.activo is True:
+            return valor_transaccion
+        else:
+            return 0.0
 
     def obtener_valor_mensual(self):
         """ Calculates how much money is exchanged in a month.
@@ -108,10 +118,10 @@ class Transaccion(models.Model):
         valor_mensual_transaccion = self.obtener_valor_mensual()
         if valor_mensual_transaccion < 0.0:
             signo_opcional = '-'
-            valor_mensual_transaccion = valor_mensual_transaccion * -1
+            valor_mensual_transaccion = valor_mensual_transaccion * decimal.Decimal(-1)
         argumentos_format = {'signo': signo_opcional,
                              'mensual_transaccion': valor_mensual_transaccion}
-        return '{signo}${mensual_transaccion:.2f} mensuales'.format(argumentos_format)
+        return '{"signo"}${mensual_transaccion:.2f} mensuales'.format(argumentos_format)
 
 
 class Ingreso(models.Model):
@@ -124,12 +134,25 @@ class Ingreso(models.Model):
     -----------
     OPCIONES_TIPO : tuple(tuple)
         This touple stores the possible types of income a family can have.
+    transaccion : OneToOneField
+        This field indicates the transaction an instance of this model is extending.
     fecha : DateField
         This field indicates when an income was first received.
     tipo : TextField
         This field indicates the type of an income.
+    tutor : ForeignKey
+        This field indicates the parent to which an income can be attributed. It can
+        be null in case no parent, is related to the income.
     """
     OPCIONES_TIPO = (('no comprobable', 'No comprobable'),
                      ('comprobable', 'Comprobable'))
-    fecha = models.DateTimeField()
+    transaccion = models.OneToOneField(Transaccion)
+    fecha = models.DateField()
     tipo = models.TextField(choices=OPCIONES_TIPO)
+    tutor = models.ForeignKey(Tutor, null=True)
+
+    def __str__(self):
+        """ This function returns the __str__ method of the parent transaction.
+
+        """
+        return '{}'.format(self.transaccion)
