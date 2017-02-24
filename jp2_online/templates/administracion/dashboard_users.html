@@ -24,12 +24,12 @@
                     </tr>
                   </thead>
                   <tbody>
-                  {% for usuario in usuarios %}
+                  {% for user in all_users %}
                       <tr class="">
-                        <td>{{usuario.id}}</td>
-                        <td>{{usuario.first_name}}</td>
-                        <td>{{usuario.last_name}}</td>
-                        <td>{{usuario.username}}</td>
+                        <td>{{user.id}}</td>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.username}}</td>
                       </tr>
                   {% endfor %}
                   </tbody>

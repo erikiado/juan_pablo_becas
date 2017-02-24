@@ -4,7 +4,7 @@ from splinter import Browser
 from django.contrib.auth.models import User
 
 
-class TestAdministracionViews(StaticLiveServerTestCase):
+class TestViewsAdministracion(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: administracion.
 
     Test the urls for 'administracion' which make up the administration dashboard.
@@ -28,13 +28,13 @@ class TestAdministracionViews(StaticLiveServerTestCase):
         """
         self.browser.quit()
 
-    def test_panel_principal(self):
-        """Test for url 'administracion:administracion_principal'.
+    def test_main_dashboard(self):
+        """Test for url 'administracion:main'.
 
-        Visit the url of name 'administracion:administracion_principal' and check it loads the
+        Visit the url of name 'administracion:main' and check it loads the
         content of the main dashboard panel.
         """
-        test_url_name = 'administracion:administracion_principal'
+        test_url_name = 'administracion:main'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
         # Check for nav_bar partial
@@ -42,13 +42,13 @@ class TestAdministracionViews(StaticLiveServerTestCase):
         # Check for side_nav partial
         self.assertTrue(self.browser.is_text_present('Administración'))
 
-    def test_panel_usuarios(self):
-        """Test for url 'administracion:administracion_usuarios'.
+    def test_users_dashboard(self):
+        """Test for url 'administracion:users'.
 
-        Visit the url of name 'administracion:administracion_usuarios' and check it loads the
+        Visit the url of name 'administracion:users' and check it loads the
         content of the user dashboard panel.
         """
-        test_url_name = 'administracion:administracion_usuarios'
+        test_url_name = 'administracion:users'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
         # Check for nav_bar partial

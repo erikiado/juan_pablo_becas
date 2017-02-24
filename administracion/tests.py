@@ -9,19 +9,19 @@ class TestAdministracion(TestCase):
     they use the correct template.
     """
 
-    def test_view_panel_principal(self):
-        '''Unit Test: administracion.views.admin_panel_principal.
-        '''
+    def test_view_main_dashboard(self):
+        """Unit Test: administracion.views.admin_main_dashboard.
+        """
         # self.client.login(username='user', password='test')
-        test_url_name = 'administracion:administracion_principal'
+        test_url_name = 'administracion:main'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_main.html')
 
-    def test_view_panel_usuarios(self):
-        '''Unit Test: administracion.views.admin_panel_usuarios.
-        '''
-        test_url_name = 'administracion:administracion_usuarios'
+    def test_view_users_dashboard(self):
+        """Unit Test: administracion.views.admin_users_dashboard.
+        """
+        test_url_name = 'administracion:users'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')

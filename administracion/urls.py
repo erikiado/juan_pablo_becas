@@ -1,9 +1,10 @@
 from django.conf.urls import url
-from .views import admin_panel_principal, admin_panel_usuarios
+from .views import admin_main_dashboard, admin_users_dashboard
 
 app_name = 'administracion'
 
+# Urls en espanol
 urlpatterns = [
-    url(r'^panel/', admin_panel_principal, name='administracion_principal'),
-    url(r'^usuarios/', admin_panel_usuarios, name='administracion_usuarios')
+    url(r'^principal/', admin_main_dashboard, name='main'),
+    url(r'^usuarios/', admin_users_dashboard, name='users')
 ]
