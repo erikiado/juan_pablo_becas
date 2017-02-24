@@ -4,6 +4,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
 from .forms import FormaCreacionUsuario
 
+
 class TestAdministracionUrls(TestCase):
     """Unit test suite for testing the views in the app: administracion.
 
@@ -27,7 +28,6 @@ class TestAdministracionUrls(TestCase):
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
-
 
 
 class TestFormaCreacionUsuario(TestCase):
