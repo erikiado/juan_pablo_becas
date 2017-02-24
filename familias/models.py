@@ -80,7 +80,7 @@ class Comentario(models.Model):
     """
 
     familia = models.ForeignKey(Familia)
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     texto = models.TextField()
 
     def __str__(self):
@@ -143,8 +143,8 @@ class Integrante(models.Model):
     familia = models.ForeignKey(Familia)
     nombres = models.TextField()
     apellidos = models.TextField()
-    telefono = models.CharField(validators=[PHONE_REGEX], null=True, max_length=16)
-    correo = models.EmailField(null=True)
+    telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
+    correo = models.EmailField(blank=True)
     nivel_estudios = models.TextField(choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
     activo = models.BooleanField(default=True)
