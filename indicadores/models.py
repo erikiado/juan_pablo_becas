@@ -1,5 +1,5 @@
 from django.db import models
-
+from familias.models import Familia
 
 class Oficio(models.Model):
     """ This model stores the list of all possible jobs.
@@ -16,8 +16,9 @@ class Oficio(models.Model):
 
     nombre = models.TextField()
 
-    def __str__ (self):
+    def __str__(self):
         return '{}'.format(self.nombre)
+
 
 class Periodo(models.Model):
     """ This model serves to mark how often an event happens.
@@ -49,50 +50,86 @@ class Periodo(models.Model):
         return '{}'.format(self.periodicidad)
 
 
-class Ingreso(models.Model):
-    """ This model details an income a family has.
+class Transaccion(models.Model):
+    """ This model details the income and expenses of a family has.
 
     Incomes are very important as they are used to directly
-    calculate the scholarship of a student, and are an essential 
+    calculate the scholarship of a student, and are an essential
     part of the calulation of many of the indicators that are going
     to be displayed.
 
     Attributes:
     -----------
     activo : boolean
-        This field indicates whether a certain income is currently
-        being received by the family.
-    fecha : DateField
-        This field indicates when an income was first received.
+        This field indicates whether a certain transaction is currently
+        being transacted by the family.
     monto : DecimalField[12,2]
-        This field stores the acutal monetary amount the family receives
-        from an income. The currency of this amount is MXN.
+        This field stores the acutal monetary amount that gets exchanged.
+        The currency of this amount is MXN.
     periodicidad : ForeignKey
-        This field references the value of how often the income is received
+        This field references the value of how often the mone is exchanged
         by the family.
     observacion : Text
         This field stores any additional comments that clarify something
-        about the income.
-
+        about the transaction.
+    es_ingreso : BooleanField
+        This field indicates whether a certain transaction is an income
+        or an expense.
     """
-
+    familia = models.ForeignKey(Familia)
     activo = models.BooleanField(default=True)
-    fecha = models.DateTimeField()
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
     observacion = models.TextField()
+    es_ingreso = models.BooleanField()
+
+    def obtener_valor_de_transaccion(self):
+        """ If a transaction is an expense, returns a negative value
+
+        This method gives you the value of a transaction, and is the
+        correct way of getting this value.
+        """
+        valor_transaccion = self.monto
+        if self.es_ingreso is not True:
+            valor_transaccion = valor_transaccion * -1.0
+        return valor_transaccion
 
     def obtener_valor_mensual(self):
-        """ Calculates how is received from an income in a month.
+        """ Calculates how much money is exchanged in a month.
 
         """
-        return self.monto * self.periodicidad.multiplicador
+        return self.obtener_valor_de_transaccion() * self.periodicidad.multiplicador
 
     def __str__(self):
-        """ Returns the calculated mensual income, formatted as money.
+        """ Returns the calculated mensual transaction, formatted as money.
 
         """
-        return '${mensual_income} mensuales'.format(mensual_income=obtener_valor_mensual())
+        signo_opcional = ''
+        valor_mensual_transaccion = self.obtener_valor_mensual()
+        if valor_mensual_transaccion < 0.0:
+            signo_opcional = '-'
+            valor_mensual_transaccion = valor_mensual_transaccion * -1
+        argumentos_format = {'signo': signo_opcional,
+                             'mensual_transaccion': valor_mensual_transaccion}
+        return '{signo}${mensual_transaccion:.2f} mensuales'.format(argumentos_format)
 
 
+class Ingreso(models.Model):
+    """ This model extends de Transaccion model.
 
+    This is a OneToOne relationship with Flujo that capital, that gets used
+    whenever the income BooleanField in FlujoDeCapital is True.
+
+    Attributes:
+    -----------
+    OPCIONES_TIPO : tuple(tuple)
+        This touple stores the possible types of income a family can have.
+    fecha : DateField
+        This field indicates when an income was first received.
+    tipo : TextField
+        This field indicates the type of an income.
+    """
+    OPCIONES_TIPO = (('no comprobable', 'No comprobable'),
+                     ('comprobable', 'Comprobable'))
+    fecha = models.DateTimeField()
+    tipo = models.TextField(choices=OPCIONES_TIPO)
