@@ -1,7 +1,7 @@
 {% extends "layouts/basic.html" %}
 {% load staticfiles %}
 {% block page_title %}Awesome Page{% endblock %}
-{% block extra_css %} 
+{% block extra_css %}
 	<link rel="stylesheet" type="text/css" href={% static "css/base/home.css" %}>
 {% endblock %}
 {% block header %}
@@ -15,11 +15,11 @@
 
 <div class='row text-center'>
 	{% if user and not user.is_anonymous %}
-	<a>Hello, {{ user.get_full_name }}!</a>
+	<a><h4>Hello, {{ user.get_full_name }}!</h4></a>
 	<br>
 	<a href="/tosp_auth/logout">Logout</a>
 	{% else %}
-	Social login used to be here.
+	<a href="/tosp_auth/login">Inciar Sesión</a>
 	{% endif %}
 
 </div>
