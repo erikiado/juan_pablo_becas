@@ -15,6 +15,7 @@ def admin_users_dashboard(request):
     users = User.objects.all()
     return render(request, 'administracion/dashboard_users.html', {'all_users': users})
 
+
 def crear_usuario(request):
     """ View to create users.
 
