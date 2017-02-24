@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'administracion.apps.AdministracionConfig',
     'perfiles_usuario.apps.PerfilesUsuarioConfig',
     'estudios_socioeconomicos.apps.EstudiosSocioeconomicosConfig',
-    'captura.apps.CapturaConfig'
+    'captura.apps.CapturaConfig',
+    'core.apps.CoreConfig'
 ]
 
 MIDDLEWARE = [
