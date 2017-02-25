@@ -69,10 +69,18 @@ class Pregunta(models.Model):
         The section to which the question belongs.
     texto : TextField
         The question itself.
+    descripcion : TextField
+        Additional information that the question may need to have.
+    relacionado_a_integrante : BooleanField
+        Indicates whether the answer of this question needs to be related 
+        with a family member. This is important for rendering the form and
+        determining if the relationship between answer and family member should exist.
     """
     seccion = models.ForeignKey(Seccion)
 
     texto = models.TextField()
+    description = models.TextField(blank=True)
+    relacionado_a_integrante = models.BooleanField(default=False)
 
     def __str__(self):
         return self.texto
@@ -95,10 +103,33 @@ class OpcionRespuesta(models.Model):
         return self.texto
 
 class Respuesta(models.Model):
+    """ The model that stores the actual answers.
+
+    This model is the actual information from a study. Note that it
+    can be related to an answer option, or to a family member, but both
+    relations are not mandatory.
+
+    Attributes:
+    -----------
+    estudio : ForeignKey
+        The study to which these answers belong.
+    pregunta : ForeignKey
+        The question this answer is responding to.
+    opcion : ManyToManyField
+        Optional relation to the options of the question, if the question
+        requires them. It's a many to many rel. instead of a one to many since
+        the question may need more than one option.
+    integrante : ForeignKey
+        If the question is related to a particular family member, this relationship
+        indicates to which one.
+    respuesta : TextField
+        If the answer needs to have text, it will be stored in this attribute.
+    """
     estudio = models.ForeignKey(Estudio)
-    opcion = models.ManyToManyField(OpcionRespuesta)
     pregunta = models.ForeignKey(Pregunta)
-    integrante = models.ForeignKey(Integrante)
+    opcion = models.ManyToManyField(OpcionRespuesta, null=True, blank=True)
+    integrante = models.ForeignKey(Integrante, null=True, blank=True)
+
     respuesta = models.TextField(blank=True)
 
     def __str__(self):
