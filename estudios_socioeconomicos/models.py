@@ -24,11 +24,16 @@ class Estudio(models.Model):
         TODO: more information on this field. It appears to be some sort of
         id for studies (refer to the sample study provided by the stakeholder).
     """
-    OPCIONES_STATUS = (('aprobado', 'Aprobado'),
-                       ('rechazado', 'Rechazado'),
-                       ('borrador', 'Borrador'),
-                       ('revision', 'Revisión'),
-                       ('eliminado', 'Eliminado'))
+    APROBADO = 'aprobado'
+    RECHAZADO = 'rechazado'
+    BORRADOR = 'borrador'
+    REVISION = 'revision'
+    ELIMINADO = 'eliminado'
+    OPCIONES_STATUS = ((APROBADO, 'Aprobado'),
+                       (RECHAZADO, 'Rechazado'),
+                       (BORRADOR, 'Borrador'),
+                       (REVISION, 'Revisión'),
+                       (ELIMINADO, 'Eliminado'))
 
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
@@ -44,7 +49,10 @@ class Seccion(models.Model):
 
     Attributes:
     -----------
-    
+    nombre : TextField
+        The name of the section.
+    numero : IntegerField
+        The number of the section.
     """
     nombre = models.TextField()
     numero = models.IntegerField()
@@ -75,9 +83,9 @@ class OpcionRespuesta(models.Model):
     Attributes:
     -----------
     pregunta : ForeignKey
-        The question 
+        The question for which these options are provided.
     texto : TextField
-        The question itself.
+        The option for answer itself.
     """
     pregunta = models.ForeignKey(Pregunta)
 
