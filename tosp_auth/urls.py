@@ -4,5 +4,5 @@ from .views import logout
 
 
 urlpatterns = [
-    url(r'^logout/$', logout)
+    url(r'^logout/$', logout, name='logout')
 ]
