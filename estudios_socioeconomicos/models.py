@@ -44,6 +44,7 @@ class Estudio(models.Model):
     def __str__(self):
         return self.familia.__str__()
 
+
 class Seccion(models.Model):
     """ The model that links questions to a particular section.
 
@@ -60,6 +61,7 @@ class Seccion(models.Model):
     def __str__(self):
         return 'Sección {nombre} número {num}'.format(nombre=self.nombre, num=self.numero)
 
+
 class Pregunta(models.Model):
     """ The model that stores the actual questions.
 
@@ -72,7 +74,7 @@ class Pregunta(models.Model):
     descripcion : TextField
         Additional information that the question may need to have.
     relacionado_a_integrante : BooleanField
-        Indicates whether the answer of this question needs to be related 
+        Indicates whether the answer of this question needs to be related
         with a family member. This is important for rendering the form and
         determining if the relationship between answer and family member should exist.
     """
@@ -84,6 +86,7 @@ class Pregunta(models.Model):
 
     def __str__(self):
         return self.texto
+
 
 class OpcionRespuesta(models.Model):
     """ The model that stores options for a particular question.
@@ -101,6 +104,7 @@ class OpcionRespuesta(models.Model):
 
     def __str__(self):
         return self.texto
+
 
 class Respuesta(models.Model):
     """ The model that stores the actual answers.
@@ -127,10 +131,13 @@ class Respuesta(models.Model):
     """
     estudio = models.ForeignKey(Estudio)
     pregunta = models.ForeignKey(Pregunta)
-    opcion = models.ManyToManyField(OpcionRespuesta, null=True, blank=True)
+    elecciones = models.ManyToManyField(OpcionRespuesta, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
     respuesta = models.TextField(blank=True)
 
     def __str__(self):
-        return self.respuesta if self.respuesta else self.opcion.texto
+        if self.respuesta:
+            return self.respuesta
+        else:
+            return ', '.join(sorted(map(str, self.elecciones.all())))
