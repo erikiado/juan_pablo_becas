@@ -14,6 +14,7 @@ class TestAdministracionUrls(TestCase):
 
     def test_view_main_dashboard(self):
         """Unit Test: administracion.views.admin_main_dashboard.
+
         """
         # self.client.login(username='user', password='test')
         test_url_name = 'administracion:main'
@@ -23,6 +24,7 @@ class TestAdministracionUrls(TestCase):
 
     def test_view_users_dashboard(self):
         """Unit Test: administracion.views.admin_users_dashboard.
+
         """
         test_url_name = 'administracion:users'
         response = self.client.get(reverse(test_url_name), follow=True)
@@ -45,6 +47,7 @@ class TestFormaCreacionUsuario(TestCase):
 
     def setUp(self):
         """ Setup the dictionary with data for feeding the form.
+
         """
         self.valid_data_form = {
             'username': 'raul',

@@ -12,7 +12,7 @@
               <!-- Launch demo modal -->
             <!-- </button> -->
 
-            <a data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i></a>
+            <a id="btn_modal_create_user" data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i></a>
         </div>
     </div>
     <div class="content-box-large box-with-header">
@@ -21,19 +21,27 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>First Name</th>
-                      <th>Last Name</th>
-                      <th>Username</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Correo Electronico</th>
+                      <th>Rol</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                   {% for user in all_users %}
                       <tr class="">
-                        <td>{{user.id}}</td>
                         <td>{{user.first_name}}</td>
                         <td>{{user.last_name}}</td>
                         <td>{{user.username}}</td>
+                        <td>
+                          {% for group in user.groups.all %}
+                            {{group}}
+                          {% endfor %}
+                        </td>
+                        <td>
+                          <i class="glyphicon glyphicon-pencil"></i>
+                        </td>
                       </tr>
                   {% endfor %}
                   </tbody>
@@ -76,7 +84,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Crear usuario</button>
+          <button type="submit" class="btn btn-primary" id="btn_send_create_user">Crear usuario</button>
         </div>
       </form>
     </div><!-- /.modal-content -->
