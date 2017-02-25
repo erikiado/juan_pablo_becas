@@ -6,9 +6,24 @@ from perfiles_usuario.models import Capturista
 from .models import Estudio, Seccion, Pregunta, OpcionRespuesta, Respuesta
 
 
-class FamiliaTestCase(TestCase):
+class EstudioTestCase(TestCase):
+    """ Suite to Test things related to the Estudio Model.
+
+    Attributes:
+    -----------
+    user : User
+        A mock user to use as capturista.
+    capturista : Capturista
+        A mock capturista to use as the one who filled the study.
+    familia : Familia
+        The family of which the study is about.
+    estudio : Estudio
+        The actual study.
+    """
 
     def setUp(self):
+        """ Setup attributes
+        """
         self.user = get_user_model().objects.create_user(
                                     username='some_user',
                                     email='temporary@gmail.com',
@@ -24,23 +39,49 @@ class FamiliaTestCase(TestCase):
                                 status=Estudio.APROBADO)
 
     def test_estudio_str(self):
+        """ Test whether the __str__ method works as expected.
+
+        TODO: fill __str__ method of familia.
+        """
         self.assertEqual(str(self.estudio), str(self.familia))
 
 
 class SeccionTestCase(TestCase):
+    """ Suite to test things related to the Seccion Model.
+
+    Attributes:
+    -----------
+    seccion : Seccion
+        The object for seccion we want to test
+    """
 
     def setUp(self):
+        """ Setup the sección.
+        """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
 
     def test_str(self):
+        """ Test whether the __str__ method works as expected.
+        """
         self.assertEqual(str(self.seccion), 'Sección Situación Económica número 1')
 
 
 class PreguntaTestCase(TestCase):
+    """ Suite to test things related to the Pregunta model.
+
+    Attributes:
+    -----------
+    seccion : Seccion
+        The section to which the question belongs.
+    pregunta : Pregunta
+        The question itself.
+    """
 
     def setUp(self):
+        """ Setup attributes.
+        """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
@@ -49,12 +90,27 @@ class PreguntaTestCase(TestCase):
                                 texto='Medio de Transporte')
 
     def test_str(self):
+        """ Test whether __str__ method works as expected.
+        """
         self.assertEqual(str(self.pregunta), 'Medio de Transporte')
 
 
 class OpcionRespuestaTestCase(TestCase):
+    """ Suite to test things related to the OpcionRespuesta model.
+
+    Attributes:
+    -----------
+    seccion : Seccion
+        The section to which the question belongs.
+    pregunta : Pregunta
+        The question itself.
+    opcion_respuesta : OpcionRespuesta
+        An option for answer to the question.
+    """
 
     def setUp(self):
+        """ Setup the attributes.
+        """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
@@ -66,12 +122,35 @@ class OpcionRespuestaTestCase(TestCase):
                                 texto='Camión')
 
     def test_str(self):
+        """ Test whether __str__ method works as expected.
+        """
         self.assertEqual(str(self.opcion_respuesta), 'Camión')
 
 
 class RespuestaTestCase(TestCase):
+    """ Suite to test things related to the Respuesta model.
+
+    Attributes:
+    -----------
+    user : User
+        A mock user to use as capturista.
+    capturista : Capturista
+        A mock capturista to use as the one who filled the study.
+    familia : Familia
+        The family of which the study is about.
+    estudio : Estudio
+        The study to which the answer belongs.
+    seccion : Seccion
+        The section to which the question belongs.
+    pregunta : Pregunta
+        The question itself.
+    opcion_respuesta : OpcionRespuesta
+        An option for answer to the question.
+    """
 
     def setUp(self):
+        """ Setuo the attributes.
+        """
         self.user = get_user_model().objects.create_user(
                                     username='some_user',
                                     email='temporary@gmail.com',
@@ -92,7 +171,23 @@ class RespuestaTestCase(TestCase):
                                 seccion=self.seccion,
                                 texto='Medio de Transporte')
 
+    def test_str_respuesta_empty(self):
+        """ Test the __str__ method.
+
+        We test the __str__ method when the answer has no text
+        or choices whatsoever.
+        """
+        respuesta = Respuesta.objects.create(
+                                estudio=self.estudio,
+                                pregunta=self.pregunta)
+        self.assertEqual(str(respuesta), 'No tiene respuesta.')
+
     def test_str_respuesta(self):
+        """ Test the __str__ method.
+
+        We test the __str__ method when the answer is a text inside the
+        answer (filling the attribute respuesta).
+        """
         respuesta = Respuesta.objects.create(
                                 estudio=self.estudio,
                                 pregunta=self.pregunta,
@@ -100,6 +195,11 @@ class RespuestaTestCase(TestCase):
         self.assertEqual(str(respuesta), 'Autobus')
 
     def test_str_opcion_respuesta(self):
+        """ Test the __str__ method.
+
+        We test the __str__ method when the answer are two choices of
+        OpcionRespuesta.
+        """
         opcion_respuesta_camion = OpcionRespuesta.objects.create(
                                 pregunta=self.pregunta,
                                 texto='Camión')

@@ -137,7 +137,15 @@ class Respuesta(models.Model):
     respuesta = models.TextField(blank=True)
 
     def __str__(self):
+        """ String representation of the answer.
+
+        If the answer has text, we print the text. Otherwise,
+        we concatenate the options chosen for the answer.
+        If it is empty, we return a string indicating so.
+        """
         if self.respuesta:
             return self.respuesta
-        else:
+        elif self.elecciones.all():
             return ', '.join(sorted(map(str, self.elecciones.all())))
+        else:
+            return 'No tiene respuesta.'
