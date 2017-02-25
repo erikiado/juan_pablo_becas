@@ -52,7 +52,7 @@ class SeccionTestCase(TestCase):
     Attributes:
     -----------
     seccion : Seccion
-        The object for seccion we want to test
+        The object for seccion we want to test.
     """
 
     def setUp(self):
@@ -149,7 +149,7 @@ class RespuestaTestCase(TestCase):
     """
 
     def setUp(self):
-        """ Setuo the attributes.
+        """ Setup the attributes.
         """
         self.user = get_user_model().objects.create_user(
                                     username='some_user',
