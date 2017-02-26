@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from splinter import Browser
+from splinter import Browser, cookie_manager
 from django.contrib.auth.models import User
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
@@ -30,6 +30,17 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
             username='thelma', email='juan@pablo.com', password='junipero')
         administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
         administrators.user_set.add(thelma)
+        administrators.save()
+        self.client.login(username='thelma', password='junipero')
+        cookie = self.client.cookies['sessionid']
+        self.browser.visit(self.live_server_url + reverse('administracion:main'))
+        print(self.browser.cookies.all())
+        self.browser.cookies.add({'name': 'sessionid', 'value': cookie.value,
+                                  'secure': False, 'path': '/'})
+        self.browser.visit(self.live_server_url + reverse('administracion:main'))
+        print(self.browser.cookies.all())
+        
+        self.browser.reload()
 
     def tearDown(self):
         """At the end of tests, close the browser.

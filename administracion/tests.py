@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
+from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from .forms import FormaCreacionUsuario
 
 
@@ -12,11 +14,19 @@ class TestAdministracionUrls(TestCase):
     they use the correct template.
     """
 
+    def setUp(self):
+        thelma = User.objects.create_user(
+            username='thelma', email='juan@pablo.com', password='junipero',
+            first_name='Thelma', last_name='Amlet')
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(thelma)
+        self.client.login(username='thelma', password='junipero')
+
+
     def test_view_main_dashboard(self):
         """Unit Test: administracion.views.admin_main_dashboard.
 
         """
-        # self.client.login(username='user', password='test')
         test_url_name = 'administracion:main'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
