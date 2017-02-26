@@ -132,6 +132,7 @@ class OpcionRespuestaTestCase(TestCase):
 
     def test_str(self):
         """ Test whether __str__ method works as expected.
+        
         """
         self.assertEqual(str(self.opcion_respuesta), 'Camión')
 
