@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'perfiles_usuario.apps.PerfilesUsuarioConfig',
     'estudios_socioeconomicos.apps.EstudiosSocioeconomicosConfig',
     'captura.apps.CapturaConfig',
-    'core.apps.CoreConfig'
+    'core.apps.CoreConfig',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,24 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
 
 WSGI_APPLICATION = 'jp2_online.wsgi.application'
 
