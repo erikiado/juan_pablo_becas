@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 
 from rest_framework.authtoken.models import Token
 
-from .utils import CAPTURISTA_GROUP
+from .utils import CAPTURISTA_GROUP, ADMINISTRADOR_GROUP, is_member
 
 
 class Capturista(models.Model):
@@ -51,5 +51,5 @@ def create_authentication_token(sender, instance=None, created=False, **kwargs):
         A value indicating if this instance is being created for the first time. Or if set
         to false if it is being edited.
     """
-    if created:
+    if created and is_member(instance, [CAPTURISTA_GROUP, ADMINISTRADOR_GROUP]):
         Token.objects.create(user=instance)
