@@ -42,7 +42,9 @@ class Estudio(models.Model):
     numero_sae = models.TextField(blank=True)
 
     def __str__(self):
-        return self.familia.__str__()
+        return '{familia} status: {status}'.format(
+                                familia=self.familia.__str__(),
+                                status=self.status)
 
 
 class Seccion(models.Model):

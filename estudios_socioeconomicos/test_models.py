@@ -22,7 +22,8 @@ class EstudioTestCase(TestCase):
     """
 
     def setUp(self):
-        """ Setup attributes
+        """ Setup attributes.
+
         """
         self.user = get_user_model().objects.create_user(
                                     username='some_user',
@@ -43,7 +44,10 @@ class EstudioTestCase(TestCase):
 
         TODO: fill __str__ method of familia.
         """
-        self.assertEqual(str(self.estudio), str(self.familia))
+        expected = '{familia} status: {status}'.format(
+                                            familia=str(self.familia),
+                                            status=self.estudio.status)
+        self.assertEqual(str(self.estudio), expected)
 
 
 class SeccionTestCase(TestCase):
@@ -57,6 +61,7 @@ class SeccionTestCase(TestCase):
 
     def setUp(self):
         """ Setup the sección.
+
         """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
