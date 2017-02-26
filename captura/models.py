@@ -12,6 +12,9 @@ class Retroalimentacion(models.Model):
 
     Attributes:
     -----------
+    estudio : Estudio
+        The study which is being checked by the user. The feedback
+        is about this study.
     usuario : User
         The user who writes the feedback. It may be either the admin or
         the capturista.
