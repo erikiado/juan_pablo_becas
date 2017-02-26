@@ -69,6 +69,7 @@ class SeccionTestCase(TestCase):
 
     def test_str(self):
         """ Test whether the __str__ method works as expected.
+
         """
         self.assertEqual(str(self.seccion), 'Sección Situación Económica número 1')
 
@@ -86,6 +87,7 @@ class PreguntaTestCase(TestCase):
 
     def setUp(self):
         """ Setup attributes.
+
         """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
@@ -96,6 +98,7 @@ class PreguntaTestCase(TestCase):
 
     def test_str(self):
         """ Test whether __str__ method works as expected.
+
         """
         self.assertEqual(str(self.pregunta), 'Medio de Transporte')
 
@@ -115,6 +118,7 @@ class OpcionRespuestaTestCase(TestCase):
 
     def setUp(self):
         """ Setup the attributes.
+
         """
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
@@ -155,6 +159,7 @@ class RespuestaTestCase(TestCase):
 
     def setUp(self):
         """ Setup the attributes.
+
         """
         self.user = get_user_model().objects.create_user(
                                     username='some_user',
