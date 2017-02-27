@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 from familias.models import Familia
 from perfiles_usuario.models import Capturista
-from .models import Estudio, Seccion, Pregunta, OpcionRespuesta, Respuesta
+from .models import Estudio, Seccion, Pregunta, OpcionRespuesta, Respuesta, Subseccion
 
 
 class EstudioTestCase(TestCase):
@@ -74,6 +74,38 @@ class SeccionTestCase(TestCase):
         self.assertEqual(str(self.seccion), 'Sección Situación Económica número 1')
 
 
+class SubSeccionTestCase(TestCase):
+    """ Suite to test things related to the SubSeccion Model.
+
+    Attributes:
+    -----------
+    seccion : Seccion
+        The section to which the subsection belongs.
+    subcession : Subseccion
+        The subsection we are interested in testing.
+    """
+
+    def setUp(self):
+        """ Setup the sección.
+
+        """
+        self.seccion = Seccion.objects.create(
+                                nombre='Situación Económica',
+                                numero=1)
+        self.subseccion = Subseccion.objects.create(
+                                seccion=self.seccion,
+                                nombre='a) Distribución del gasto',
+                                numero=1)
+
+    def test_str(self):
+        """ Test whether the __str__ method works as expected.
+
+        """
+        expected = 'Subsección a) Distribución del gasto, en {}'.format(
+                                                    str(self.seccion))
+        self.assertEqual(str(self.subseccion), expected)
+
+
 class PreguntaTestCase(TestCase):
     """ Suite to test things related to the Pregunta model.
 
@@ -92,9 +124,14 @@ class PreguntaTestCase(TestCase):
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
-        self.pregunta = Pregunta.objects.create(
+        self.subseccion = Subseccion.objects.create(
                                 seccion=self.seccion,
-                                texto='Medio de Transporte')
+                                nombre='a) Distribución del gasto',
+                                numero=1)
+        self.pregunta = Pregunta.objects.create(
+                                subseccion=self.subseccion,
+                                texto='Medio de Transporte',
+                                orden=1)
 
     def test_str(self):
         """ Test whether __str__ method works as expected.
@@ -123,8 +160,12 @@ class OpcionRespuestaTestCase(TestCase):
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
-        self.pregunta = Pregunta.objects.create(
+        self.subseccion = Subseccion.objects.create(
                                 seccion=self.seccion,
+                                nombre='a) Distribución del gasto',
+                                numero=1)
+        self.pregunta = Pregunta.objects.create(
+                                subseccion=self.subseccion,
                                 texto='Medio de Transporte')
         self.opcion_respuesta = OpcionRespuesta.objects.create(
                                 pregunta=self.pregunta,
@@ -178,8 +219,12 @@ class RespuestaTestCase(TestCase):
         self.seccion = Seccion.objects.create(
                                 nombre='Situación Económica',
                                 numero=1)
-        self.pregunta = Pregunta.objects.create(
+        self.subseccion = Subseccion.objects.create(
                                 seccion=self.seccion,
+                                nombre='a) Distribución del gasto',
+                                numero=1)
+        self.pregunta = Pregunta.objects.create(
+                                subseccion=self.subseccion,
                                 texto='Medio de Transporte')
 
     def test_str_respuesta_empty(self):
