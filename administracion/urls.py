@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^usuarios/', admin_users_dashboard, name='users'),
     url(r'^crear_usuario/$', crear_usuario, name='crear_usuario'),
     url(r'^crear_retroalimentacion/', crear_retroalimentacion, name='crear_retroalimentacion'),
-    
+    url(r'^revisar_focus_mode/', revisar_focus_mode, name='revisar_focus_mode'),
 ]
