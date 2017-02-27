@@ -19,5 +19,19 @@
                 <li><a href="#">Signup</a></li>
             </ul>
         </li>
+        <li class="submenu">
+             <a href="#">
+                <i class="glyphicon glyphicon-list-alt"></i> Estudios socioeconomicos
+                <span class="caret pull-right"></span>
+             </a>
+             <!-- Sub menu -->
+             <ul>
+                <li><a href="#">Aprobados</a></li>
+                <li><a href="{% url 'estudios_socioeconomicos:pendientes' %}">Pendientes</a></li>
+                <li><a href="{% url 'estudios_socioeconomicos:revision' %}">En revisión</a></li>
+                <li><a href="#">Eliminados</a></li>
+                <li><a href="#">En borrador</a></li>
+            </ul>
+        </li>
     </ul>
  </div>

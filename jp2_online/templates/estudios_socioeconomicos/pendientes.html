@@ -1,0 +1,74 @@
+{% extends "administracion/dashboard_base.html" %}
+{% load staticfiles %}
+{% block dashboard_body %}
+{% if estudios %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="content-box-header panel-heading">
+        <div class="panel-title ">Estudios Socioeconomicos Pendientes</div>
+
+        <div class="panel-options">
+            <a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            <a href="#" data-rel="reload"><i class="glyphicon glyphicon-cog"></i></a>
+        </div>
+    </div>
+    <div class="content-box-large box-with-header">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Numero de Estudio Socioeconómico</th>
+                      <th>Nombre del Capturista</th>
+                      <th>Id Familia</th>
+                      <th>Estado del estudio</th>
+                      <th>Ver</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for estudio in estudios %}
+                      <tr class="">
+                        <td>{{estudio.id}}</td>
+                        <td>{{estudio.capturista.user.first_name}} {{estudio.capturista.user.last_name}}</td>
+                        <td>{{estudio.familia.id}}</td>
+                        <td>{% if estudio.status == 'revision' %}
+                              Pendiente
+                            {% endif %}</td>
+                        <td><a class="btn btn-primary btn-circle-sm" href="#"><span class="glyphicon glyphicon-circle-arrow-right"></span></a></td>
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+    <div class="col-md-12 panel-warning">
+        <div class="content-box-large">
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="content-box-header panel-heading">
+        <div class="panel-title ">No existen Estudios Socioeconómicos pendientes a revisar</div>
+
+        <div class="panel-options">
+            <a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            <a href="#" data-rel="reload"><i class="glyphicon glyphicon-cog"></i></a>
+        </div>
+    </div>
+  </div>
+</div>
+{% endif%}
+{% endblock %}
+
+
+{% block extra_page_js %}
+<script type="text/javascript">
+  $("#li_side_nav_users").addClass("current");
+</script>
+{% endblock %}
