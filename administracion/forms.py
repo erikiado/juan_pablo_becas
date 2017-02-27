@@ -6,7 +6,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECT
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
 from captura.models import Retroalimentacion
-from estudios_socioeconomicos import Estudio
+# from estudios_socioeconomicos.models import Estudio
 
 
 class FormaUsuario(forms.ModelForm):
@@ -63,25 +63,19 @@ class FormaCreacionUsuario(FormaUsuario):
             user.save()
         return user
 
+
 class FormaRetroalimentacion(forms.ModelForm):
 
     class Meta:
         model = Retroalimentacion
-        fields = ['estudio', 'usuario', 'fecha', 'descripcion', 'activo']
+        fields = ['estudio', 'usuario', 'descripcion', 'activo']
         labels = {
             'estudio': ('Id del Estudio'),
             'usuario': ('Id del Usuario'),
-            'fecha': ('Fecha'),
             'descripcion': ('Descripcion'),
             'activo': ('Activo')
         }
 
-        # hacer metodo save
-        def save(self, *args, **kwargs):
-            
-class FormaFocusMode(forms.ModelForm):
-
-    class Meta:
-        model = Estudio
-
-        def save(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(FormaRetroalimentacion, self).__init__(*args, **kwargs)

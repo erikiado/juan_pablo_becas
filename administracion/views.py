@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from .forms import FormaCreacionUsuario, FormaRetroalimentacion, FormaFocusMode
+from .forms import FormaCreacionUsuario, FormaRetroalimentacion  # FormaFocusMode
 
 
 def admin_main_dashboard(request):
@@ -30,21 +30,22 @@ def crear_usuario(request):
         forma = FormaCreacionUsuario()
     return render(request, 'crear_usuario.html', {'form': forma})
 
+
 def crear_retroalimentacion(request):
     forma = FormaRetroalimentacion
 
     if request.method == 'POST':
-        form = forma(data=request.POST)
+        form = forma(request.user, data=request.POST)
 
         if form.is_valid():
             form.save()
             return redirect('retroalimentacion')
     else:
-        form = FormaRetroalimentacion()
-    return render(request, 'administracion/retroalimentacion.html', {'from': form})
+        form = forma(request.user)
+    return render(request, 'administracion/retroalimentacion.html', {'form': form})
 
 
-def revisar_focus_mode(request):
+"""def revisar_focus_mode(request):
     forma = FormaFocusMode
 
     if request.method == 'POST':
@@ -55,4 +56,4 @@ def revisar_focus_mode(request):
             return redirect('focus_mode')
     else:
         form = FormaFocusMode()
-    return render(request, 'administracion/focus_mode.html', {'from': form})
+    return render(request, 'administracion/focus_mode.html', {'from': form})"""

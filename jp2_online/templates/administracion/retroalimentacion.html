@@ -2,11 +2,11 @@
 {% load staticfiles %}
 {% block title %} Retroalimentación {% endblock %}
 
-{% block content %}
+{% block dashboard_body %}
 <h2> Retroalimentación </h2>
 <form role="form" action="" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form }}
     <button type="submit">Submit</button>
 </form>
 {% endblock %}
