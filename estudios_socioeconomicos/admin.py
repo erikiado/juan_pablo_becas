@@ -1,3 +1,8 @@
-# from django.contrib import admin
+from django.contrib import admin
+from .models import Estudio, Seccion, Pregunta, OpcionRespuesta, Respuesta
 
-# Register your models here.
+admin.site.register(Estudio)
+admin.site.register(Seccion)
+admin.site.register(Pregunta)
+admin.site.register(OpcionRespuesta)
+admin.site.register(Respuesta)
