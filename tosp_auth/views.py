@@ -2,44 +2,36 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from .forms import LoginForm
 
 
 def logout(request):
     auth_logout(request)
     return redirect('/')
 
+
 def login(request):
+    """ This view deals with login requests.
+
+    In the case of a POST request, the view authenticates the user and
+    logs him in. If it receives any other type of request, the view
+    renders the login form.
+
+    Parameters
+    ----------
+    POST['username'] : string
+        username of the user that will be authenticated
+    POST['password'] : string
+        password of the user that will be authenticated
+    """
+    error_message = None
     if request.method == 'POST':
-        #form = LoginForm(request.POST)
         username = request.POST['username']
         password = request.POST['password']
-        #username = form.get('username')
-        #password = form.get('password')
-        #print(username)
-        #print(password)
-        #user = authenticate(username=username, password=password)
         user = authenticate(username=username, password=password)
-        print(user)
-        if user is not None:
-            if user.is_active:
-                auth_login(request, user)
-                #return render(request,'base/home.html')
-                return redirect('/')
-                #redirect to the success page
-            else:
-                #form = LoginForm()
-
-                return render(request,'tosp_auth/login.html')
-                #return render(request,'login/login.html', {'form': form})
+        if user is not None and user.is_active:
+            auth_login(request, user)
+            return redirect('home')
         else:
-            #form = LoginForm()
-            #print('Login invalido {} {} '.format(username,password))
-            return render(request,'tosp_auth/login.html')
-            #return render(request,'login/login.html', {'form': form})
-            # Return an 'invalid login' error message.
-    else:
-        #form = LoginForm()
-        return render(request,'tosp_auth/login.html')
-        #return render(request, 'login/login.html', {'form': form})
+            error_message = 'El usuario o la contraseña son incorrectos.'
+    context = {'error_message': error_message}
+    return render(request, 'tosp_auth/login.html', context)
