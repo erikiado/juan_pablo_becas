@@ -16,19 +16,19 @@ class TokenCreationTest(APITestCase):
             last_name='ElGandul', email='Julian69@gmail.com',
             password='vacalalonja')
 
-        User.objects.create_user(
+        self.servicios_user = User.objects.create_user(
             username='erikiano', first_name='erik',
             last_name='yano', email='erikiano@gmail.com',
             password='vacalalo')
 
         self.servicios_group = Group.objects.get_or_create(name=SERVICIOS_ESCOLARES_GROUP)[0]
-        self.user.groups.add(self.servicios_group)
+        self.servicios_user.groups.add(self.servicios_group)
 
         self.capturista = Capturista.objects.create(user=self.user)
         self.url = reverse('perfiles_usuario:obtain_auth_token')
 
     def test_return_authentication_token(self):
-        """ Test that an existing user can authenticate through a rest endpoint.
+        """ Test that a user with the capturista group can get its token
 
             Test that a client can send a post request with a users credentials and
             the API will return the user Token for the client to use in further requests.
