@@ -36,12 +36,21 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_empty_fields(self):
+        """ Test for empty fields
+
+        Visit the url of name 'login', and check that the form can't
+        be submitted without filling out each field in the form. Then
+        check that filling the form, allows it to be submitted.
+        """
         self.browser.visit(self.live_server_url + reverse('login'))
         self.browser.find_by_name('login-submit').first.click()
         self.assertTrue(self.browser.find_by_css('input:invalid'))
         self.browser.fill('username', self.username)
         self.browser.fill('password', self.password)
         self.assertFalse(self.browser.find_by_css('input:invalid'))
+        self.browser.find_by_name('login-submit').first.click()
+        test_string = 'Hello, world!'
+        self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_valid_login(self):
         """ Test for valid login at url 'tosp_auth:login'
