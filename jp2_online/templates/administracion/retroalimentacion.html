@@ -1,0 +1,12 @@
+{% extends "administracion/dashboard_base.html" %}
+{% load staticfiles %}
+{% block title %} Retroalimentación {% endblock %}
+
+{% block content %}
+<h2> Retroalimentación </h2>
+<form role="form" action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
