@@ -79,4 +79,9 @@ class FormaRetroalimentacion(forms.ModelForm):
         # hacer metodo save
         def save(self, *args, **kwargs):
             
-        
+class FormaFocusMode(forms.ModelForm):
+
+    class Meta:
+        model = Estudio
+
+        def save(self, *args, **kwargs):
