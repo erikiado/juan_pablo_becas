@@ -22,5 +22,5 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^administracion/', include('administracion.urls')),
     url(r'^tosp_auth/', include('tosp_auth.urls')),
-    url(r'^perfiles-usuario', include('perfiles_usuario.urls')),
+    url(r'^perfiles-usuario/', include('perfiles_usuario.urls')),
 ]
