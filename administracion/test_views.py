@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from splinter import Browser, cookie_manager
+from splinter import Browser
 from django.contrib.auth.models import User
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
@@ -26,21 +26,18 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 
         """
         self.browser = Browser('chrome')
+        test_username = 'thelma'
+        test_password = 'junipero'
         thelma = User.objects.create_user(
-            username='thelma', email='juan@pablo.com', password='junipero')
+            username=test_username, email='juan@pablo.com', password=test_password,
+            first_name='Thelma', last_name='Thelmapellido')
         administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
         administrators.user_set.add(thelma)
         administrators.save()
-        self.client.login(username='thelma', password='junipero')
-        cookie = self.client.cookies['sessionid']
-        self.browser.visit(self.live_server_url + reverse('administracion:main'))
-        print(self.browser.cookies.all())
-        self.browser.cookies.add({'name': 'sessionid', 'value': cookie.value,
-                                  'secure': False, 'path': '/'})
-        self.browser.visit(self.live_server_url + reverse('administracion:main'))
-        print(self.browser.cookies.all())
-        
-        self.browser.reload()
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
 
     def tearDown(self):
         """At the end of tests, close the browser.
