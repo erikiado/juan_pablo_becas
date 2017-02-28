@@ -22,7 +22,6 @@ class TestAdministracionUrls(TestCase):
         administrators.user_set.add(thelma)
         self.client.login(username='thelma', password='junipero')
 
-
     def test_view_main_dashboard(self):
         """Unit Test: administracion.views.admin_main_dashboard.
 
