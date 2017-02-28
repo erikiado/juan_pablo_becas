@@ -23,7 +23,7 @@ class TestOficio(TestCase):
         This tests that it returns the name of the oficio.
         """
         oficio = Oficio.objects.get(nombre=self.nombre)
-        self.assertTrue(str(oficio) == self.nombre)
+        self.assertEqual(str(oficio), self.nombre)
 
 
 class TestPeriodo(TestCase):
@@ -49,7 +49,7 @@ class TestPeriodo(TestCase):
         This tests that it returns the peridicidad of the oficio.
         """
         periodo = Periodo.objects.get(periodicidad=self.periodicidad)
-        self.assertTrue(str(periodo) == self.periodicidad)
+        self.assertEqual(str(periodo), self.periodicidad)
 
 
 class TestTransacciones(TestCase):
@@ -81,11 +81,11 @@ class TestTransacciones(TestCase):
         cases of the function
         """
         transaccion = Transaccion.objects.get(monto=1200)
-        self.assertTrue(transaccion.obtener_valor_de_transaccion() == decimal.Decimal('1200.0'))
+        self.assertEqual(transaccion.obtener_valor_de_transaccion(), decimal.Decimal('1200.0'))
         transaccion.es_ingreso = False
-        self.assertTrue(transaccion.obtener_valor_de_transaccion() == decimal.Decimal('-1200.0'))
+        self.assertEqual(transaccion.obtener_valor_de_transaccion(), decimal.Decimal('-1200.0'))
         transaccion.activo = False
-        self.assertTrue(transaccion.obtener_valor_de_transaccion() == decimal.Decimal('0.0'))
+        self.assertEqual(transaccion.obtener_valor_de_transaccion(), decimal.Decimal('0.0'))
 
     def test_obtener_valor_mensual(self):
         """ Test that the funcitn obtener_valor_mensual method works.
@@ -100,7 +100,7 @@ class TestTransacciones(TestCase):
         transaccion.es_ingreso = False
         self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('-100.0'))
         transaccion.activo = False
-        self.assertAlmostEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('0.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('0.0'))
 
         # Casos when multiplica is True
         periodo = Periodo.objects.get(periodicidad='Anual')
@@ -117,11 +117,11 @@ class TestTransacciones(TestCase):
 
     def test_str(self):
         transaccion = Transaccion.objects.get(monto=1200)
-        self.assertEquals(str(transaccion), '$100.00 mensuales')
+        self.assertEqual(str(transaccion), '$100.00 mensuales')
         transaccion.es_ingreso = False
         self.assertEqual(str(transaccion), '-$100.00 mensuales')
         transaccion.activo = False
-        self.assertEquals(str(transaccion), '$0.00 mensuales')
+        self.assertEqual(str(transaccion), '$0.00 mensuales')
 
 
 class TestIngreso(TestCase):
@@ -155,4 +155,4 @@ class TestIngreso(TestCase):
         This tests that it returns the __str__ of the related transaccion.
         """
         ingreso = Ingreso.objects.get(tipo='no comprobable')
-        self.assertTrue(str(ingreso) == '$100.00 mensuales')
+        self.assertEqual(str(ingreso), '$100.00 mensuales')
