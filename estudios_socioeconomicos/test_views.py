@@ -3,9 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User, Group
 from splinter import Browser
 
-from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
-                                   SERVICIOS_ESCOLARES_GROUP
-
+from perfiles_usuario.utils import ADMINISTRADOR_GROUP
 
 
 class PendingStudiosTest(StaticLiveServerTestCase):
@@ -28,7 +26,6 @@ class PendingStudiosTest(StaticLiveServerTestCase):
               username='thelma', email='juan@pablo.com', password='junipero')
         administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
         administrators.user_set.add(thelma)
-
 
     def tearDown(self):
         """ At the end of tests, close the browser.
