@@ -22,11 +22,11 @@ class ControlerLogoutTest(TestCase):
         self.client.login(username='thelma', password='junipero')
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Log Out")
+        self.assertContains(response, 'Log Out')
         self.client.logout()
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "login")
+        self.assertContains(response, 'login')
 
     def test_expected_url(self):
         """Verify if redirect to the right url.

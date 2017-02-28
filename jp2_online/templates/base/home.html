@@ -17,7 +17,7 @@
 	{% if user and not user.is_anonymous %}
 	<a>Hello, {{ user.get_full_name }}!</a>
 	<br>
-	<a href="/tosp_auth/logout">Logout</a>
+	<a href="/tosp_auth/logout">Log Out</a>
 	{% else %}
 	Social login used to be here.
 	{% endif %}
