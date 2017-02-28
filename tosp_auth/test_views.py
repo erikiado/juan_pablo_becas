@@ -42,7 +42,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         be submitted without filling out each field in the form. Then
         check that filling the form, allows it to be submitted.
         """
-        self.browser.visit(self.live_server_url + reverse('login'))
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.find_by_name('login-submit').first.click()
         self.assertTrue(self.browser.find_by_css('input:invalid'))
         self.browser.fill('username', self.username)
@@ -63,7 +63,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         test_string : string
             This string is expected after succesful login.
         """
-        self.browser.visit(self.live_server_url + reverse('login'))
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', self.username)
         self.browser.fill('password', self.password)
         self.browser.find_by_name('login-submit').first.click()
@@ -84,7 +84,7 @@ class TestAuthViews(StaticLiveServerTestCase):
             This message is expected after a failed login attempt.
         """
         bad_password = self.password + 'wrong_password'
-        self.browser.visit(self.live_server_url + reverse('login'))
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', self.username)
         self.browser.fill('password', bad_password)
         self.browser.find_by_name('login-submit').first.click()
@@ -105,7 +105,7 @@ class TestAuthViews(StaticLiveServerTestCase):
             This message is expected after a failed login attempt.
         """
         bad_username = self.username + 'wrong_username'
-        self.browser.visit(self.live_server_url + reverse('login'))
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', bad_username)
         self.browser.fill('password', self.password)
         self.browser.find_by_name('login-submit').first.click()
