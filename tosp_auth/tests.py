@@ -4,24 +4,21 @@ from django.contrib.auth.models import User
 
 class ControlerLogoutTest(TestCase):
     
-    """
-        Unit test suite for testing the controler of 
+    """Unit test suite for testing the controler of 
         Logout in the app: tosp_auth.
 
         Test that if the functionality of logout is correct.
     """
     
     def setUp(self):
-        """
-            Initialize the browser and create a user, before running the tests.
+        """Initialize the browser and create a user, before running the tests.
         """
         User.objects.create_user(
             username='thelma', email='juan@pablo.com', password='junipero')
             
     def test_logout_does_not_do_that(self):
         
-        """
-            Verify if the Logout works.
+        """Verify if the Logout works.
         """
         
         self.client.login(username='thelma', password='junipero')
@@ -35,8 +32,7 @@ class ControlerLogoutTest(TestCase):
         
         
     def test_expected_url(self):
-        """
-            Verify if redirect to the right url.
+        """Verify if redirect to the right url.
         """
         self.client.login(username='thelma', password='junipero')
         response = self.client.get(reverse('home'))
