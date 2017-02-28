@@ -38,7 +38,7 @@ def parse(name):
     pickle.dump(preguntas, open(name, 'wb'))
 
 
-def load_data(name='estudios_socioeconomicos.pkl'):
+def load_data(name='estudios_socioeconomicos/preguntas.pkl'):
     """ Load the questions and sections for the study.
 
     To execute: import this function after running
