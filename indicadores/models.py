@@ -38,15 +38,20 @@ class Periodo(models.Model):
     periodicidad : TextField
         This text stores a human readable value for how often a
         specific event happens e.g. Bimensual, Trimestral, etc.
-    multiplicador: DecimalField[12,10]
+    factor: DecimalField[12,10]
         This is the actual value that is used in calculations. It's
         purpose is to be able to calculate in the case of incomes and
         expenses how much the monto represents per month, by multiplying
         the income by this number.
+    multiplica : BooleanField
+        This dictates how the factor should be used in arithmetic
+        operations. True for multiplication, false for division.
+        This mitigates precision problems, in some operations.
     """
 
     periodicidad = models.TextField()
-    multiplicador = models.DecimalField(max_digits=12, decimal_places=10)
+    factor = models.DecimalField(max_digits=12, decimal_places=10)
+    multiplica = models.BooleanField()
 
     def __str__(self):
         """ This returns the value or the periodicidad attribute
@@ -97,18 +102,21 @@ class Transaccion(models.Model):
         correct way of getting this value.
         """
         valor_transaccion = self.monto
-        if self.es_ingreso is not True:
-            valor_transaccion = valor_transaccion * decimal.Decimal(-1.0)
-        if self.activo is True:
+        if not self.es_ingreso:
+            valor_transaccion = valor_transaccion * decimal.Decimal('-1.0')
+        if self.activo:
             return valor_transaccion
         else:
-            return 0.0
+            return decimal.Decimal('0.0')
 
     def obtener_valor_mensual(self):
         """ Calculates how much money is exchanged in a month.
 
         """
-        return self.obtener_valor_de_transaccion() * self.periodicidad.multiplicador
+        if self.periodicidad.multiplica:
+            return self.obtener_valor_de_transaccion() * self.periodicidad.factor
+        else:
+            return self.obtener_valor_de_transaccion() / self.periodicidad.factor
 
     def __str__(self):
         """ Returns the calculated mensual transaction, formatted as money.
@@ -116,12 +124,10 @@ class Transaccion(models.Model):
         """
         signo_opcional = ''
         valor_mensual_transaccion = self.obtener_valor_mensual()
-        if valor_mensual_transaccion < 0.0:
+        if valor_mensual_transaccion < decimal.Decimal('0.0'):
             signo_opcional = '-'
-            valor_mensual_transaccion = valor_mensual_transaccion * decimal.Decimal(-1)
-        argumentos_format = {'signo': signo_opcional,
-                             'mensual_transaccion': valor_mensual_transaccion}
-        return '{"signo"}${mensual_transaccion:.2f} mensuales'.format(argumentos_format)
+            valor_mensual_transaccion = valor_mensual_transaccion * decimal.Decimal('-1.0')
+        return '{}${:.2f} mensuales'.format(signo_opcional, valor_mensual_transaccion)
 
 
 class Ingreso(models.Model):
