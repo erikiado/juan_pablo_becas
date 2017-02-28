@@ -98,17 +98,12 @@ class Pregunta(models.Model):
         Additional information that the question may need to have.
     orden : IntegerField
         The relative order of the question within the subsection.
-    relacionado_a_integrante : BooleanField
-        Indicates whether the answer of this question needs to be related
-        with a family member. This is important for rendering the form and
-        determining if the relationship between answer and family member should exist.
     """
     subseccion = models.ForeignKey(Subseccion, null=True)
 
     texto = models.TextField()
-    description = models.TextField(blank=True)
+    descripcion = models.TextField(blank=True)
     orden = models.IntegerField(default=0)
-    relacionado_a_integrante = models.BooleanField(default=False)
 
     def __str__(self):
         return self.texto

@@ -66,7 +66,7 @@ def load_data(name='estudios_socioeconomicos/preguntas.pkl'):
                 pregunta = Pregunta.objects.create(
                                 subseccion=subseccion,
                                 texto=p['texto'],
-                                description=p['descripcion'],
+                                descripcion=p['descripcion'],
                                 orden=p['numero'],
                                 )
                 map(lambda o: OpcionRespuesta.objects.create(
