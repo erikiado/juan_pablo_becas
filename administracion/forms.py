@@ -68,14 +68,8 @@ class FormaRetroalimentacion(forms.ModelForm):
 
     class Meta:
         model = Retroalimentacion
-        fields = ['estudio', 'usuario', 'descripcion', 'activo']
+        fields = ['estudio', 'descripcion']
         labels = {
-            'estudio': ('Id del Estudio'),
-            'usuario': ('Id del Usuario'),
-            'descripcion': ('Descripcion'),
-            'activo': ('Activo')
+            'estudio': ('Estudio'),
+            'descripcion': ('Retroalimentacion'),
         }
-
-    def __init__(self, user, *args, **kwargs):
-        self.user = user
-        super(FormaRetroalimentacion, self).__init__(*args, **kwargs)

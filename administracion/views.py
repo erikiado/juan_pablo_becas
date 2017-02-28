@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from captura.models import Retroalimentacion
 from .forms import FormaCreacionUsuario, FormaRetroalimentacion  # FormaFocusMode
 
 
@@ -32,16 +33,17 @@ def crear_usuario(request):
 
 
 def crear_retroalimentacion(request):
-    forma = FormaRetroalimentacion
+    """ View to render form for providing feedback for a study.
+    """
 
     if request.method == 'POST':
-        form = forma(request.user, data=request.POST)
-
+        retroalimentacion = Retroalimentacion(usuario=request.user)
+        form = FormaRetroalimentacion(request.POST, instance=retroalimentacion)
         if form.is_valid():
             form.save()
-            return redirect('retroalimentacion')
+            return redirect('administracion:main')
     else:
-        form = forma(request.user)
+        form = FormaRetroalimentacion()
     return render(request, 'administracion/retroalimentacion.html', {'form': form})
 
 
