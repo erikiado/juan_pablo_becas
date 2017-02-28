@@ -1,6 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+from rest_framework.authtoken.models import Token
 
 from .utils import CAPTURISTA_GROUP
 
@@ -28,3 +32,24 @@ class Capturista(models.Model):
         user_group = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
         self.user.groups.add(user_group)
         return super(Capturista, self).save(*args, **kwargs)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_authentication_token(sender, instance=None, created=False, **kwargs):
+    """ Signal for creating a new Token when after a user is saved.
+
+    To authenticate a user using the desktop application we will be using auth tokens.
+    Rest framework provides us with this functionality but we need to create a Token for
+    each user.
+
+    Attributes:
+    ----------
+    instance : django.contrib.auth.models.User
+        The instance of the object whose creation triggered the signal. In this case a
+        django user.
+    created : BooleanField
+        A value indicating if this instance is being created for the first time. Or if set
+        to false if it is being edited.
+    """
+    if created:
+        Token.objects.create(user=instance)
