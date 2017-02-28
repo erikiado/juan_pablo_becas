@@ -7,10 +7,6 @@ from .models import Oficio, Periodo, Transaccion, Ingreso
 class TestOficio(TestCase):
     """ Unit test suite for testing the Oficio model in .models
 
-    Attributes:
-    -----------
-    nombre : String
-        Stores the name that will be used for the name of the oficio object.
     """
 
     def setUp(self):
@@ -33,13 +29,6 @@ class TestOficio(TestCase):
 class TestPeriodo(TestCase):
     """ Unit test suite for testing the Periodo model in .models.
 
-    Attributes:
-    -----------
-    periodicidad : String
-        Denotes the value of the perodicidad field that will be used to
-        create objects, and test the methods of said object.
-    factor : float
-        Denotes the value of the factor field that will be used to crete objects.
     """
 
     def setUp(self):
@@ -107,9 +96,9 @@ class TestTransacciones(TestCase):
 
         # Casos when multiplica is False
         transaccion = Transaccion.objects.get(monto=decimal.Decimal('1200'))
-        self.assertAlmostEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('100.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('100.0'))
         transaccion.es_ingreso = False
-        self.assertAlmostEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('-100.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('-100.0'))
         transaccion.activo = False
         self.assertAlmostEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('0.0'))
 
@@ -120,11 +109,11 @@ class TestTransacciones(TestCase):
         periodo.save()
         periodo = Periodo.objects.get(periodicidad='Anual')
         transaccion = Transaccion.objects.get(monto=1200)
-        self.assertTrue(transaccion.obtener_valor_mensual() == decimal.Decimal('12000.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('12000.0'))
         transaccion.es_ingreso = False
-        self.assertTrue(transaccion.obtener_valor_mensual() == decimal.Decimal('-12000.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('-12000.0'))
         transaccion.activo = False
-        self.assertTrue(transaccion.obtener_valor_mensual() == decimal.Decimal('0.0'))
+        self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('0.0'))
 
     def test_str(self):
         transaccion = Transaccion.objects.get(monto=1200)
