@@ -1,8 +1,9 @@
 from django.conf.urls import url
-from rest_framework.authtoken import views as authviews
+
+from .views import ObtainAuthToken
 
 app_name = 'perfiles_usuario'
 
 urlpatterns = [
-    url(r'^api-login/', authviews.obtain_auth_token, name='api_login'),
+    url(r'^obtain-auth-token/', ObtainAuthToken.as_view(), name='obtain_auth_token'),
 ]
