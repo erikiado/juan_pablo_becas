@@ -150,8 +150,10 @@ class Ingreso(models.Model):
         This field indicates the parent to which an income can be attributed. It can
         be null in case no parent, is related to the income.
     """
-    OPCIONES_TIPO = (('no comprobable', 'No comprobable'),
-                     ('comprobable', 'Comprobable'))
+    OPCION_NO_COMPROBABLE = ('no comprobable', 'No comprobable')
+    OPCION_COMPROBABLE = ('comprobable', 'Comprobable')
+    OPCIONES_TIPO = (OPCION_NO_COMPROBABLE,
+                     OPCION_COMPROBABLE)
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
     tipo = models.TextField(choices=OPCIONES_TIPO)
