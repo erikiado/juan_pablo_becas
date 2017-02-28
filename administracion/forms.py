@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
+from captura.models import Retroalimentacion
+# from estudios_socioeconomicos.models import Estudio
 
 
 class FormaUsuario(forms.ModelForm):
@@ -60,3 +62,16 @@ class FormaCreacionUsuario(FormaUsuario):
             user.groups.add(user_group)
             user.save()
         return user
+
+
+class FormaRetroalimentacion(forms.ModelForm):
+    """ Form for creating a Retroalimentacion.
+
+    """
+    class Meta:
+        model = Retroalimentacion
+        fields = ['estudio', 'descripcion']
+        labels = {
+            'estudio': ('Estudio'),
+            'descripcion': ('Retroalimentacion'),
+        }
