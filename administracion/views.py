@@ -48,14 +48,16 @@ def crear_retroalimentacion(request):
 
 
 """def revisar_focus_mode(request):
-    forma = FormaFocusMode
+def crear_retroalimentacion(request):
+    forma = FormaRetroalimentacion
 
     if request.method == 'POST':
         form = forma(data=request.POST)
 
         if form.is_valid():
             form.save()
-            return redirect('focus_mode')
+            return redirect('retroalimentacion')
     else:
-        form = FormaFocusMode()
-    return render(request, 'administracion/focus_mode.html', {'from': form})"""
+        form = FormaRetroalimentacion()
+    return render(request, 'administracion/retroalimentacion.html', {'from': form})
+"""
