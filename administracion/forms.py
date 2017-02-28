@@ -65,7 +65,9 @@ class FormaCreacionUsuario(FormaUsuario):
 
 
 class FormaRetroalimentacion(forms.ModelForm):
+    """ Form for creating a Retroalimentacion.
 
+    """
     class Meta:
         model = Retroalimentacion
         fields = ['estudio', 'descripcion']
