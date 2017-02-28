@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class ControlerLogoutTest(TestCase):
-    """Unit test suite for testing the controler of 
+    """Unit test suite for testing the controler of
         Logout in the app: tosp_auth.
 
         Test that if the functionality of logout is correct.
