@@ -153,6 +153,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('id_email').first.fill(email)
         self.browser.find_by_id('id_rol_usuario').select(role)
         self.browser.find_by_id('btn_send_create_user').click()
+        time.sleep(0.1)
 
     def test_edit_user_dashboard(self):
         """ Test for create user from dashboard form.
