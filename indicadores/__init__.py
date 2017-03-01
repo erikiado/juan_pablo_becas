@@ -1,6 +1,6 @@
-""" En esta app se maneja la lógica para la presentación de indicadores.
+""" This app handles all the logic related to the creation and presentation of indicators
 
-Para la implementación de todos las vistas y modelos auxiliares de soporte para la presentación
-de indicadores, y descarga de archivos de excel con datos seleccionados a través de filtros, la
-falta de filtros descarga un backup completo de los estudios socioeconómicos.
+This app is for the implementation of all the views and models that are auxiliary to
+the presentacion of indicators, and the download of excel files through filters. When
+no filters are applied, the downloaded excel files download a full backup.
 """
