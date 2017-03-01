@@ -39,8 +39,8 @@ class PendingStudiosTest(StaticLiveServerTestCase):
             Visit the url of name 'estudios_socioeconomicos:pendientes' and check it loads the
             content of the socio-economic studies dashboard panel.
         """
-        test_url_name = 'estudios_socioeconomicos:pendientes'
         self.client.login(username='thelma', password='junipero')
+        test_url_name = 'estudios_socioeconomicos:pendientes'
 
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         # Check for nav_bar partial
@@ -54,8 +54,9 @@ class PendingStudiosTest(StaticLiveServerTestCase):
             Visit the url of name 'estudios_socioeconomicos:revision' and check it loads the
             content of the socio-economic studies dashboard panel.
         """
-        test_url_name = 'estudios_socioeconomicos:revision'
         self.client.login(username='thelma', password='junipero')
+        test_url_name = 'estudios_socioeconomicos:revision'
+
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
         # Check for nav_bar partial

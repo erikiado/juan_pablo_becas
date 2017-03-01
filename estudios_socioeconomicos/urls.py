@@ -1,10 +1,10 @@
 from django.conf.urls import url
 
-from .views import PendientesList, RevisionList
+from .views import revision_list, pendientes_list
 
 app_name = 'estudios_socioeconomicos'
 
 urlpatterns = [
-    url(r'^pendientes/$', PendientesList.as_view(), name='pendientes'),
-    url(r'^revision/$', RevisionList.as_view(), name='revision'),
+    url(r'^revision/$', revision_list, name='revision'),
+    url(r'^pendientes/$', pendientes_list, name='pendientes'),
 ]
