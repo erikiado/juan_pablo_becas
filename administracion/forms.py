@@ -34,10 +34,10 @@ class FormaCreacionUsuario(FormaUsuario):
     The save method is overriden to add the corresponding group to the created user.
     """
     ROLES_USUARIO = (
-        (ADMINISTRADOR_GROUP, ('Administrador')),
-        (CAPTURISTA_GROUP, ('Capturista')),
-        (DIRECTIVO_GROUP, ('Directivo')),
-        (SERVICIOS_ESCOLARES_GROUP, ('Servicios Escolares'))
+        (ADMINISTRADOR_GROUP, (ADMINISTRADOR_GROUP)),
+        (CAPTURISTA_GROUP, (CAPTURISTA_GROUP)),
+        (DIRECTIVO_GROUP, (DIRECTIVO_GROUP)),
+        (SERVICIOS_ESCOLARES_GROUP, (SERVICIOS_ESCOLARES_GROUP))
     )
 
     rol_usuario = forms.ChoiceField(choices=ROLES_USUARIO, label='Tipo de usuario', required=True)
