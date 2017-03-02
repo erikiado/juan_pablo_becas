@@ -15,11 +15,11 @@
 
 <div class='row text-center'>
 	{% if user and not user.is_anonymous %}
-	<a>Hello, {{ user.get_full_name }}!</a>
+	<a><h4>Hello, {{ user.get_full_name }}!</h4></a>
 	<br>
 	<a href="{% url 'tosp_auth:logout' %}">Log Out</a>
 	{% else %}
-	Social login used to be here.
+	<a href="/tosp_auth/login">Iniciar Sesión</a>
 	{% endif %}
 
 </div>

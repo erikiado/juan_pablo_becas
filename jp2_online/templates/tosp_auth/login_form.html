@@ -1,0 +1,28 @@
+<div class="row text-center">
+	<h1>Iniciar Sesion</h1>
+</div>
+<div class="container">
+  <div class="row text-center">
+    <form id="login_form" method="post" class="form-group">
+        {% csrf_token %}
+        {% if error_message %}
+          <div class="alert alert-danger">
+            {{error_message}}
+          </div>
+        {% endif %}
+        <div class="form-group col-sm-8 col-sm-offset-2">
+          <label for="formUser">Usuario</label>
+          <input type="text" class="required form-control col-sm-2 col-md-4 col-form-label" name="username" value="" size="50" placeholder="Usuario" id="login-username" oninvalid="this.setCustomValidity('Introduzca un nombre de usuario')" oninput="setCustomValidity('')" required="true" required/>
+        </div>
+        <div class="form-group col-sm-8 col-sm-offset-2">
+          <label for="formPassword">Contraseña</label>
+          <input type="password" class="required form-control col-sm-2 col-md-4 col-form-label" name="password" id="formPassword" placeholder="Contraseña" id="login-password" oninvalid="this.setCustomValidity('Introduzca una contraseña')" oninput="setCustomValidity('')" required="true" required>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <button type="submit" class="btn btn-primary" name="login-submit" id="login-submit">Enviar</button>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>

@@ -5,3 +5,5 @@ pep8-naming==0.4.1
 psycopg2==2.6.2
 Sphinx==1.5.2
 sphinx-rtd-theme==0.1.9
+djangorestframework==3.5.4
+django-cors-headers==2.0.2
