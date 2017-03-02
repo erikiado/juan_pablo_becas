@@ -3,8 +3,8 @@ from splinter import Browser
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
-from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
-                                   SERVICIOS_ESCOLARES_GROUP
+from perfiles_usuario.utils import ADMINISTRADOR_GROUP
+
 
 class WidgetLogoutTest(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: tosp_auth.
