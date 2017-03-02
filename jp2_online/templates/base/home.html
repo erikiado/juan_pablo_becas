@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block page_title %}Awesome Page{% endblock %}
 {% block extra_css %} 
-	<link rel="stylesheet" type="text/css" href={% static "css/base/home.css" %}>
+	<link rel='stylesheet' type='text/css' href={% static 'css/base/home.css' %}>
 {% endblock %}
 {% block header %}
 {% endblock %}
@@ -17,7 +17,7 @@
 	{% if user and not user.is_anonymous %}
 	<a>Hello, {{ user.get_full_name }}!</a>
 	<br>
-	<a href="/tosp_auth/logout">Log Out</a>
+	<a href="{% url 'tosp_auth:logout' %}">Log Out</a>
 	{% else %}
 	Social login used to be here.
 	{% endif %}
