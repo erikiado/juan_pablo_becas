@@ -41,7 +41,6 @@ class ControlerLogoutTest(TestCase):
         self.client.logout()
 
 
-
 class WidgetLogoutTest(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: tosp_auth.
 
