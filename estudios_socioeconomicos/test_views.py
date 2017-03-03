@@ -26,6 +26,7 @@ class PendingStudiosTest(StaticLiveServerTestCase):
               username='thelma', email='juan@pablo.com', password='junipero')
         administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
         administrators.user_set.add(thelma)
+        administrators.save()
 
     def tearDown(self):
         """ At the end of tests, close the browser.

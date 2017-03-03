@@ -33,6 +33,10 @@
                         <td>{{estudio.familia.id}}</td>
                         <td>{% if estudio.status == 'revision' %}
                               Pendiente
+                            {% elif estudio.status == 'rechazado' %}
+                              En revisión
+                            {% else %}
+                            {{estudio.status}}
                             {% endif %}</td>
                         <td><a class="btn btn-primary btn-circle-sm" href="#"><span class="glyphicon glyphicon-circle-arrow-right"></span></a></td>
                       </tr>
