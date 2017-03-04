@@ -47,6 +47,30 @@ class Estudio(models.Model):
                                 status=self.status)
 
 
+def create_answers_for_study(sender, instance=None, created=False, **kwargs):
+    """ Signal for creating all answers for all questions on a new study.
+
+    This triggers creates all answer objects for all existing questions on a new
+    study. Since we are dealing with de-normalized data for the questions stored
+    in the database, we want to populate all the answers to query them and display
+    them to the user.
+
+    Parameters:
+    -----------
+      instance : estudios_socioeconomicos.models.Estudio
+          The instance of the object whose creation triggered the signal. In this case a
+          Estudio.
+      created : BooleanField
+          A value indicating if this instance is being created for the first time. Or if set
+          to false if it is being edited.
+    """
+
+    if created:
+        preguntas = Pregunta.objects.all()
+        for pregunta in preguntas:
+            Respuesta.objects.create(estudio=instance, pregunta=pregunta)
+
+
 class Seccion(models.Model):
     """ The model that links questions to a particular section.
 
