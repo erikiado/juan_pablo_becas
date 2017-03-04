@@ -49,6 +49,15 @@ class EstudioTestCase(TestCase):
                                             status=self.estudio.status)
         self.assertEqual(str(self.estudio), expected)
 
+    def test_anwser_generation_for_study(self):
+        """ Tests whether the trigger that generates answers for each
+            new study works.
+        """
+        respuestas = Respuesta.objects.filter(estudio=self.estudio)
+        preguntas = Pregunta.objects.all()
+
+        self.assertEqual(respuestas.count(), preguntas.count())
+
 
 class SeccionTestCase(TestCase):
     """ Suite to test things related to the Seccion Model.
