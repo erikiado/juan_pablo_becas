@@ -55,19 +55,27 @@ def load_data(name='estudios_socioeconomicos/preguntas.pkl'):
         'Personalidad': 7,
         'Otros Aspectos': 8
     }
+    # delete everything first
+    Pregunta.objects.all().delete()
+    Seccion.objects.all().delete()
+    Subseccion.objects.all().delete()
+    OpcionRespuesta.objects.all().delete()
+
     for sec in preguntas.keys():
-        seccion = Seccion.objects.create(nombre=sec, numero=nums[sec])
+        seccion = Seccion.objects.get_or_create(nombre=sec, numero=nums[sec])[0]
         for i, sub in enumerate(preguntas[sec].keys()):
-            subseccion = Subseccion.objects.create(
+            subseccion = Subseccion.objects.get_or_create(
                                 seccion=seccion,
                                 nombre=sub,
-                                numero=i)
+                                numero=i)[0]
             for p in preguntas[sec][sub]:
-                pregunta = Pregunta.objects.create(
+                pregunta = Pregunta.objects.get_or_create(
                                 subseccion=subseccion,
                                 texto=p['texto'],
                                 descripcion=p['descripcion'],
                                 orden=p['numero'],
-                                )
-                map(lambda o: OpcionRespuesta.objects.create(
-                        pregunta=pregunta, texto=o), p['opciones'])
+                                )[0]
+                for opt in p['opciones']:
+                    OpcionRespuesta.objects.get_or_create(
+                                    pregunta=pregunta,
+                                    texto=opt)
