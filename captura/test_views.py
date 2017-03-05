@@ -141,6 +141,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         self.assertNotEqual(number_answers, Respuesta.objects.all().count())
 
     def test_submitting_answers(self):
+        #TODO
         test_url_name = 'captura:contestar_estudio'
         secciones = Seccion.objects.all().order_by('numero')
         subsecciones = Subseccion.objects.filter(seccion=secciones[0])
