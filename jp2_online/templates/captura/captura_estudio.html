@@ -21,21 +21,23 @@
 			{% for pregunta in subseccion.preguntas %}
 				
 				<h4>{{pregunta.texto}}</h4>
-				
+
 				<div id="question-container-{{pregunta.id}}" class='question-container'>
 					{% for respuesta in pregunta.respuestas %}
 						
-						
 						<div class='form-container'>
 
-							{% for field in respuesta.form.visible_fields %}
-                            
-                        
+							{% if pregunta.opciones_respuesta.1 %}
+									
+								{{respuesta.form.elecciones}}
+
+							{% else %}
+
 	                            <div class="item form-group">
 
 	                                <div class="col-md-6 col-sm-6 col-xs-12">
 	                                    <div class="col-sm-12">
-	                                       <p>{{ field }}</p>
+	                                       <p>{{ respuesta.form.respuesta }}</p>
 	                                    </div>
 	                                </div>
 									
@@ -48,7 +50,7 @@
 	                            {{ field.errors }}
 
 
-                    		{% endfor %}
+                    		{% endif %}
 						
 						</div>
 						
@@ -57,10 +59,11 @@
 					{% endfor%}
 				</div>
 				
-				<a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer" href="javascript:void(0)">
-					+
-				</a>
-				
+				{% if not pregunta.opciones_respuesta.1 %}
+					<a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer" href="javascript:void(0)">
+						+
+					</a>
+				{% endif %}
 			
 			{% endfor %}
 		

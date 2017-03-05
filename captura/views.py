@@ -6,7 +6,7 @@ from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Subseccion, Estudio
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Subseccion, Estudio, OpcionRespuesta
 
 
 @login_required
@@ -50,7 +50,7 @@ def add_answer_study(request):
 
         respuesta = Respuesta.objects.create(estudio=estudio, pregunta=pregunta)
         respuesta.save()
-        form = RespuestaForm(instance=respuesta, prefix='respuesta-{}'.format(respuesta.id))
+        form = RespuestaForm(instance=respuesta, pregunta=pregunta, prefix='respuesta-{}'.format(respuesta.id))
 
         return HttpResponse(form, status=status.HTTP_201_CREATED)
 
@@ -144,23 +144,29 @@ def capture_study(request, id_estudio, numero_seccion):
                 pregunta=pregunta['id'],
                 estudio=estudio).values()
 
+            opciones_respuesta = OpcionRespuesta.objects.filter(pregunta=pregunta['id'])
+
             for respuesta in respuestas:
                 respuesta_obj = Respuesta.objects.get(pk=respuesta['id'])
+
 
                 if request.method == 'POST':  # Bind each form to its original object
                     form = RespuestaForm(
                         request.POST,
                         instance=respuesta_obj,
-                        prefix='respuesta-{}'.format(respuesta_obj.id))
+                        prefix='respuesta-{}'.format(respuesta_obj.id),
+                        pregunta=pregunta['id'])
 
                     if form.is_valid():
                         form.save()
 
                 respuesta['form'] = RespuestaForm(
                     instance=respuesta_obj,  # We will use the prefix to bind it back to instance
-                    prefix='respuesta-{}'.format(respuesta_obj.id))
+                    prefix='respuesta-{}'.format(respuesta_obj.id),
+                    pregunta=pregunta['id'])
 
             pregunta['respuestas'] = respuestas
+            pregunta['opciones_respuesta'] = opciones_respuesta
 
         subseccion['preguntas'] = preguntas
 
@@ -174,6 +180,6 @@ def capture_study(request, id_estudio, numero_seccion):
             return redirect(
                 'captura:contestar_estudio',
                 id_estudio=id_estudio,
-                numero_seccion=seccion.numero+1)
+                numero_seccion=seccion.numero)
 
     return render(request, 'captura/captura_estudio.html', context)
