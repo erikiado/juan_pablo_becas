@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Pregunta, Seccion, Subseccion
+from .models import Pregunta, Seccion, Subseccion, OpcionRespuesta
 from .load import load_data
 
 
@@ -8,13 +8,26 @@ class TestLoadPreguntas(TestCase):
 
     """
 
+    def setUp(self):
+        load_data()
+
     def test_load_preguntas(self):
         """ Test that the script to load questions works properly.
 
         We assert that the number of objects inserted is the same as we
         expect.
         """
-        load_data()
-        self.assertEqual(142, len(Pregunta.objects.all()))
+        self.assertEqual(140, len(Pregunta.objects.all()))
         self.assertEqual(7, len(Seccion.objects.all()))
         self.assertEqual(18, len(Subseccion.objects.all()))
+        self.assertEqual(96, len(OpcionRespuesta.objects.all()))
+
+    def test_opciones(self):
+        """ Test that a particular questions has options assigned.
+
+        We assert that the number of options for the question 'El piso es de:'
+        is 4.
+        """
+        p = Pregunta.objects.get(texto='El piso es de:')
+        opts = OpcionRespuesta.objects.filter(pregunta=p).count()
+        self.assertEqual(4, opts)
