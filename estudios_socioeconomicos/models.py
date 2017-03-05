@@ -1,4 +1,7 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 from familias.models import Familia, Integrante
 from perfiles_usuario.models import Capturista
 
@@ -46,7 +49,7 @@ class Estudio(models.Model):
                                 familia=self.familia.__str__(),
                                 status=self.status)
 
-
+@receiver(post_save, sender=Estudio)
 def create_answers_for_study(sender, instance=None, created=False, **kwargs):
     """ Signal for creating all answers for all questions on a new study.
 
@@ -64,7 +67,6 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
           A value indicating if this instance is being created for the first time. Or if set
           to false if it is being edited.
     """
-
     if created:
         preguntas = Pregunta.objects.all()
         for pregunta in preguntas:
