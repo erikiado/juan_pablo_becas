@@ -1,9 +1,12 @@
 from django.conf.urls import url
-from .views import estudios
+
+from . import views
 
 app_name = 'captura'
 
-# Urls en espanol
 urlpatterns = [
-    url(r'^estudios/', estudios, name='estudios'),
+    url(r'^contestar-estudio/(?P<id_estudio>[0-9]+)/(?P<numero_seccion>[0-9]+)',
+        views.capture_study, name='contestar_estudio'),
+    url(r'^agregar-respuesta-estudio/', views.add_answer_study, name='agregar_respuesta_estudio'),
+    url(r'^quitar-respuesta-estudio/', views.remove_answer_study, name='quitar_respuesta_estudio'),
 ]
