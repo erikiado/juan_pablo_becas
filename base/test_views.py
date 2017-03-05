@@ -84,7 +84,7 @@ class TestRedirects(TestCase):
 
         We receive the name of the group, create it, and bound it to the
         user.
-        
+
         Parameters:
         -----------
         group_name : str
@@ -113,5 +113,20 @@ class TestRedirects(TestCase):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('captura:estudios'))
 
+    def test_redirect_directivo(self):
+        """ Test that a directivo is redirected to its dashboard.
 
+        """
+        self.create_group(DIRECTIVO_GROUP)
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('indicadores:all'))
 
+    def test_redirect_servicios_escolares(self):
+        """ Test that servicios escolares is redirected to its dashboard.
+
+        """
+        self.create_group(SERVICIOS_ESCOLARES_GROUP)
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('becas:services'))

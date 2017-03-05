@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from perfiles_usuario.utils import is_administrador, is_capturista, is_directivo, is_servicios_escolares
+from perfiles_usuario.utils import is_administrador, is_capturista,\
+                                 is_directivo, is_servicios_escolares
 
 
 @login_required
