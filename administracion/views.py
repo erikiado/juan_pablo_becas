@@ -3,9 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
 from .forms import UserForm
 from perfiles_usuario.utils import is_administrador
-from django.http import HttpResponse
-import json
-from django.template.loader import render_to_string
+
 
 @login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
