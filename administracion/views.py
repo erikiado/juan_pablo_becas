@@ -65,7 +65,7 @@ def admin_users_edit(request):
 
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_delete_modal(request, user_id):
-    """ View to send the form to edit users.
+    """ View to send the form to delete users.
 
     """
     if request.is_ajax():
@@ -76,7 +76,7 @@ def admin_users_delete_modal(request, user_id):
 
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_delete(request):
-    """ View to edit users.
+    """ View to delete users.
 
     """
     if request.method == 'POST':
