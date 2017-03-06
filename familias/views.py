@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test, login_required
 from perfiles_usuario.utils import is_administrador
+
 
 @login_required
 @user_passes_test(is_administrador)
