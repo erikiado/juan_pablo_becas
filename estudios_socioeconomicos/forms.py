@@ -28,7 +28,7 @@ class RespuestaForm(forms.ModelForm):
 
     respuesta = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'class': 'form-control answer-input'}))
 
     elecciones = forms.ModelMultipleChoiceField(
         required=False,

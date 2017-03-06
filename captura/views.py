@@ -95,8 +95,8 @@ def remove_answer_study(request):
 @user_passes_test(is_capturista)
 def capture_study(request, id_estudio, numero_seccion):
     """ View for filling the non statistic parts of a study.
-        
-        @TODO: Currently section 5 does not exist, so I am 
+
+        @TODO: Currently section 5 does not exist, so I am
         hardcoding this view to jump it, this should be
         removed in the future.
 
@@ -180,26 +180,27 @@ def capture_study(request, id_estudio, numero_seccion):
 
         subseccion['preguntas'] = preguntas
 
-    max_num_sections = Seccion.objects.all().count() + 1 # We are missing section 5
-    print(max_num_sections)
+    max_num_sections = Seccion.objects.all().count() + 1  # We are missing section 5
+
     if request.method == 'POST':
         next_section = 1
 
-        if request.POST.get('next','') and seccion.numero <= max_num_sections:
+        if request.POST.get('next', '') and seccion.numero <= max_num_sections:
             next_section = seccion.numero + 1
-            if next_section == 5 :
+            if next_section == 5:
                 next_section += 1
 
         if request.POST.get('previous', '') and seccion.numero > 1:
             next_section = seccion.numero - 1
-            if next_section == 5 :
+            if next_section == 5:
                 next_section -= 1
 
-        
-        if next_section :
-    
-            return redirect('captura:contestar_estudio', id_estudio=id_estudio, numero_seccion=next_section)
-        
+        if next_section:
+
+            return redirect(
+                'captura:contestar_estudio',
+                id_estudio=id_estudio,
+                numero_seccion=next_section)
 
     context['max_num_sections'] = Seccion.objects.all().count()
     context['data'] = subsecciones
