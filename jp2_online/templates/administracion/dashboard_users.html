@@ -12,7 +12,7 @@
               <!-- Launch demo modal -->
             <!-- </button> -->
 
-            <a id="btn_modal_create_user" data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i></a>
+            <a id="btn_modal_create_user" class="mouseClick" data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i> Agregar Usuario</a>
         </div>
     </div>
     <div class="content-box-large box-with-header">
@@ -21,11 +21,12 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Nombre</th>
-                      <th>Apellido</th>
-                      <th>Correo Electronico</th>
-                      <th>Rol</th>
-                      <th>Acciones</th>
+                      <th width="15%">Nombre</th>
+                      <th width="15%">Apellido</th>
+                      <th width="20%">Correo Electronico</th>
+                      <th width="15%">Usuario</th>
+                      <th width="20%">Rol</th>
+                      <th width="15%">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -33,6 +34,7 @@
                       <tr class="">
                         <td>{{ user.first_name }}</td>
                         <td>{{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
                         <td>{{ user.username }}</td>
                         <td>
                           {% for group in user.groups.all %}
@@ -40,8 +42,7 @@
                           {% endfor %}
                         </td>
                         <td>
-                          <a class="contact" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i></a>
-                          <!-- <a onclick="openEditModal({{user.id}})"></a> -->
+                          <a class="edit_user_link mouseClick" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i> Editar</a>
                         </td>
                       </tr>
                   {% endfor %}
@@ -156,14 +157,14 @@
   }
 
 
- $(".contact").click(function(ev) { // for each edit contact url
-        ev.preventDefault(); // prevent navigation
-        var url = $(this).data("form"); // get the contact form url
-        $("#modal_edit_user_content").load(url, function() { // load the url into the modal
-            $("#modal_edit_user").modal('show'); // display the modal on url load
-        });
-        return false; // prevent the click propagation
-    });
+  $(".edit_user_link").click(function(ev) { // for each edit contact url
+      ev.preventDefault(); // prevent navigation
+      var url = $(this).data("form"); // get the contact form url
+      $("#modal_edit_user_content").load(url, function() { // load the url into the modal
+          $("#modal_edit_user").modal('show'); // display the modal on url load
+      });
+      return false; // prevent the click propagation
+  });
 
     $('.edit_form').on('submit', '#btn_send_edit_user',function() {
         $.ajax({ 
