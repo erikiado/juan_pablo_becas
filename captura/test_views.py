@@ -160,3 +160,4 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 answer_input = self.browser.find_by_id('id_respuesta-' + str(respuesta.id) + '-respuesta').first
                 answer_input.fill('sastres el desastres')
 
+        time.sleep(10)
