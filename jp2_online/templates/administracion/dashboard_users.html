@@ -42,7 +42,7 @@
                           {% endfor %}
                         </td>
                         <td>
-                          <a class="edit_user_link mouseClick" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i> Editar</a>
+                          <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i> Editar</a>
                         </td>
                       </tr>
                   {% endfor %}
