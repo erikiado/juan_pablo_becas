@@ -49,6 +49,7 @@ class Estudio(models.Model):
                                 familia=self.familia.__str__(),
                                 status=self.status)
 
+
 @receiver(post_save, sender=Estudio)
 def create_answers_for_study(sender, instance=None, created=False, **kwargs):
     """ Signal for creating all answers for all questions on a new study.

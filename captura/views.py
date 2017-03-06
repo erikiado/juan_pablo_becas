@@ -6,7 +6,8 @@ from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Subseccion, Estudio, OpcionRespuesta
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Subseccion
+from estudios_socioeconomicos.models import Estudio, OpcionRespuesta
 
 
 @login_required
@@ -50,7 +51,10 @@ def add_answer_study(request):
 
         respuesta = Respuesta.objects.create(estudio=estudio, pregunta=pregunta)
         respuesta.save()
-        form = RespuestaForm(instance=respuesta, pregunta=pregunta, prefix='respuesta-{}'.format(respuesta.id))
+        form = RespuestaForm(
+            instance=respuesta,
+            pregunta=pregunta,
+            prefix='respuesta-{}'.format(respuesta.id))
 
         return HttpResponse(form, status=status.HTTP_201_CREATED)
 
@@ -91,6 +95,13 @@ def remove_answer_study(request):
 @user_passes_test(is_capturista)
 def capture_study(request, id_estudio, numero_seccion):
     """ View for filling the non statistic parts of a study.
+        
+        @TODO: Currently section 5 does not exist, so I am 
+        hardcoding this view to jump it, this should be
+        removed in the future.
+
+        @TODO: Remove + 1 from max_number_sections when we
+        add section 5.
 
         This view helps a Capturista user fill out all the information
         that will not be used for statistical indicators in a study.
@@ -106,12 +117,12 @@ def capture_study(request, id_estudio, numero_seccion):
 
         When we recieve a post request, we perform the same query, once
         we have all the questions, we get the form from the post data,
-        bind it back to the object and save changes. 
-    
+        bind it back to the object and save changes.
+
         Returns
         ----------
         GET:
-            On succes returns HTTP 200 with captura/captura_estudio.html 
+            On succes returns HTTP 200 with captura/captura_estudio.html
             template rendeered.
 
             On error returns HTTP 404
@@ -149,7 +160,6 @@ def capture_study(request, id_estudio, numero_seccion):
             for respuesta in respuestas:
                 respuesta_obj = Respuesta.objects.get(pk=respuesta['id'])
 
-
                 if request.method == 'POST':  # Bind each form to its original object
                     form = RespuestaForm(
                         request.POST,
@@ -170,16 +180,30 @@ def capture_study(request, id_estudio, numero_seccion):
 
         subseccion['preguntas'] = preguntas
 
+    max_num_sections = Seccion.objects.all().count() + 1 # We are missing section 5
+    print(max_num_sections)
+    if request.method == 'POST':
+        next_section = 1
+
+        if request.POST.get('next','') and seccion.numero <= max_num_sections:
+            next_section = seccion.numero + 1
+            if next_section == 5 :
+                next_section += 1
+
+        if request.POST.get('previous', '') and seccion.numero > 1:
+            next_section = seccion.numero - 1
+            if next_section == 5 :
+                next_section -= 1
+
+        
+        if next_section :
+    
+            return redirect('captura:contestar_estudio', id_estudio=id_estudio, numero_seccion=next_section)
+        
+
+    context['max_num_sections'] = Seccion.objects.all().count()
     context['data'] = subsecciones
     context['id_estudio'] = id_estudio
-
-    if request.method == 'POST':
-        max_num_sections = Seccion.objects.all().count()
-
-        if seccion.numero < max_num_sections:  # Are we in the last section yet?
-            return redirect(
-                'captura:contestar_estudio',
-                id_estudio=id_estudio,
-                numero_seccion=seccion.numero)
+    context['seccion'] = seccion
 
     return render(request, 'captura/captura_estudio.html', context)
