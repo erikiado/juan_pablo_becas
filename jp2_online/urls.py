@@ -23,4 +23,8 @@ urlpatterns = [
     url(r'^administracion/', include('administracion.urls')),
     url(r'^tosp_auth/', include('tosp_auth.urls')),
     url(r'^perfiles-usuario/', include('perfiles_usuario.urls')),
+    url(r'^familias/', include('familias.urls')),
+    url(r'^captura/', include('captura.urls')),
+    url(r'^indicadores/', include('indicadores.urls')),
+    url(r'^becas/', include('becas.urls')),
 ]
