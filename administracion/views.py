@@ -45,7 +45,6 @@ def admin_users_create(request):
 
 @login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
-
 def admin_users_edit_form(request, user_id):
     """ View to send the form to edit users.
 
