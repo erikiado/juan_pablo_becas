@@ -48,10 +48,6 @@ def admin_users_edit_form(request, user_id):
         return render(request, 'administracion/user_form.html',
                       {'user_form': form, 'from_user': user})
 
-<<<<<<< 0a9e08b1e03a7377487e5d3ffba7f3317a4dbb96
-
-=======
->>>>>>> Fix flake8
 
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_edit(request):
