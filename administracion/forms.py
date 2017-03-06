@@ -6,6 +6,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECT
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
 
+
 class UserModelForm(forms.ModelForm):
     """ ModelForm for Users.
 
@@ -39,7 +40,6 @@ class UserForm(UserModelForm):
     )
 
     rol_usuario = forms.ChoiceField(choices=ROLES_USUARIO, label='Tipo de usuario', required=True)
-
 
     def generate_user_password(self):
         return self.instance.first_name+'_'+self.instance.last_name
