@@ -3,9 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test
 from .forms import UserForm
 from perfiles_usuario.utils import is_administrador
-from django.http import HttpResponse
-import json
-from django.template.loader import render_to_string
+
 
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_main_dashboard(request):
@@ -50,7 +48,10 @@ def admin_users_edit_form(request, user_id):
         return render(request, 'administracion/user_form.html',
                       {'user_form': form, 'from_user': user})
 
+<<<<<<< 0a9e08b1e03a7377487e5d3ffba7f3317a4dbb96
 
+=======
+>>>>>>> Fix flake8
 
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_edit(request):
