@@ -86,10 +86,10 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         """
         test_url_name = 'administracion:users'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
-        self.send_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com', DIRECTIVO_GROUP)
-        self.send_user_form('SimonETA', 'Simoneta', 'Mar', 'simoneta@sjp.com',
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com', DIRECTIVO_GROUP)
+        self.send_create_user_form('SimonETA', 'Simoneta', 'Mar', 'simoneta@sjp.com',
                             SERVICIOS_ESCOLARES_GROUP)
-        self.send_user_form('Pug03', 'Muffin', 'Mer', 'muffin@sjp.com', CAPTURISTA_GROUP)
+        self.send_create_user_form('Pug03', 'Muffin', 'Mer', 'muffin@sjp.com', CAPTURISTA_GROUP)
 
         # Check user creation.
         self.assertEqual(User.objects.count(), 4)
@@ -116,15 +116,12 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         test_url_name = 'administracion:users'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         # Send invalid email.
-        self.send_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugeniosjp.com', DIRECTIVO_GROUP)
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugeniosjp.com', DIRECTIVO_GROUP)
         # Revisit the url since it should not be sent.
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         # Send invalid username.
-        self.send_user_form('', 'Simoneta', 'Mar', 'simoneta@sjp.com', SERVICIOS_ESCOLARES_GROUP)
+        self.send_create_user_form('', 'Simoneta', 'Mar', 'simoneta@sjp.com', SERVICIOS_ESCOLARES_GROUP)
         self.browser.visit(self.live_server_url + reverse(test_url_name))
-        # Send invalid password.
-        self.send_user_form('Pug03', 'Muffin', 'Mer', 'muffin@sjp.com', CAPTURISTA_GROUP,
-                            no_pass=True)
 
         # Check no user created.
         self.browser.visit(self.live_server_url + reverse(test_url_name))
@@ -141,7 +138,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present(CAPTURISTA_GROUP))
         self.assertFalse(self.browser.is_text_present(SERVICIOS_ESCOLARES_GROUP))
 
-    def send_user_form(self, username, first_name, last_name, email, role, no_pass=False):
+    def send_create_user_form(self, username, first_name, last_name, email, role):
         """ Function which fills the user creation form and tries to send it.
 
         """
@@ -151,6 +148,62 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('id_first_name').first.fill(first_name)
         self.browser.find_by_id('id_last_name').first.fill(last_name)
         self.browser.find_by_id('id_email').first.fill(email)
-        self.browser.find_by_id('id_password').first.fill('junipero' if not no_pass else '')
         self.browser.find_by_id('id_rol_usuario').select(role)
         self.browser.find_by_id('btn_send_create_user').click()
+
+    def test_edit_user_dashboard(self):
+        """ Test for create user from dashboard form.
+
+        Visit the url of name 'administracion:users' and create some users with different
+        roles and check they are created.
+        """
+        test_url_name = 'administracion:users'
+        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com', DIRECTIVO_GROUP)
+
+        # Check user creation.
+        self.assertEqual(User.objects.count(), 2)
+        test_user = User.objects.get(email='eugenio@sjp.com')
+
+        self.browser.reload()
+        # Check the new user is displayed
+        self.assertTrue(self.browser.is_text_present('Eugenio420'))
+        self.assertTrue(self.browser.is_text_present('Eugenio'))
+        self.assertTrue(self.browser.is_text_present('Mar'))
+        self.assertTrue(self.browser.is_text_present('eugenio@sjp.com'))
+        self.assertTrue(self.browser.is_text_present(DIRECTIVO_GROUP))
+
+        self.send_update_user_form(test_user.pk, username='Eugenio421', role=CAPTURISTA_GROUP)
+        self.assertFalse(self.browser.is_text_present(DIRECTIVO_GROUP))
+        self.assertTrue(self.browser.is_text_present(CAPTURISTA_GROUP))
+        self.assertTrue(self.browser.is_text_present('Eugenio421'))
+        self.assertEqual(Capturista.objects.count(), 1)
+
+        self.send_update_user_form(test_user.pk, first_name='Marcos', role=SERVICIOS_ESCOLARES_GROUP)
+        self.assertFalse(self.browser.is_text_present(CAPTURISTA_GROUP))
+        self.assertTrue(self.browser.is_text_present(SERVICIOS_ESCOLARES_GROUP))
+        self.assertTrue(self.browser.is_text_present('Marcos'))
+        self.assertEqual(Capturista.objects.count(), 0)
+
+        # self.assertEqual(Capturista.objects.count(), 1)
+
+    def send_update_user_form(self, pk, username=False, first_name=False, last_name=False, 
+                              email=False, role=False):
+        """ Function which fills the user update form and tries to send it.
+
+        """
+        self.browser.find_by_id('update_user_'+str(pk)).click()
+        time.sleep(0.5)
+        search_xpath = '//DIV[@id="modal_edit_user"]//INPUT[@id="id_username"]'
+        if username: self.browser.find_by_xpath(search_xpath).fill(username)
+        search_xpath = '//DIV[@id="modal_edit_user"]//INPUT[@id="id_first_name"]'
+        if first_name: self.browser.find_by_xpath(search_xpath).fill(first_name) 
+        search_xpath = '//DIV[@id="modal_edit_user"]//INPUT[@id="id_last_name"]'
+        if last_name: self.browser.find_by_xpath(search_xpath).fill(last_name) 
+        search_xpath = '//DIV[@id="modal_edit_user"]//INPUT[@id="id_email"]'
+        if email: self.browser.find_by_xpath(search_xpath).fill(email) 
+        search_xpath = '//DIV[@id="modal_edit_user"]\
+                        //SELECT[@id="id_rol_usuario"]\
+                        //OPTION[@value="' + role + '"]'
+        if role: self.browser.find_by_xpath(search_xpath).click() 
+        self.browser.find_by_id('btn_send_edit_user').click()

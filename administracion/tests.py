@@ -4,7 +4,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from .forms import FormaCreacionUsuario
+from .forms import UserForm
 
 
 class TestAdministracionUrls(TestCase):
@@ -41,10 +41,10 @@ class TestAdministracionUrls(TestCase):
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
 
 
-class TestFormaCreacionUsuario(TestCase):
-    """ Basic Suite for testing FormaCreacionUsuario.
+class TestUserForm(TestCase):
+    """ Basic Suite for testing UserForm.
 
-    Test the basic purpose of the FormaCreacionUsuario: that the user is actually created and
+    Test the basic purpose of the UserForm: that the user is actually created and
     that it has the proper group assigned to it.
 
     Attributes
@@ -69,12 +69,12 @@ class TestFormaCreacionUsuario(TestCase):
     def test_valid_data_basic(self):
         """ Test if the form assigns the proper group to a user.
 
-        Test if the overriden save method inside FormaCreacionUsuario correctly assigns
+        Test if the overriden save method inside UserForm correctly assigns
         the administrador group to the user we are creating.
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = ADMINISTRADOR_GROUP
-        form = FormaCreacionUsuario(data_form)
+        form = UserForm(data_form)
         self.assertTrue(form.is_valid())
         user = form.save()
         self.assertTrue(user.groups.filter(name=ADMINISTRADOR_GROUP).exists())
@@ -82,12 +82,12 @@ class TestFormaCreacionUsuario(TestCase):
     def test_valid_data_capturista(self):
         """ Test if the form creates the Capturista.
 
-        Test if the overriden save method inside FormaCreacionUsuario correctly creates the
+        Test if the overriden save method inside UserForm correctly creates the
         Capturista object when that role is selected.
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = CAPTURISTA_GROUP
-        form = FormaCreacionUsuario(data_form)
+        form = UserForm(data_form)
         self.assertTrue(form.is_valid())
         user = form.save()
         self.assertTrue(user.groups.filter(name=CAPTURISTA_GROUP).exists())
@@ -99,5 +99,5 @@ class TestFormaCreacionUsuario(TestCase):
         Test if the Form is not valid if the role is missing.
         """
         data_form = self.valid_data_form.copy()
-        form = FormaCreacionUsuario(data_form)
+        form = UserForm(data_form)
         self.assertFalse(form.is_valid())
