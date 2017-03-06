@@ -43,6 +43,8 @@
                         </td>
                         <td>
                           <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i> Editar</a>
+                          &nbsp;&nbsp;
+                          <a id="delete_user_{{ user.id }}" class="delete_user_link mouseClick" data-form="{% url 'administracion:users_delete_modal' user.id %}"><i class="glyphicon glyphicon-trash"></i> Borrar</a>
                         </td>
                       </tr>
                   {% endfor %}
@@ -102,6 +104,14 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_user">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_user_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% endblock %}
 
@@ -178,6 +188,15 @@
         });
         return false;
     });
+
+  $(".delete_user_link").click(function(ev) { // for each edit contact url
+      ev.preventDefault(); // prevent navigation
+      var url = $(this).data("form"); // get the contact form url
+      $("#modal_delete_user_content").load(url, function() { // load the url into the modal
+          $("#modal_delete_user").modal('show'); // display the modal on url load
+      });
+      return false; // prevent the click propagation
+  });
 
 </script>
 {% endblock %}

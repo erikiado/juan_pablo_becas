@@ -61,3 +61,26 @@ def admin_users_edit(request):
         if form.is_valid():
             form.save()
         return redirect('administracion:users')
+
+
+@user_passes_test(is_administrador, login_url='tosp_auth:login')
+def admin_users_delete_modal(request, user_id):
+    """ View to send the form to edit users.
+
+    """
+    if request.is_ajax():
+        user = User.objects.get(pk=user_id)
+        return render(request, 'administracion/user_delete_modal.html',
+                      {'delete_user': user})
+
+
+@user_passes_test(is_administrador, login_url='tosp_auth:login')
+def admin_users_delete(request):
+    """ View to edit users.
+
+    """
+    if request.method == 'POST':
+        user_id = request.POST['user_id']
+        instance = User.objects.get(pk=user_id)
+        instance.delete()
+        return redirect('administracion:users')
