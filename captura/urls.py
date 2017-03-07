@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from .views import capturista_dashboard
 
 app_name = 'captura'

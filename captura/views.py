@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import render
+
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.models import Estudio
 

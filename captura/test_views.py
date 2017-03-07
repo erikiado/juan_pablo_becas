@@ -1,9 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from splinter import Browser
 from django.contrib.auth.models import User
-from perfiles_usuario.utils import CAPTURISTA_GROUP
 from django.contrib.auth.models import Group
+
+from splinter import Browser
+
+from perfiles_usuario.utils import CAPTURISTA_GROUP
 from estudios_socioeconomicos.models import Estudio
 
 
