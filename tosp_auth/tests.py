@@ -29,8 +29,7 @@ class ControlerLogoutTest(TestCase):
         self.assertContains(response, 'Logout')
         self.client.logout()
         response = self.client.get(reverse('home'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'login')
+        self.assertRedirects(response, reverse('tosp_auth:login') + '?next=/')
 
     def test_expected_url(self):
         """Verify if redirect to the right url.
@@ -78,6 +77,7 @@ class WidgetLogoutTest(StaticLiveServerTestCase):
         self.browser.fill('password', 'junipero')
         self.browser.find_by_id('login-submit').click()
         self.browser.visit(self.live_server_url)
+        self.browser.find_by_id('my-account-btn').first.click()
         self.assertTrue(self.browser.is_text_present('Logout'))
 
     def test_option_appear_to_no_logged_client(self):
