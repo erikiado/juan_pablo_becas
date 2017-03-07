@@ -65,6 +65,9 @@ class TestUserForm(TestCase):
             'email': 'elver@abc.com',
             'password': 'elver12312310'
         }
+        self.thelma = User.objects.create_user(
+            username='thelma', email='juan@pablo.com', password='junipero',
+            first_name='Thelma', last_name='Thelmapellido')
 
     def test_valid_data_basic(self):
         """ Test if the form assigns the proper group to a user.
