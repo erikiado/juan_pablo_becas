@@ -1,9 +1,9 @@
 from django.conf.urls import url
-from .views import estudios
+from .views import reinscription_studies_left
 
 app_name = 'becas'
 
-# Urls en espanol
+# URLS en español
 urlpatterns = [
-    url(r'^estudios/', estudios, name='services'),
+    url(r'^estudios/', reinscription_studies_left, name='services'),
 ]

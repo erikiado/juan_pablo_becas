@@ -1,14 +1,23 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test, login_required
+from perfiles_usuario.utils import is_directivo
 
 
 @login_required
-def all_indicadores(request):
-    """ DUMMY VIEW.
+@user_passes_test(is_directivo)
+def all_indicators(request):
+    """ View to see the list of indicators for the beca calculation.
 
-    This functions is currently just being used to test the redirect
-    from base.
-
-    TODO: name properly and implement everything
     """
+
     return render(request, 'administracion/dashboard_users.html')
+
+
+@login_required
+@user_passes_test(is_directivo)
+def show_indicator(request):
+    """ View to see the detail of an indicator.
+
+    """
+
+    return render(request, 'indicadores/indicator_detail.html')

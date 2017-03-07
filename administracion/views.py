@@ -10,6 +10,8 @@ from perfiles_usuario.utils import is_administrador
 def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
+    The content to be shown in this view is the
+    list of Estudios (familias).
     """
     return render(request, 'administracion/dashboard_main.html')
 
@@ -38,3 +40,12 @@ def admin_users_create(request):
         if forma.is_valid():
             forma.save()
             return redirect('administracion:users')
+
+
+@login_required
+@user_passes_test(is_administrador)
+def admin_focusmode(request):
+    """ View to show the focus mode of a certain study.
+
+    """
+    return render(request, 'administracion/focus_mode.html')

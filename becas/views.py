@@ -1,14 +1,15 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test, login_required
+from perfiles_usuario.utils import is_servicios_escolares
 
 
 @login_required
-def estudios(request):
-    """ DUMMY VIEW.
+@user_passes_test(is_servicios_escolares)
+def reinscription_studies_left(request):
+    """ View to see the list of studies that require to
+    be marked for reinscription and therefore assing a new
+    scolarship for the student.
 
-    This functions is currently just being used to test the redirect
-    from base.
-
-    TODO: name properly and implement everything
     """
+
     return render(request, 'administracion/dashboard_users.html')
