@@ -44,12 +44,12 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_main_dashboard(self):
-        """Test for url 'captura:capturista_dashboard'.
+        """Test for url 'captura:estudios'.
 
-        Visit the url of name 'captura:capturista_dashboard' and check it loads the
+        Visit the url of name 'captura:estudios' and check it loads the
         content of the captura dashboard panel.
         """
-        test_url_name = 'captura:capturista_dashboard'
+        test_url_name = 'captura:estudios'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
         # Check for nav_bar partial

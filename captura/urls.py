@@ -5,5 +5,5 @@ app_name = 'captura'
 
 
 urlpatterns = [
-    url(r'^capturista/', capturista_dashboard, name='capturista_dashboard'),
+    url(r'^estudios/', capturista_dashboard, name='estudios'),
 ]
