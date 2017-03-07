@@ -219,3 +219,39 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
                             //OPTION[@value="' + role + '"]'
             self.browser.find_by_xpath(search_xpath).click()
         self.browser.find_by_id('btn_send_edit_user').click()
+
+    def test_delete_user_dashboard(self):
+        """ Test for create user from dashboard form.
+
+        Visit the url of name 'administracion:users', create a user and update it with different
+        roles and check it is correctly displayed.
+        """
+        test_url_name = 'administracion:users'
+        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com',
+                                   DIRECTIVO_GROUP)
+
+        # Check user creation.
+        self.assertEqual(User.objects.count(), 2)
+        test_user = User.objects.get(email='eugenio@sjp.com')
+
+        self.browser.reload()
+        # Check the new user is displayed
+        self.assertTrue(self.browser.is_text_present('Eugenio420'))
+        self.assertTrue(self.browser.is_text_present('Eugenio'))
+        self.assertTrue(self.browser.is_text_present('Mar'))
+        self.assertTrue(self.browser.is_text_present('eugenio@sjp.com'))
+        self.assertTrue(self.browser.is_text_present(DIRECTIVO_GROUP))
+
+
+        # Open modal and confirm user delete
+        self.browser.find_by_id('delete_user_'+str(test_user.id)).click()
+        time.sleep(0.5)
+        search_xpath = '//DIV[@id="modal_delete_user"]//BUTTON[@id="btn_send_delete_user"]'
+        self.browser.find_by_xpath(search_xpath).click()
+        self.assertFalse(self.browser.is_text_present('Eugenio420'))
+        self.assertFalse(self.browser.is_text_present('Eugenio'))
+        self.assertFalse(self.browser.is_text_present('Mar'))
+        self.assertFalse(self.browser.is_text_present('eugenio@sjp.com'))
+        self.assertFalse(self.browser.is_text_present(DIRECTIVO_GROUP))
+        self.assertEqual(User.objects.count(), 1)
