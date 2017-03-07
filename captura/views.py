@@ -12,7 +12,7 @@ def capturista_dashboard(request):
        This view shows the list of socio-economic studies that are under review
        and the button to add a new socio-economic study.
        Also shows the edit and see feedback buttons to each socio-economic study
-       shown in the list if this exist for the current user (capturist).
+       shown in the list if this exists for the current user (capturist).
     """
     estudios = []
     iduser = request.user.id
