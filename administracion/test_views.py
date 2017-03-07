@@ -221,10 +221,10 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('btn_send_edit_user').click()
 
     def test_delete_user_dashboard(self):
-        """ Test for create user from dashboard form.
+        """ Test for delete user from dashboard form.
 
-        Visit the url of name 'administracion:users', create a user and update it with different
-        roles and check it is correctly displayed.
+        Visit the url of name 'administracion:users', create a user check it is displayed, then
+        delete it and check it is not displayed anymore and does not exist in the database.
         """
         test_url_name = 'administracion:users'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
@@ -242,7 +242,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Mar'))
         self.assertTrue(self.browser.is_text_present('eugenio@sjp.com'))
         self.assertTrue(self.browser.is_text_present(DIRECTIVO_GROUP))
-
 
         # Open modal and confirm user delete
         self.browser.find_by_id('delete_user_'+str(test_user.id)).click()
