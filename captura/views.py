@@ -16,6 +16,7 @@ def capturista_dashboard(request):
        shown in the list if this exists for the current user (capturist).
     """
     user_id = request.user.id
-    estudios = Estudio.objects.filter(status=Estudio.RECHAZADO, capturista_id=user_id)
+    estudios = Estudio.objects.filter(status__in=[Estudio.RECHAZADO,Estudio.REVISION,Estudio.BORRADOR],
+                                      capturista_id=user_id)
     return render(request, 'captura/dashboard_capturista.html',
-                  {'estudios': estudios})
+                  {'estudios': estudios, 'Estudio':Estudio})
