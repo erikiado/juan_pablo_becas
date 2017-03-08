@@ -152,7 +152,7 @@ class Respuesta(models.Model):
     """
     estudio = models.ForeignKey(Estudio)
     pregunta = models.ForeignKey(Pregunta)
-    elecciones = models.ManyToManyField(OpcionRespuesta, blank=True)
+    eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
     respuesta = models.TextField(blank=True)
@@ -161,12 +161,12 @@ class Respuesta(models.Model):
         """ String representation of the answer.
 
         If the answer has text, we print the text. Otherwise,
-        we concatenate the options chosen for the answer.
+        we print the option chosen for the answer.
         If it is empty, we return a string indicating so.
         """
         if self.respuesta:
             return self.respuesta
-        elif self.elecciones.all():
-            return ', '.join(sorted(map(str, self.elecciones.all())))
+        elif self.eleccion:
+            return str(self.eleccion)
         else:
             return 'No tiene respuesta.'
