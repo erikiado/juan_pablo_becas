@@ -156,6 +156,10 @@
 
   }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ccc2f2409aee7b0bd2f65a3aabc61f2db8d8aaa
   $(".edit_user_link").click(function(ev) { // for each edit contact url
       ev.preventDefault(); // prevent navigation
       var url = $(this).data("form"); // get the contact form url
@@ -165,6 +169,7 @@
       return false; // prevent the click propagation
   });
 
+<<<<<<< HEAD
   $('.edit_form').on('submit', '#btn_send_edit_user',function() {
       $.ajax({ 
           type: $(this).attr('method'), 
@@ -177,6 +182,21 @@
       });
       return false;
   });
+=======
+    $('.edit_form').on('submit', '#btn_send_edit_user',function() {
+        $.ajax({ 
+            type: $(this).attr('method'), 
+            url: this.action, 
+            data: $(this).serialize(),
+            context: this,
+            success: function(data, status) {
+                $('#modal_edit_user').html(data);
+            }
+        });
+        return false;
+    });
+
+>>>>>>> 6ccc2f2409aee7b0bd2f65a3aabc61f2db8d8aaa
 </script>
 {% endblock %}
 
