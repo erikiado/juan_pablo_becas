@@ -27,7 +27,6 @@ def admin_users_dashboard(request):
                   {'all_users': users, 'create_user_form': create_user_form})
 
 
-
 @login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_create(request):
