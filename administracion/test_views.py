@@ -219,6 +219,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
                             //OPTION[@value="' + role + '"]'
             self.browser.find_by_xpath(search_xpath).click()
         self.browser.find_by_id('btn_send_edit_user').click()
+        time.sleep(0.1)
 
     def test_login_created_user(self):
         """Test for creating user from dashboard and then login with it.
