@@ -6,6 +6,7 @@ from .forms import FormaCreacionUsuario
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 
+
 def admin_main_dashboard(request):
     """View to render the main control dashboard.
     """
@@ -33,10 +34,11 @@ def crear_usuario(request):
         forma = FormaCreacionUsuario()
     return render(request, 'crear_usuario.html', {'form': forma})
 
+
 @login_required
 @user_passes_test(User, is_administrador)
 def main(request, status_study):
-    #estudios = Estudio.objects.all()
+    # estudios = Estudio.objects.all()
     estudios = Estudio.objects.filter(status=status_study)
     contexto = {'estudios': estudios}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
