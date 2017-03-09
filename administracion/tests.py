@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User, Group
+
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from .forms import UserForm
 
 
