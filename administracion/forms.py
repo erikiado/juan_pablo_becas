@@ -7,7 +7,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECT
 from perfiles_usuario.models import Capturista
 
 
-class FormaUsuario(forms.ModelForm):
+class UserModelForm(forms.ModelForm):
     """ ModelForm for Users.
 
     This is the general model form for creating users.
@@ -15,20 +15,19 @@ class FormaUsuario(forms.ModelForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['username', 'first_name', 'last_name', 'email']
         labels = {
             'username': ('Nombre de Usuario'),
             'first_name': ('Nombre'),
             'last_name': ('Apellido'),
-            'email': ('Email'),
-            'password': ('Contraseña')
+            'email': ('Email')
         }
 
 
-class FormaCreacionUsuario(FormaUsuario):
-    """ Form for creating different types of users.
+class UserForm(UserModelForm):
+    """ Form for creating and updating different types of users.
 
-    This form inherits from FormaUsuario, and is meant to be used for
+    This form inherits from UserModelForm, and is meant to be used for
     the creation of any kind of user by the administrative.
 
     The save method is overriden to add the corresponding group to the created user.
@@ -42,6 +41,9 @@ class FormaCreacionUsuario(FormaUsuario):
 
     rol_usuario = forms.ChoiceField(choices=ROLES_USUARIO, label='Tipo de usuario', required=True)
 
+    def generate_user_password(self):
+        return self.instance.first_name+'_'+self.instance.last_name
+
     def save(self, *args, **kwargs):
         """ Override save method to add group to the user.
 
@@ -49,14 +51,45 @@ class FormaCreacionUsuario(FormaUsuario):
         add the corresponding group to the user that is being created.
         The group is chosen based on the ChoiceField defined above
         """
-        user = super(FormaCreacionUsuario, self).save(*args, **kwargs)
         data = self.cleaned_data
-        if data['rol_usuario'] == CAPTURISTA_GROUP:
-            # capturista's group is added in the save method of the Model.
-            capturista = Capturista(user=user)
-            capturista.save()
+        # Create user
+        if self.instance.pk is None:
+            user = super(UserForm, self).save(*args, **kwargs)
+            # TODO: Change the password generation for an PasswordResetForm
+            user.set_password(self.generate_user_password())
+            if data['rol_usuario'] == CAPTURISTA_GROUP:
+                user.save()
+                # capturista's group is added in the save method of the Model.
+                capturista = Capturista(user=user)
+                capturista.save()
+            else:
+                user_group = Group.objects.get_or_create(name=data['rol_usuario'])[0]
+                user.groups.add(user_group)
+                user.save()
+
+        # Update user
         else:
-            user_group = Group.objects.get_or_create(name=data['rol_usuario'])[0]
-            user.groups.add(user_group)
-            user.save()
+            user = self.instance
+            user.username = data['username']
+            user.first_name = data['first_name']
+            user.last_name = data['last_name']
+            user.email = data['email']
+
+            user_group_name = user.groups.all()[0].name
+
+            if data['rol_usuario'] != user_group_name:
+                user.groups.clear()
+                if data['rol_usuario'] == CAPTURISTA_GROUP:
+                    user.save()
+                    capturista = Capturista(user=user)
+                    capturista.save()
+                else:
+                    if user_group_name == CAPTURISTA_GROUP:
+                        capturista = Capturista.objects.get(user=user)
+                        capturista.delete()
+                    user_group = Group.objects.get_or_create(name=data['rol_usuario'])[0]
+                    user.groups.add(user_group)
+                    user.save()
+            else:
+                user.save()
         return user

@@ -12,7 +12,7 @@
               <!-- Launch demo modal -->
             <!-- </button> -->
 
-            <a id="btn_modal_create_user" data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i></a>
+            <a id="btn_modal_create_user" class="mouseClick" data-toggle="modal" data-target="#modal_create_user"><i class="glyphicon glyphicon-plus"></i> Agregar Usuario</a>
         </div>
     </div>
     <div class="content-box-large box-with-header">
@@ -21,26 +21,28 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Nombre</th>
-                      <th>Apellido</th>
-                      <th>Correo Electronico</th>
-                      <th>Rol</th>
-                      <th>Acciones</th>
+                      <th width="15%">Nombre</th>
+                      <th width="15%">Apellido</th>
+                      <th width="20%">Correo Electrónico</th>
+                      <th width="15%">Usuario</th>
+                      <th width="20%">Rol</th>
+                      <th width="15%">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                   {% for user in all_users %}
                       <tr class="">
-                        <td>{{user.first_name}}</td>
-                        <td>{{user.last_name}}</td>
-                        <td>{{user.username}}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.username }}</td>
                         <td>
                           {% for group in user.groups.all %}
                             {{group}}
                           {% endfor %}
                         </td>
                         <td>
-                          <i class="glyphicon glyphicon-pencil"></i>
+                          <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick" data-form="{% url 'administracion:users_edit_form' user.id %}"><i class="glyphicon glyphicon-pencil"></i> Editar</a>
                         </td>
                       </tr>
                   {% endfor %}
@@ -91,11 +93,90 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_edit_user">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_edit_user_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 {% endblock %}
 
 
 {% block extra_page_js %}
 <script type="text/javascript">
+  // using jQuery
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
   $("#li_side_nav_users").addClass("current");
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
+  function openEditModal(num){
+    window.console.log(num)
+     // $("#test").submit(function(event){
+            $.ajax({
+                 type:"POST",
+                 url:"{% url 'administracion:users_edit' %}",
+                 data: {
+                        'user_id': Number(num) // from form
+                        },
+                 success: function(data){
+                    window.console.log(data)
+                     $('#message').html("<h2>Contact Form Submitted!</h2>") 
+                 }
+            });
+            // return false; //<---- move it here
+       // });
+
+  }
+
+  $(".edit_user_link").click(function(ev) { // for each edit contact url
+      ev.preventDefault(); // prevent navigation
+      var url = $(this).data("form"); // get the contact form url
+      $("#modal_edit_user_content").load(url, function() { // load the url into the modal
+          $("#modal_edit_user").modal('show'); // display the modal on url load
+      });
+      return false; // prevent the click propagation
+  });
+
+  $('.edit_form').on('submit', '#btn_send_edit_user',function() {
+      $.ajax({ 
+          type: $(this).attr('method'), 
+          url: this.action, 
+          data: $(this).serialize(),
+          context: this,
+          success: function(data, status) {
+              $('#modal_edit_user').html(data);
+          }
+      });
+      return false;
+  });
 </script>
 {% endblock %}
+
