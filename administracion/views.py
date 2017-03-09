@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+
 from .forms import UserForm
 from perfiles_usuario.utils import is_administrador
 
 
+@login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_main_dashboard(request):
     """View to render the main control dashboard.
@@ -13,6 +15,7 @@ def admin_main_dashboard(request):
     return render(request, 'administracion/dashboard_main.html')
 
 
+@login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_dashboard(request):
     """View to render the users control dashboard.
@@ -25,6 +28,7 @@ def admin_users_dashboard(request):
                   {'all_users': users, 'create_user_form': create_user_form})
 
 
+@login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_create(request):
     """ View to create users.
@@ -37,6 +41,7 @@ def admin_users_create(request):
             return redirect('administracion:users')
 
 
+@login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_edit_form(request, user_id):
     """ View to send the form to edit users.
@@ -49,6 +54,7 @@ def admin_users_edit_form(request, user_id):
                       {'user_form': form, 'from_user': user})
 
 
+@login_required(login_url='tosp_auth:login')
 @user_passes_test(is_administrador, login_url='tosp_auth:login')
 def admin_users_edit(request):
     """ View to edit users.
