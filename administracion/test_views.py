@@ -47,7 +47,6 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.browser.fill('password', test_password)
         self.browser.find_by_id('login-submit').click()
 
-
     def tearDown(self):
         """ At the end of tests, close the browser.
         """
@@ -68,7 +67,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
-        self.assertTrue(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertTrue(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
@@ -115,7 +115,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertFalse(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         self.assertFalse(self.browser.is_text_present('aprobado'))
         self.assertFalse(self.browser.is_text_present('borrador'))
         self.assertFalse(self.browser.is_text_present('Pendiente'))
@@ -143,7 +144,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
-        self.assertTrue(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertTrue(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
@@ -190,7 +192,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertFalse(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         self.assertFalse(self.browser.is_text_present('aprobado'))
         self.assertFalse(self.browser.is_text_present('borrador'))
         self.assertFalse(self.browser.is_text_present('En revisión'))
@@ -201,7 +204,6 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
         self.assertTrue(self.browser.is_text_present('Ver'))
         self.assertTrue(self.browser.is_text_present('Pendiente'))
-
 
     def test_if_not_exist_any_studies_approved(self):
         """ Test for url 'administracion:main_estudios' with the 'aprobado' parameter.
@@ -219,7 +221,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
-        self.assertTrue(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertTrue(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
@@ -266,7 +269,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertFalse(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         self.assertFalse(self.browser.is_text_present('Pendiente'))
         self.assertFalse(self.browser.is_text_present('borrador'))
         self.assertFalse(self.browser.is_text_present('En revisión'))
@@ -294,7 +298,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
-        self.assertTrue(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertTrue(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
@@ -341,7 +346,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertFalse(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         self.assertFalse(self.browser.is_text_present('Pendiente'))
         self.assertFalse(self.browser.is_text_present('aprobado'))
         self.assertFalse(self.browser.is_text_present('En revisión'))
@@ -368,7 +374,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
-        self.assertTrue(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertTrue(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
@@ -415,7 +422,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('No existen registros de este tipo de estudios para mostrar'))
+        self.assertFalse(self.browser.is_text_present(
+                        'No existen registros de este tipo de estudios para mostrar'))
         self.assertFalse(self.browser.is_text_present('Pendiente'))
         self.assertFalse(self.browser.is_text_present('aprobado'))
         self.assertFalse(self.browser.is_text_present('En revisión'))
