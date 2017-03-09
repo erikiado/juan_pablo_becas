@@ -64,27 +64,46 @@ class Seccion(models.Model):
         return 'Sección {nombre} número {num}'.format(nombre=self.nombre, num=self.numero)
 
 
+class Subseccion(models.Model):
+    """ The model that represents a subsection within a section.
+
+    Attributes:
+    -----------
+    nombre : TextField
+        The name of the subsection.
+    numero : IntegerField
+        The number of the section.
+    """
+    seccion = models.ForeignKey(Seccion)
+
+    nombre = models.TextField()
+    numero = models.IntegerField()
+
+    def __str__(self):
+        return 'Subsección {nombre}, en {seccion}'.format(
+                                nombre=self.nombre,
+                                seccion=str(self.seccion))
+
+
 class Pregunta(models.Model):
     """ The model that stores the actual questions.
 
     Attributes:
     -----------
-    seccion : ForeignKey
-        The section to which the question belongs.
+    subseccion : ForeignKey
+        The subsection to which the question belongs.
     texto : TextField
         The question itself.
     descripcion : TextField
         Additional information that the question may need to have.
-    relacionado_a_integrante : BooleanField
-        Indicates whether the answer of this question needs to be related
-        with a family member. This is important for rendering the form and
-        determining if the relationship between answer and family member should exist.
+    orden : IntegerField
+        The relative order of the question within the subsection.
     """
-    seccion = models.ForeignKey(Seccion)
+    subseccion = models.ForeignKey(Subseccion, null=True)
 
     texto = models.TextField()
-    description = models.TextField(blank=True)
-    relacionado_a_integrante = models.BooleanField(default=False)
+    descripcion = models.TextField(blank=True)
+    orden = models.IntegerField(default=0)
 
     def __str__(self):
         return self.texto
@@ -133,7 +152,7 @@ class Respuesta(models.Model):
     """
     estudio = models.ForeignKey(Estudio)
     pregunta = models.ForeignKey(Pregunta)
-    elecciones = models.ManyToManyField(OpcionRespuesta, blank=True)
+    eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
     respuesta = models.TextField(blank=True)
@@ -142,12 +161,12 @@ class Respuesta(models.Model):
         """ String representation of the answer.
 
         If the answer has text, we print the text. Otherwise,
-        we concatenate the options chosen for the answer.
+        we print the option chosen for the answer.
         If it is empty, we return a string indicating so.
         """
         if self.respuesta:
             return self.respuesta
-        elif self.elecciones.all():
-            return ', '.join(sorted(map(str, self.elecciones.all())))
+        elif self.eleccion:
+            return str(self.eleccion)
         else:
             return 'No tiene respuesta.'

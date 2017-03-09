@@ -38,21 +38,34 @@ class Familia(models.Model):
     egresos tables are created.
     - Clarify the contents of the number_hijos_diferentes_papas field
     """
-    OPCIONES_ESTADO_CIVIL = (('soltero', 'Soltero'),
-                             ('viudo', 'Viudo'),
-                             ('union libre', 'Unión Libre'),
-                             ('casado civil', 'Casado-Civil'),
-                             ('casado iglesia', 'Casado-Iglesia'),
-                             ('vuelto a casar', 'Divorciado Vuelto a Casar'))
 
-    OPCIONES_LOCALIDAD = (('Poblado Jurica', 'Poblado Juríca'),
-                          ('Nabo', 'Nabo'),
-                          ('Salitre', 'Salitre'),
-                          ('La Campana', 'La Campana'),
-                          ('otro', 'Otro'))
+    OPCION_ESTADO_SOLTERO = 'soltero'
+    OPCION_ESTADO_VIUDO = 'viudo'
+    OPCION_ESTADO_UNION_LIBRE = 'union_libre'
+    OPCION_ESTADO_CASADO_CIVIL = 'casado_civil'
+    OPCION_ESTADO_CASADO_IGLESIA = 'casado_iglesia'
+    OPCION_ESTADO_VUELTO_CASAR = 'vuelto_a_casar'
+
+    OPCIONES_ESTADO_CIVIL = ((OPCION_ESTADO_SOLTERO, 'Soltero'),
+                             (OPCION_ESTADO_VIUDO, 'Viudo'),
+                             (OPCION_ESTADO_UNION_LIBRE, 'Unión Libre'),
+                             (OPCION_ESTADO_CASADO_CIVIL, 'Casado-Civil'),
+                             (OPCION_ESTADO_CASADO_IGLESIA, 'Casado-Iglesia'),
+                             (OPCION_ESTADO_VUELTO_CASAR, 'Divorciado Vuelto a Casar'))
+
+    OPCION_LOCALIDAD_JURICA = 'poblado_jurica'
+    OPCION_LOCALIDAD_NABO = 'nabo'
+    OPCION_LOCALIDAD_SALITRE = 'salitre'
+    OPCION_LOCALIDAD_CAMPANA = 'la_campana'
+    OPCION_LOCALIDAD_OTRO = 'otro'
+    OPCIONES_LOCALIDAD = ((OPCION_LOCALIDAD_JURICA, 'Poblado Juríca'),
+                          (OPCION_LOCALIDAD_NABO, 'Nabo'),
+                          (OPCION_LOCALIDAD_SALITRE, 'Salitre'),
+                          (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
+                          (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
     numero_hijos_diferentes_papas = models.IntegerField(default=0)
-    explicacion_solvencia = models.TextField()
+    explicacion_solvencia = models.TextField(blank=True)
     estado_civil = models.TextField(choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.TextField(choices=OPCIONES_LOCALIDAD)
 
@@ -123,23 +136,38 @@ class Integrante(models.Model):
     -----
     - Implement foreign key relationship with oficio.
     """
-
-    OPCIONES_NIVEL_ESTUDIOS = (('ninguno', 'Ninguno'),
-                               ('1º grado', 'Primero de Primaria'),
-                               ('2º grado', 'Segundo de Primaria'),
-                               ('3º grado', 'Tercero de Primaria'),
-                               ('4º grado', 'Cuarto de Primaria'),
-                               ('5º grado', 'Quinto de Primaria'),
-                               ('6º grado', 'Sexto de Primaria'),
-                               ('7º grado', 'Primero de Secundaria'),
-                               ('8º grado', 'Segundo de Secundaria'),
-                               ('9º grado', 'Tercero de Secundaria'),
-                               ('10º grado', 'Primero de Pecundaria'),
-                               ('11º grado', 'Segundo de Preparatoria'),
-                               ('12º grado', 'Tercero de Preparatoria'),
-                               ('universidad', 'Universidad'),
-                               ('maestria', 'Maestría'),
-                               ('doctorado', 'Doctorado'))
+    OPCION_ESTUDIOS_NINGUNO = 'ninguno'
+    OPCION_ESTUDIOS_1 = '1_grado'
+    OPCION_ESTUDIOS_2 = '2_grado'
+    OPCION_ESTUDIOS_3 = '3_grado'
+    OPCION_ESTUDIOS_4 = '4_grado'
+    OPCION_ESTUDIOS_5 = '5_grado'
+    OPCION_ESTUDIOS_6 = '6_grado'
+    OPCION_ESTUDIOS_7 = '7_grado'
+    OPCION_ESTUDIOS_8 = '8_grado'
+    OPCION_ESTUDIOS_9 = '9_grado'
+    OPCION_ESTUDIOS_10 = '10_grado'
+    OPCION_ESTUDIOS_11 = '11_grado'
+    OPCION_ESTUDIOS_12 = '12_grado'
+    OPCION_ESTUDIOS_UNIVERSIDAD = 'universidad'
+    OPCION_ESTUDIOS_MAESTRIA = 'maestria'
+    OPCION_ESTUDIOS_DOCTORADO = 'doctorado'
+    OPCIONES_NIVEL_ESTUDIOS = ((OPCION_ESTUDIOS_NINGUNO, 'Ninguno'),
+                               (OPCION_ESTUDIOS_1, 'Primero de Primaria'),
+                               (OPCION_ESTUDIOS_2, 'Segundo de Primaria'),
+                               (OPCION_ESTUDIOS_3, 'Tercero de Primaria'),
+                               (OPCION_ESTUDIOS_4, 'Cuarto de Primaria'),
+                               (OPCION_ESTUDIOS_5, 'Quinto de Primaria'),
+                               (OPCION_ESTUDIOS_6, 'Sexto de Primaria'),
+                               (OPCION_ESTUDIOS_7, 'Primero de Secundaria'),
+                               (OPCION_ESTUDIOS_8, 'Segundo de Secundaria'),
+                               (OPCION_ESTUDIOS_9, 'Tercero de Secundaria'),
+                               (OPCION_ESTUDIOS_10, 'Primero de Pecundaria'),
+                               (OPCION_ESTUDIOS_11, 'Segundo de Preparatoria'),
+                               (OPCION_ESTUDIOS_12, 'Tercero de Preparatoria'),
+                               (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),
+                               (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
+                               (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
     familia = models.ForeignKey(Familia)
     nombres = models.TextField()
     apellidos = models.TextField()
@@ -209,9 +237,12 @@ class Tutor(models.Model):
         the other information that is stored about all of the family members.
     relacion : TextField
     """
-    OPCIONES_RELACION = (('madre', 'Madre'),
-                         ('padre', 'Padre'),
-                         ('tutor', 'Tutor'))
+    OPCION_RELACION_MADRE = 'madre'
+    OPCION_RELACION_PADRE = 'padre'
+    OPCION_RELACION_TUTOR = 'tutor'
+    OPCIONES_RELACION = ((OPCION_RELACION_MADRE, 'Madre'),
+                         (OPCION_RELACION_PADRE, 'Padre'),
+                         (OPCION_RELACION_TUTOR, 'Tutor'))
     integrante = models.OneToOneField(Integrante)
     relacion = models.TextField(choices=OPCIONES_RELACION)
 

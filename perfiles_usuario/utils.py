@@ -2,10 +2,10 @@
 """
 
 # Names of groups for users
-ADMINISTRADOR_GROUP = 'administrador'
-CAPTURISTA_GROUP = 'capturista'
-DIRECTIVO_GROUP = 'directivo'
-SERVICIOS_ESCOLARES_GROUP = 'servicios_escolares'
+ADMINISTRADOR_GROUP = 'Administrador'
+CAPTURISTA_GROUP = 'Capturista'
+DIRECTIVO_GROUP = 'Directivo'
+SERVICIOS_ESCOLARES_GROUP = 'Servicios Escolares'
 
 
 def is_member(user, groups):
