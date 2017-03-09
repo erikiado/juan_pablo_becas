@@ -6,7 +6,7 @@ from estudios_socioeconomicos.models import Estudio
 
 
 @login_required
-#@user_passes_test(is_capturista)
+@user_passes_test(is_capturista)
 def capturista_dashboard(request):
     """View to render the capturista control dashboard.
 
@@ -16,7 +16,8 @@ def capturista_dashboard(request):
        shown in the list if this exists for the current user (capturist).
     """
     user_id = request.user.id
-    estudios = Estudio.objects.filter(status__in=[Estudio.RECHAZADO,Estudio.REVISION,Estudio.BORRADOR],
-                                      capturista_id=user_id)
+    estudios = Estudio.objects.filter(
+            status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
+            capturista_id=user_id)
     return render(request, 'captura/dashboard_capturista.html',
-                  {'estudios': estudios, 'Estudio':Estudio})
+                  {'estudios': estudios, 'Estudio': Estudio})
