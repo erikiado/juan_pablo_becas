@@ -1,12 +1,11 @@
+import time
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.contrib.auth.models import User, Group
 from splinter import Browser
-from django.contrib.auth.models import User
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
-from django.contrib.auth.models import Group
-import time
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):
@@ -79,7 +78,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(ADMINISTRADOR_GROUP))
 
     def test_create_user_dashboard(self):
-        """ Test for create user from dashboard form.
+        """Test for create user from dashboard form.
 
         Visit the url of name 'administracion:users' and create some users with different
         roles and check they are created.
@@ -108,7 +107,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(SERVICIOS_ESCOLARES_GROUP))
 
     def test_invalid_create_user_dashboard(self):
-        """ Test for create user from dashboard form.
+        """Test for create user from dashboard form.
 
         Visit the url of name 'administracion:users' and try to create some invalid users
         and check they are not created. The validation tested are: valid email, valid username
@@ -142,7 +141,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present(SERVICIOS_ESCOLARES_GROUP))
 
     def send_create_user_form(self, username, first_name, last_name, email, role):
-        """ Function which fills the user creation form and tries to send it.
+        """Function which fills the user creation form and tries to send it.
 
         """
         self.browser.find_by_id('btn_modal_create_user').click()
@@ -153,9 +152,10 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('id_email').first.fill(email)
         self.browser.find_by_id('id_rol_usuario').select(role)
         self.browser.find_by_id('btn_send_create_user').click()
+        time.sleep(0.1)
 
     def test_edit_user_dashboard(self):
-        """ Test for create user from dashboard form.
+        """Test for create user from dashboard form.
 
         Visit the url of name 'administracion:users', create a user and update it with different
         roles and check it is correctly displayed.
@@ -194,7 +194,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 
     def send_update_user_form(self, pk, username=False, first_name=False, last_name=False,
                               email=False, role=False):
-        """ Function which fills the user update form and tries to send it.
+        """Function which fills the user update form and tries to send it.
 
         This function initializes everything as False so each field is updated only if it is
         given as a parameter.
@@ -219,6 +219,34 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
                             //OPTION[@value="' + role + '"]'
             self.browser.find_by_xpath(search_xpath).click()
         self.browser.find_by_id('btn_send_edit_user').click()
+        time.sleep(0.1)
+
+    def test_login_created_user(self):
+        """Test for creating user from dashboard and then login with it.
+
+        Visit the url of name 'administracion:users', create a user, logout and then attempt to
+        login with the created user.
+        """
+        test_url_name = 'administracion:users'
+        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com',
+                                   ADMINISTRADOR_GROUP)
+
+        # Check user creation.
+        self.assertEqual(User.objects.count(), 2)
+        test_user = User.objects.get(email='eugenio@sjp.com')
+
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:logout'))
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_user.username)
+        # Fill the password with the generated password
+        # This should be updated when the new password generation takes place
+        self.browser.fill('password', test_user.first_name + '_' + test_user.last_name)
+        self.browser.find_by_id('login-submit').click()
+
+        # Check the user effectively logged in.
+        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
+        self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_delete_user_dashboard(self):
         """ Test for delete user from dashboard form.
