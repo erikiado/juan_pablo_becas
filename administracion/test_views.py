@@ -230,7 +230,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         test_url_name = 'administracion:users'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com',
-                                   DIRECTIVO_GROUP)
+                                   ADMINISTRADOR_GROUP)
 
         # Check user creation.
         self.assertEqual(User.objects.count(), 2)
@@ -245,4 +245,5 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('login-submit').click()
 
         # Check the user effectively logged in.
-        self.assertTrue(self.browser.is_text_present('Hello, Eugenio Mar!'))
+        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
+        self.assertTrue(self.browser.is_text_present('Administración'))
