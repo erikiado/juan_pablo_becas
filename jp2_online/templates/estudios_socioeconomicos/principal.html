@@ -5,8 +5,17 @@
 <div class="row">
   <div class="col-md-12">
     <div class="content-box-header panel-heading">
+        {% if estado == Estudio.REVISION %}
         <div class="panel-title ">Estudios Socioeconomicos Pendientes</div>
-
+        {% elif estado == Estudio.RECHAZADO %}
+        <div class="panel-title ">Estudios Socioeconomicos en revisión</div>
+        {% elif estado == Estudio.BORRADOR %}
+        <div class="panel-title ">Estudios Socioeconomicos en borrador</div>
+        {% elif estado == Estudio.APROBADO %}
+        <div class="panel-title ">Estudios Socioeconomicos aprovados</div>
+        {% elif estado == Estudio.ELIMINADO %}
+        <div class="panel-title ">Estudios Socioeconomicos eliminados</div>
+        {% endif %}
         <div class="panel-options">
             <a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
             <a href="#" data-rel="reload"><i class="glyphicon glyphicon-cog"></i></a>
@@ -58,7 +67,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="content-box-header panel-heading">
-        <div class="panel-title ">No existen Estudios Socioeconómicos pendientes a revisar</div>
+        <div class="panel-title ">No existen registros de este tipo de estudios para mostrar</div>
 
         <div class="panel-options">
             <a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>

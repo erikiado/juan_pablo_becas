@@ -38,7 +38,6 @@ def crear_usuario(request):
 @login_required
 @user_passes_test(User, is_administrador)
 def main(request, status_study):
-    # estudios = Estudio.objects.all()
     estudios = Estudio.objects.filter(status=status_study)
-    contexto = {'estudios': estudios}
+    contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
