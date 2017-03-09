@@ -253,18 +253,15 @@ class RespuestaTestCase(TestCase):
     def test_str_opcion_respuesta(self):
         """ Test the __str__ method.
 
-        We test the __str__ method when the answer are two choices of
+        We test the __str__ method when the answer is a choice from
         OpcionRespuesta.
         """
         opcion_respuesta_camion = OpcionRespuesta.objects.create(
                                 pregunta=self.pregunta,
                                 texto='Camión')
-        opcion_respuesta_bicicleta = OpcionRespuesta.objects.create(
-                                pregunta=self.pregunta,
-                                texto='Bicicleta')
         respuesta = Respuesta.objects.create(
                                 estudio=self.estudio,
                                 pregunta=self.pregunta)
-        respuesta.elecciones.add(opcion_respuesta_camion)
-        respuesta.elecciones.add(opcion_respuesta_bicicleta)
-        self.assertEqual(str(respuesta), 'Bicicleta, Camión')
+        respuesta.eleccion = opcion_respuesta_camion
+        respuesta.save()
+        self.assertEqual(str(respuesta), 'Camión')
