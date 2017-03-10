@@ -42,7 +42,7 @@ class TestAdministracionUrls(TestCase):
 
 
 class TestUserForm(TestCase):
-    """ Basic Suite for testing UserForm.
+    """Basic Suite for testing UserForm.
 
     Test the basic purpose of the UserForm: that the user is actually created and
     that it has the proper group assigned to it.
@@ -55,7 +55,7 @@ class TestUserForm(TestCase):
     """
 
     def setUp(self):
-        """ Setup the dictionary with data for feeding the form.
+        """Setup the dictionary with data for feeding the form.
 
         """
         self.valid_data_form = {
@@ -70,7 +70,7 @@ class TestUserForm(TestCase):
             first_name='Thelma', last_name='Thelmapellido')
 
     def test_valid_data_basic(self):
-        """ Test if the form assigns the proper group to a user.
+        """Test if the form assigns the proper group to a user.
 
         Test if the overriden save method inside UserForm correctly assigns
         the administrador group to the user we are creating.
@@ -83,7 +83,7 @@ class TestUserForm(TestCase):
         self.assertTrue(user.groups.filter(name=ADMINISTRADOR_GROUP).exists())
 
     def test_valid_data_capturista(self):
-        """ Test if the form creates the Capturista.
+        """Test if the form creates the Capturista.
 
         Test if the overriden save method inside UserForm correctly creates the
         Capturista object when that role is selected.
@@ -97,7 +97,7 @@ class TestUserForm(TestCase):
         self.assertTrue(Capturista.objects.filter(user=user).exists())
 
     def test_invalid_data(self):
-        """ Test if the form validates invalid data.
+        """Test if the form validates invalid data.
 
         Test if the Form is not valid if the role is missing.
         """
@@ -107,7 +107,7 @@ class TestUserForm(TestCase):
 
 
 class TestDeleteUserForm(TestCase):
-    """ Basic Suite for testing DeleteUserForm.
+    """Basic Suite for testing DeleteUserForm.
 
     Test the basic purpose of the DeleteUserForm: that the user is actually deleted from database.
 
@@ -119,7 +119,7 @@ class TestDeleteUserForm(TestCase):
     """
 
     def setUp(self):
-        """ Setup the dictionary with data for feeding the form.
+        """Setup the dictionary with data for feeding the form.
 
         """
         self.thelma = User.objects.create_user(
@@ -130,10 +130,8 @@ class TestDeleteUserForm(TestCase):
         }
 
     def test_valid_data_basic(self):
-        """ Test if the form assigns the proper group to a user.
+        """Test if the form effectively deletes the user instance
 
-        Test if the overriden save method inside UserForm correctly assigns
-        the administrador group to the user we are creating.
         """
         data_form = self.valid_data_form.copy()
         form = DeleteUserForm(data_form)
@@ -147,9 +145,8 @@ class TestDeleteUserForm(TestCase):
         self.assertEqual(test_user, None)
 
     def test_invalid_data(self):
-        """ Test if the form validates invalid data.
+        """Test if the form validates invalid data.
 
-        Test if the Form is not valid if the role is missing.
         """
         data_form = self.valid_data_form.copy()
         data_form['user_id'] = 'id falso'
