@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
-from .forms import UserForm
+from .forms import UserForm, DeleteUserForm
 from perfiles_usuario.utils import is_administrador
 
 
@@ -68,24 +68,27 @@ def admin_users_edit(request):
         return redirect('administracion:users')
 
 
-@user_passes_test(is_administrador, login_url='tosp_auth:login')
+@login_required
+@user_passes_test(is_administrador)
 def admin_users_delete_modal(request, user_id):
     """ View to send the form to delete users.
 
     """
     if request.is_ajax():
         user = User.objects.get(pk=user_id)
+        form = DeleteUserForm(initial={'user_id': user.pk})
         return render(request, 'administracion/user_delete_modal.html',
-                      {'delete_user': user})
+                      {'delete_user': user, 'delete_form': form})
 
 
-@user_passes_test(is_administrador, login_url='tosp_auth:login')
+@login_required
+@user_passes_test(is_administrador)
 def admin_users_delete(request):
     """ View to delete users.
 
     """
     if request.method == 'POST':
-        user_id = request.POST['user_id']
-        instance = User.objects.get(pk=user_id)
-        instance.delete()
+        form = DeleteUserForm(request.POST)
+        if form.is_valid():
+            form.save()
         return redirect('administracion:users')
