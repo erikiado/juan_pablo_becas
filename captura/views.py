@@ -6,6 +6,7 @@ from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
+
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
@@ -51,6 +52,7 @@ def add_answer_study(request):
 
     """
     if request.method == 'POST' and request.is_ajax():
+
         estudio = get_object_or_404(Estudio, pk=request.POST.get('id_estudio'))
         pregunta = get_object_or_404(Pregunta, pk=request.POST.get('id_pregunta'))
 
@@ -97,6 +99,7 @@ def remove_answer_study(request):
         only accessible through XMLHttpRequest.
     """
     if request.method == 'POST' and request.is_ajax():
+
         get_object_or_404(Respuesta, pk=request.POST.get('id_respuesta')).delete()
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
@@ -115,6 +118,7 @@ def capture_study(request, id_estudio, numero_seccion):
         it contains the logic to map its section to its predesecor and
         succesor. Any changes in the way we store studies, should also
         change this.
+
 
         This view helps a Capturista user fill out all the information
         that will not be used for statistical indicators in a study.

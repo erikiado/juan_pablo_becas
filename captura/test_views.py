@@ -95,6 +95,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 for i in range(num_opciones):
                     answer_input = self.browser.find_by_id(
                         'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(i))
+
                     self.assertNotEqual(answer_input, [])
                     self.assertTrue(self.browser.is_text_present(pregunta.texto))
             else:
@@ -189,6 +190,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
 
                     answer_input = self.browser.find_by_id(
                         'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
                     answer_input.check()
                 else:
                     new_text = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
@@ -211,6 +213,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 if num_opciones > 0:
                     answer_input = self.browser.find_by_id(
                         'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
                     self.assertTrue(answer_input.checked)
                 else:
                     answer_input = self.browser.find_by_id(
