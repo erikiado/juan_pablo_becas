@@ -94,7 +94,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
             if num_opciones > 0:
                 for i in range(num_opciones):
                     answer_input = self.browser.find_by_id(
-                        'id_respuesta-' + str(respuesta.id) + '-elecciones_' + str(i))
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(i))
                     self.assertNotEqual(answer_input, [])
                     self.assertTrue(self.browser.is_text_present(pregunta.texto))
             else:
@@ -113,7 +113,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 self.test_url_name,
                 kwargs={'id_estudio': 0, 'numero_seccion': secciones[0].numero}))
 
-        self.assertTrue(self.browser.is_text_present("Not Found"))
+        self.assertTrue(self.browser.is_text_present('Not Found'))
 
     def test_adding_more_answers(self):
         """ Test that a user can dynamically add more questions to a
@@ -188,7 +188,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 if num_opciones > 0:
 
                     answer_input = self.browser.find_by_id(
-                        'id_respuesta-' + str(respuesta.id) + '-elecciones_' + str(num_opciones-1))
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
                     answer_input.check()
                 else:
                     new_text = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
@@ -210,14 +210,14 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
 
                 if num_opciones > 0:
                     answer_input = self.browser.find_by_id(
-                        'id_respuesta-' + str(respuesta.id) + '-elecciones_' + str(num_opciones-1))
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
                     self.assertTrue(answer_input.checked)
                 else:
                     answer_input = self.browser.find_by_id(
                         'id_respuesta-' + str(respuesta.id) + '-respuesta').first
                     self.assertEqual(answer_input.value, random_texts[respuesta.id])
 
-    def test_submitting_answer_with_dyanmic_answers(self):
+    def test_submitting_answer_with_dynamic_answers(self):
         """ Test that answers generated dynamically are being saved after submission.
         """
         secciones = Seccion.objects.all().order_by('numero')

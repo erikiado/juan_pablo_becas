@@ -23,12 +23,12 @@ $.ajaxSetup({
 });
 	
 $("#next_section_button").on('click', function(e){
-	$("#parentForm").append('<input name="next" value="1">')
+	$("#parentForm").append('<input class="hidden" name="next" value="next">')
 	// e.preventDefault();
 });
 
 $("#previous_section_button").on('click', function(e){
-	$("#parentForm").append('<input name="previous" value="1">')
+	$("#parentForm").append('<input class="hidden" name="next" value="previous">')
 	// e.preventDefault();
 });
 

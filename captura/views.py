@@ -6,8 +6,8 @@ from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Subseccion
-from estudios_socioeconomicos.models import Estudio, OpcionRespuesta
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
 @login_required
@@ -44,8 +44,13 @@ def add_answer_study(request):
         HTTP STATUS 404
             If either study or question do not exist in database.
 
+        Notes
+        ----------
+        is_ajax() function makes the functionality in this view
+        only accessible through XMLHttpRequest.
+
     """
-    if request.method == 'POST':
+    if request.method == 'POST' and request.is_ajax():
         estudio = get_object_or_404(Estudio, pk=request.POST.get('id_estudio'))
         pregunta = get_object_or_404(Pregunta, pk=request.POST.get('id_pregunta'))
 
@@ -85,8 +90,13 @@ def remove_answer_study(request):
         ----------
         HTTP STATUS 404
             If answer do not exist in database.
+
+        Notes
+        ----------
+        is_ajax() function makes the functionality in this view
+        only accessible through XMLHttpRequest.
     """
-    if request.method == 'POST':
+    if request.method == 'POST' and request.is_ajax():
         get_object_or_404(Respuesta, pk=request.POST.get('id_respuesta')).delete()
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
@@ -101,23 +111,23 @@ def capture_study(request, id_estudio, numero_seccion):
         removed in the future.
 
         @TODO: Remove + 1 from max_number_sections when we
-        add section 5.
+        add section 5. If this is removed, check utils.SECTIONS_FLOW,
+        it contains the logic to map its section to its predesecor and
+        succesor. Any changes in the way we store studies, should also
+        change this.
 
         This view helps a Capturista user fill out all the information
         that will not be used for statistical indicators in a study.
         This view recieves the id of the study the capturista wants to
         fill, and the number of section inside the study.
 
-        For each section, we query all subsections that branch out and
-        for each subsection we query all the questions that branch out.
-        After that, for each question we query all the answers that have
-        been created (When a study is generated a trigger automatically
-        generates an empty answer for each question).  Finally we create
-        a form for each answer and send the complete object of rendering.
+        This function calls .utils.get_study_info_for_section, this function
+        returns an object with all the information we need nested and organized.
+        (subsecciones, preguntas, respuestas, opciones de respuestas) for easy
+        rendering.
 
-        When we recieve a post request, we perform the same query, once
-        we have all the questions, we get the form from the post data,
-        bind it back to the object and save changes.
+        On POST we iterate all saved answers and bind them back to the sent forms
+        to save the edition of each object in the database.
 
         Returns
         ----------
@@ -144,67 +154,40 @@ def capture_study(request, id_estudio, numero_seccion):
     estudio = get_object_or_404(Estudio, pk=id_estudio)
     seccion = get_object_or_404(Seccion, numero=numero_seccion)
 
-    subsecciones = Subseccion.objects.filter(seccion=seccion).order_by('numero').values()
-
-    for subseccion in subsecciones:
-        preguntas = Pregunta.objects.filter(subseccion=subseccion['id']).order_by('orden').values()
-
-        for pregunta in preguntas:
-
-            respuestas = Respuesta.objects.filter(
-                pregunta=pregunta['id'],
-                estudio=estudio).values()
-
-            opciones_respuesta = OpcionRespuesta.objects.filter(pregunta=pregunta['id'])
-
-            for respuesta in respuestas:
-                respuesta_obj = Respuesta.objects.get(pk=respuesta['id'])
-
-                if request.method == 'POST':  # Bind each form to its original object
-                    form = RespuestaForm(
-                        request.POST,
-                        instance=respuesta_obj,
-                        prefix='respuesta-{}'.format(respuesta_obj.id),
-                        pregunta=pregunta['id'])
-
-                    if form.is_valid():
-                        form.save()
-
-                respuesta['form'] = RespuestaForm(
-                    instance=respuesta_obj,  # We will use the prefix to bind it back to instance
-                    prefix='respuesta-{}'.format(respuesta_obj.id),
-                    pregunta=pregunta['id'])
-
-            pregunta['respuestas'] = respuestas
-            pregunta['opciones_respuesta'] = opciones_respuesta
-
-        subseccion['preguntas'] = preguntas
-
-    max_num_sections = Seccion.objects.all().count() + 1  # We are missing section 5
+    (data, respuestas) = get_study_info_for_section(estudio, seccion)
 
     if request.method == 'POST':
-        next_section = 1
+        for respuesta in respuestas:
+            form = RespuestaForm(
+                request.POST,
+                instance=respuesta,
+                prefix='respuesta-{}'.format(respuesta.id),
+                pregunta=respuesta.pregunta.id)
 
-        if request.POST.get('next', '') and seccion.numero <= max_num_sections:
-            next_section = seccion.numero + 1
-            if next_section == 5:
-                next_section += 1
+            if form.is_valid():
+                form.save()
 
-        if request.POST.get('previous', '') and seccion.numero > 1:
-            next_section = seccion.numero - 1
-            if next_section == 5:
-                next_section -= 1
+        next_section = SECTIONS_FLOW.get(seccion.numero).get(request.POST.get('next', ''))
 
-        if next_section:
-
+        if next_section:  # if anybody messes with JS it will return None
             return redirect(
-                'captura:contestar_estudio',
-                id_estudio=id_estudio,
-                numero_seccion=next_section)
+                    'captura:contestar_estudio',
+                    id_estudio=id_estudio,
+                    numero_seccion=next_section)
 
-    context['max_num_sections'] = Seccion.objects.all().count()
-    context['data'] = subsecciones
+    context['max_num_sections'] = Seccion.objects.all().count() + 1  # Compensate missing section
+    context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
 
     return render(request, 'captura/captura_estudio.html', context)
+
+
+@login_required
+def estudios(request):
+    """ DUMMY VIEW.
+    This functions is currently just being used to test the redirect
+    from base.
+    TODO: name properly and implement everything
+    """
+    return render(request, 'administracion/dashboard_users.html')
