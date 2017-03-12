@@ -31,11 +31,13 @@ class TestViewsFamilias(StaticLiveServerTestCase):
 
         """
         test_url_name = 'familias:all'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
 
     def test_family_member(self):
         """ Test for the view that shows a member of a family.
 
         """
         test_url_name = 'familias:member'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)

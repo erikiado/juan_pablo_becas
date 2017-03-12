@@ -31,32 +31,37 @@ class TestViewsCaptura(StaticLiveServerTestCase):
 
         """
         test_url_name = 'captura:housing'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
 
     def test_captura_estudios(self):
         """ Test for the view that shows the list of pending studies.
 
         """
         test_url_name = 'captura:estudios'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
 
     def test_captura_family(self):
         """ Test for the view that shows the members of a family.
 
         """
         test_url_name = 'captura:family'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
 
     def test_estudio_income(self):
         """ Test for the view that shows the income of a family.
 
         """
         test_url_name = 'captura:income'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
 
     def test_estudio_sections(self):
         """ Test for the view that shows all sections of a study's focus mode.
 
         """
         test_url_name = 'captura:sections'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)

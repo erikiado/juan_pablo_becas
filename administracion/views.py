@@ -46,6 +46,7 @@ def admin_users_create(request):
 @user_passes_test(is_administrador)
 def admin_focusmode(request):
     """ View to show the focus mode of a certain study.
-
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
     """
     return render(request, 'administracion/focus_mode.html')

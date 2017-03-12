@@ -31,4 +31,5 @@ class TestViewsBecas(StaticLiveServerTestCase):
 
         """
         test_url_name = 'becas:services'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
