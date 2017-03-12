@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
@@ -93,3 +93,18 @@ class UserForm(UserModelForm):
             else:
                 user.save()
         return user
+
+
+class DeleteUserForm(forms.Form):
+    """Form to delete user from dashboard which is used to validate the post information.
+
+    """
+    user_id = forms.IntegerField(widget=forms.HiddenInput())
+
+    def save(self, *args, **kwargs):
+        """Override save method to delete user instance.
+
+        """
+        data = self.cleaned_data
+        user_instance = User.objects.get(pk=data['user_id'])
+        user_instance.delete()

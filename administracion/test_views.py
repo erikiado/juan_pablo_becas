@@ -27,11 +27,11 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser = Browser('chrome')
         test_username = 'thelma'
         test_password = 'junipero'
-        thelma = User.objects.create_user(
+        self.thelma = User.objects.create_user(
             username=test_username, email='juan@pablo.com', password=test_password,
             first_name='Thelma', last_name='Thelmapellido')
         administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
-        administrators.user_set.add(thelma)
+        administrators.user_set.add(self.thelma)
         administrators.save()
         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', test_username)
@@ -247,3 +247,44 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         # Check the user effectively logged in.
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         self.assertTrue(self.browser.is_text_present('Administración'))
+
+    def test_delete_user_dashboard(self):
+        """ Test for delete user from dashboard form.
+
+        Visit the url of name 'administracion:users', create a user check it is displayed, then
+        delete it and check it is not displayed anymore and does not exist in the database.
+        """
+        test_url_name = 'administracion:users'
+        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        self.send_create_user_form('Eugenio420', 'Eugenio', 'Mar', 'eugenio@sjp.com',
+                                   DIRECTIVO_GROUP)
+
+        # Check user creation.
+        self.assertEqual(User.objects.count(), 2)
+        test_user = User.objects.get(email='eugenio@sjp.com')
+
+        # Check the new user is displayed
+        self.browser.reload()
+        self.assertTrue(self.browser.is_text_present(test_user.username))
+        self.assertTrue(self.browser.is_text_present(test_user.first_name))
+        self.assertTrue(self.browser.is_text_present(test_user.last_name))
+        self.assertTrue(self.browser.is_text_present(test_user.email))
+        self.assertTrue(self.browser.is_text_present(DIRECTIVO_GROUP))
+
+        # Open modal check user email is correctly displayed
+        self.browser.find_by_id('delete_user_'+str(test_user.id)).click()
+        time.sleep(0.5)
+        search_query = 'Esta seguro que desea borrar al usuario de correo: ' + self.thelma.email
+        self.assertFalse(self.browser.is_text_present(search_query))
+        search_query = 'Esta seguro que desea borrar al usuario de correo: ' + test_user.email
+        self.assertTrue(self.browser.is_text_present(search_query))
+        search_xpath = '//DIV[@id="modal_delete_user"]//BUTTON[@id="btn_send_delete_user"]'
+        self.browser.find_by_xpath(search_xpath).click()
+
+        # Confirm user delete
+        self.assertFalse(self.browser.is_text_present('Eugenio420'))
+        self.assertFalse(self.browser.is_text_present('Eugenio'))
+        self.assertFalse(self.browser.is_text_present('Mar'))
+        self.assertFalse(self.browser.is_text_present('eugenio@sjp.com'))
+        self.assertFalse(self.browser.is_text_present(DIRECTIVO_GROUP))
+        self.assertEqual(User.objects.count(), 1)
