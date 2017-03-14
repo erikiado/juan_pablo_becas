@@ -57,7 +57,7 @@ def add_answer_study(request):
         pregunta = get_object_or_404(Pregunta, pk=request.POST.get('id_pregunta'))
 
         respuesta = Respuesta.objects.create(estudio=estudio, pregunta=pregunta)
-        respuesta.save()
+
         form = RespuestaForm(
             instance=respuesta,
             pregunta=pregunta,
