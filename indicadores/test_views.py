@@ -1,6 +1,5 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.urlresolvers import reverse
-from splinter import Browser
 
 
 class TestViewsIndicadores(StaticLiveServerTestCase):
@@ -13,18 +12,6 @@ class TestViewsIndicadores(StaticLiveServerTestCase):
     browser : Browser
         Driver to navigate through websites and to run integration tests.
     """
-
-    def setUp(self):
-        """Initialize the browser and create a user, before running the tests.
-
-        """
-        self.browser = Browser('chrome')
-
-    def tearDown(self):
-        """At the end of tests, close the browser.
-
-        """
-        self.browser.quit()
 
     def test_all_indicadores(self):
         """ Test for the view that shows all the indicators.
