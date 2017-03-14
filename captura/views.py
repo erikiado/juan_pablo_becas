@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import render
 
 from perfiles_usuario.utils import is_capturista
+from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.models import Estudio
 
 
@@ -15,9 +16,8 @@ def capturista_dashboard(request):
        Also shows the edit and see feedback buttons to each socio-economic study
        shown in the list if this exists for the current user (capturist).
     """
-    user_id = request.user.id
     estudios = Estudio.objects.filter(
             status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
-            capturista_id=user_id)
+            capturista=Capturista.objects.get(user=request.user))
     return render(request, 'captura/dashboard_capturista.html',
                   {'estudios': estudios, 'Estudio': Estudio})

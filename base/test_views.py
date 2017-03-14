@@ -7,6 +7,7 @@ from splinter import Browser
 
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
+from perfiles_usuario.models import Capturista
 
 
 class TestBaseViews(StaticLiveServerTestCase):
@@ -108,6 +109,7 @@ class TestRedirects(TestCase):
         """ Test that the capturista is redirected to its dashboard.
 
         """
+        self.capturista = Capturista.objects.create(user=self.user)
         self.create_group(CAPTURISTA_GROUP)
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(reverse('home'))

@@ -27,16 +27,16 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         """Initialize the browser and create a user, before running the tests.
         """
         self.browser = Browser('chrome')
-        test_username = 'thelma'
+        test_username = 'estebes'
         test_password = 'junipero'
-        thelma = User.objects.create_user(
-            username=test_username, email='juan@pablo.com', password=test_password,
-            first_name='Thelma', last_name='Thelmapellido')
+        estebes = User.objects.create_user(
+            username=test_username, email='juan@example.com', password=test_password,
+            first_name='Estebes', last_name='Thelmapellido')
         capturista = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
-        capturista.user_set.add(thelma)
+        capturista.user_set.add(estebes)
         capturista.save()
 
-        self.capturista = Capturista.objects.create(user=thelma)
+        self.capturista = Capturista.objects.create(user=estebes)
         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', test_username)
         self.browser.fill('password', test_password)
@@ -77,10 +77,9 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         'captura:estudios' to check it loads both socio-economic studies created
         previously.
         """
-
-        user = User.objects.get(username='thelma')
+        user = User.objects.get(username='estebes')
         user_id = user.id
-        capturista = Capturista.objects.get(user=user_id)
+        capturist = Capturista.objects.get(user=user_id)
 
         solvencia = 'No tienen dinero'
         estado = Familia.OPCION_ESTADO_SOLTERO
@@ -95,10 +94,10 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
                      estado_civil=estado2, localidad=localidad2)
         f2.save()
 
-        e1 = Estudio(capturista_id=capturista.id, familia_id=f1.id,
+        e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
                      status=Estudio.RECHAZADO, numero_sae=1)
         e1.save()
-        e2 = Estudio(capturista_id=capturista.id, familia_id=f2.id,
+        e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
                      status=Estudio.REVISION, numero_sae=2)
         e2.save()
 
@@ -111,8 +110,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Mis estudios socioeconómicos'))
         self.assertTrue(self.browser.is_text_present('Agregar estudio'))
         # Check that the following text isn't present if exists any socio-economic study
-        self.assertFalse(self.browser.is_text_present(
-                        'No hay registro de estudios socioeconómicos'))
+        self.assertFalse(self.browser.is_text_present('No hay registro'))
         # Check that the following texts are present if exists any socio-economic study
         self.assertTrue(self.browser.is_text_present('Estudios en revisión'))
         self.assertTrue(self.browser.is_text_present('Estudios pendientes a revisar'))
