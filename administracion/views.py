@@ -13,7 +13,7 @@ def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
     """
-    return render(request, 'administracion/dashboard_main.html')
+    return render(request, 'administracion/dashboard_main.html', {'Estudio': Estudio})
 
 
 @login_required
@@ -26,7 +26,7 @@ def admin_users_dashboard(request):
     create_user_form = FormaCreacionUsuario()
 
     return render(request, 'administracion/dashboard_users.html',
-                  {'all_users': users, 'create_user_form': create_user_form})
+                  {'all_users': users, 'create_user_form': create_user_form, 'Estudio': Estudio})
 
 
 @login_required
@@ -48,6 +48,9 @@ def admin_users_create(request):
 @login_required
 @user_passes_test(is_administrador)
 def list_studies(request, status_study):
+    """ View to list the studies with a specific status according to the button pushed
+
+    """
     estudios = Estudio.objects.filter(status=status_study)
     contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
