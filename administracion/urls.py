@@ -7,7 +7,7 @@ app_name = 'administracion'
 
 # Urls en espanol
 urlpatterns = [
-    url(r'^principal/', admin_main_dashboard, name='main'),
+    url(r'^principal/$', admin_main_dashboard, name='main'),
     url(r'^usuarios/nuevo/', admin_users_create, name='users_add'),
     url(r'^usuarios/editar/(\d+)/', admin_users_edit_form, name='users_edit_form'),
     url(r'^usuarios/editar/guardar/', admin_users_edit, name='users_edit'),
