@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, create_estudio
+from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
+                   create_estudio
 
 app_name = 'captura'
 
