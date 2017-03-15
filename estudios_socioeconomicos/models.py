@@ -1,4 +1,7 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 from familias.models import Familia, Integrante
 from perfiles_usuario.models import Capturista
 
@@ -45,6 +48,30 @@ class Estudio(models.Model):
         return '{familia} status: {status}'.format(
                                 familia=self.familia.__str__(),
                                 status=self.status)
+
+
+@receiver(post_save, sender=Estudio)
+def create_answers_for_study(sender, instance=None, created=False, **kwargs):
+    """ Signal for creating all answers for all questions on a new study.
+
+    This triggers creates all answer objects for all existing questions on a new
+    study. Since we are dealing with de-normalized data for the questions stored
+    in the database, we want to populate all the answers to query them and display
+    them to the user.
+
+    Parameters:
+    -----------
+      instance : estudios_socioeconomicos.models.Estudio
+          The instance of the object whose creation triggered the signal. In this case a
+          Estudio.
+      created : BooleanField
+          A value indicating if this instance is being created for the first time. Or if set
+          to false if it is being edited.
+    """
+    if created:
+        preguntas = Pregunta.objects.all()
+        for pregunta in preguntas:
+            Respuesta.objects.create(estudio=instance, pregunta=pregunta)
 
 
 class Seccion(models.Model):
@@ -152,7 +179,7 @@ class Respuesta(models.Model):
     """
     estudio = models.ForeignKey(Estudio)
     pregunta = models.ForeignKey(Pregunta)
-    elecciones = models.ManyToManyField(OpcionRespuesta, blank=True)
+    eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
     respuesta = models.TextField(blank=True)
@@ -161,12 +188,12 @@ class Respuesta(models.Model):
         """ String representation of the answer.
 
         If the answer has text, we print the text. Otherwise,
-        we concatenate the options chosen for the answer.
+        we print the option chosen for the answer.
         If it is empty, we return a string indicating so.
         """
         if self.respuesta:
             return self.respuesta
-        elif self.elecciones.all():
-            return ', '.join(sorted(map(str, self.elecciones.all())))
+        elif self.eleccion:
+            return str(self.eleccion)
         else:
             return 'No tiene respuesta.'
