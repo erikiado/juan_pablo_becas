@@ -1,3 +1,4 @@
+from django import forms
 from django.db import models
 from core.validators import PHONE_REGEX
 # from administracion.models import Escuela
@@ -64,7 +65,11 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
-    numero_hijos_diferentes_papas = models.IntegerField(default=0)
+    numero_hijos_diferentes_papas = models.IntegerField(default=0,
+                                                        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
+
+
     explicacion_solvencia = models.TextField(blank=True)
     estado_civil = models.CharField(max_length=100,
                                     choices=OPCIONES_ESTADO_CIVIL,
