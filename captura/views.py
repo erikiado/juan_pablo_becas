@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+
 
 from rest_framework import status
 
@@ -8,6 +10,7 @@ from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from familias.models import Familia
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -202,3 +205,16 @@ def capturista_dashboard(request):
             capturista=Capturista.objects.get(user=request.user))
     return render(request, 'captura/dashboard_capturista.html',
                   {'estudios': estudios, 'Estudio': Estudio})
+
+
+@login_required
+@user_passes_test(is_capturista)
+def create_estudio(request):
+    """ This view creates the family, and estudio entities that are
+    required for the creation and fullfillment of every piece of functionality
+    in this app.
+    """
+    if request.method == 'POST':
+        familia = Familia.objects.create()
+        Estudio.objects.create(capturista=request.user.capturista, familia=familia)
+        return redirect(reverse('home'))

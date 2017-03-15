@@ -41,7 +41,7 @@ class Estudio(models.Model):
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
 
-    status = models.TextField(choices=OPCIONES_STATUS)
+    status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
     numero_sae = models.TextField(blank=True)
 
     def __str__(self):
