@@ -202,7 +202,7 @@ def capturista_dashboard(request):
     """
     estudios = Estudio.objects.filter(
             status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
-            capturista=Capturista.objects.get(user=request.user))
+            capturista=Capturista.objects.get(user=request.user)).order_by('status')
     return render(request, 'captura/dashboard_capturista.html',
                   {'estudios': estudios, 'Estudio': Estudio})
 
