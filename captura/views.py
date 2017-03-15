@@ -12,6 +12,7 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from familias.forms import FamiliaForm
 from familias.models import Familia
 
 from .utils import SECTIONS_FLOW, get_study_info_for_section
@@ -225,8 +226,24 @@ def create_estudio(request):
     if request.method == 'POST':
         familia = Familia.objects.create()
         Estudio.objects.create(capturista=request.user.capturista, familia=familia)
-        return redirect(reverse('home'))
+        return redirect(reverse('captura:familia', kwargs={'id_familia': familia.id}))
 
+@login_required
+@user_passes_test(is_capturista)
+def familia(request, id_familia):
+    """ This view allows a capturista to capture the information related
+    to a specific family.
+    """
+    if request.method == 'POST':
+        form = FamiliaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('captura:familia', kwargs={'id_familia': form.instance.pk}))
+            # return redirect(reverse('captura:integrante', kwargs={'familia': form.instance.pk}))
+    else:
+        familia = Familia.objects.get(pk=id_familia)
+        form = FamiliaForm(instance=familia)
+        return render(request, 'captura/familia_form.html', {'form': form, 'familia': familia})
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.
