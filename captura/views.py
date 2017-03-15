@@ -6,7 +6,7 @@ from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
-
+from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
@@ -188,10 +188,17 @@ def capture_study(request, id_estudio, numero_seccion):
 
 
 @login_required
-def estudios(request):
-    """ DUMMY VIEW.
-    This functions is currently just being used to test the redirect
-    from base.
-    TODO: name properly and implement everything
+@user_passes_test(is_capturista)
+def capturista_dashboard(request):
+    """View to render the capturista control dashboard.
+
+       This view shows the list of socio-economic studies that are under review
+       and the button to add a new socio-economic study.
+       Also shows the edit and see feedback buttons to each socio-economic study
+       shown in the list if this exists for the current user (capturist).
     """
-    return render(request, 'administracion/dashboard_users.html')
+    estudios = Estudio.objects.filter(
+            status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
+            capturista=Capturista.objects.get(user=request.user))
+    return render(request, 'captura/dashboard_capturista.html',
+                  {'estudios': estudios, 'Estudio': Estudio})
