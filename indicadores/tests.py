@@ -1,16 +1,12 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 
-class TestViewsIndicadores(StaticLiveServerTestCase):
+class TestViewsIndicadores(TestCase):
     """Integration test suite for testing the views in the app: indicadores.
 
     Test the urls for 'indicadores' which make up the directivo dashboard.
 
-    Attributes
-    ----------
-    browser : Browser
-        Driver to navigate through websites and to run integration tests.
     """
 
     def test_all_indicadores(self):

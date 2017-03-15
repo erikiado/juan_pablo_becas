@@ -1,8 +1,8 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 
-class TestViewsFamilias(StaticLiveServerTestCase):
+class TestViewsFamilias(TestCase):
     """Integration test suite for testing the views in the app: familias.
 
     Test the urls for 'familias' which make up the administration dashboard.

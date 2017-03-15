@@ -154,11 +154,3 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.find_by_id('id_password').first.fill('junipero' if not no_pass else '')
         self.browser.find_by_id('id_rol_usuario').select(role)
         self.browser.find_by_id('btn_send_create_user').click()
-
-    def test_focusmode(self):
-        """ Test for the view of the focus mode.
-
-        """
-        test_url_name = 'administracion:focus'
-        response = self.client.get(reverse(test_url_name), follow=True)
-        self.assertEqual(200, response.status_code)
