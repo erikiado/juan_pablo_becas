@@ -379,4 +379,3 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Estudios pendientes a revisar'))
         self.assertTrue(self.browser.is_text_present('Editar'))
         self.assertTrue(self.browser.is_text_present('Ver retroalimentación'))
-        
