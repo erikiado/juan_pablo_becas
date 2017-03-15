@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
+
 from .forms import UserForm, DeleteUserForm
 from perfiles_usuario.utils import is_administrador
+from estudios_socioeconomicos.models import Estudio
 
 
 @login_required
@@ -11,7 +13,7 @@ def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
     """
-    return render(request, 'administracion/dashboard_main.html')
+    return render(request, 'administracion/dashboard_main.html', {'Estudio': Estudio})
 
 
 @login_required
@@ -24,7 +26,7 @@ def admin_users_dashboard(request):
     create_user_form = UserForm()
 
     return render(request, 'administracion/dashboard_users.html',
-                  {'all_users': users, 'create_user_form': create_user_form})
+                  {'all_users': users, 'create_user_form': create_user_form, 'Estudio': Estudio})
 
 
 @login_required
@@ -92,3 +94,14 @@ def admin_users_delete(request):
         if form.is_valid():
             form.save()
         return redirect('administracion:users')
+
+
+@login_required
+@user_passes_test(is_administrador)
+def list_studies(request, status_study):
+    """ View to list the studies with a specific status according to the button pushed
+
+    """
+    estudios = Estudio.objects.filter(status=status_study)
+    contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
+    return render(request, 'estudios_socioeconomicos/principal.html', contexto)
