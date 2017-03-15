@@ -66,8 +66,12 @@ class Familia(models.Model):
 
     numero_hijos_diferentes_papas = models.IntegerField(default=0)
     explicacion_solvencia = models.TextField(blank=True)
-    estado_civil = models.TextField(choices=OPCIONES_ESTADO_CIVIL, default=OPCION_ESTADO_SOLTERO)
-    localidad = models.TextField(choices=OPCIONES_LOCALIDAD, default=OPCION_LOCALIDAD_JURICA)
+    estado_civil = models.CharField(max_length=100,
+                                    choices=OPCIONES_ESTADO_CIVIL,
+                                    default=OPCION_ESTADO_SOLTERO)
+    localidad = models.CharField(max_length=100,
+                                 choices=OPCIONES_LOCALIDAD,
+                                 default=OPCION_LOCALIDAD_JURICA)
 
 
 class Comentario(models.Model):

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
-                   create_estudio, APIQuestionsInformation
+                   create_estudio, familia, APIQuestionsInformation
 
 app_name = 'captura'
 
@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^crear-estudio/', create_estudio, name='create_estudio'),
     url(r'^api-obtener-informacion-preguntas/', APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
+    url(r'^familia/(?P<id_familia>[0-9]+)', familia, name='familia'),
 ]
