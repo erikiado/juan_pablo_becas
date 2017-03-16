@@ -696,3 +696,7 @@ body {
     width: 12.5%;
   }
 }
+
+.mouseClick{
+  cursor: pointer;
+}
