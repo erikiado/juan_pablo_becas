@@ -1,4 +1,7 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 from familias.models import Familia, Integrante
 from perfiles_usuario.models import Capturista
 
@@ -38,13 +41,37 @@ class Estudio(models.Model):
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
 
-    status = models.TextField(choices=OPCIONES_STATUS)
+    status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
     numero_sae = models.TextField(blank=True)
 
     def __str__(self):
         return '{familia} status: {status}'.format(
                                 familia=self.familia.__str__(),
                                 status=self.status)
+
+
+@receiver(post_save, sender=Estudio)
+def create_answers_for_study(sender, instance=None, created=False, **kwargs):
+    """ Signal for creating all answers for all questions on a new study.
+
+    This triggers creates all answer objects for all existing questions on a new
+    study. Since we are dealing with de-normalized data for the questions stored
+    in the database, we want to populate all the answers to query them and display
+    them to the user.
+
+    Parameters:
+    -----------
+      instance : estudios_socioeconomicos.models.Estudio
+          The instance of the object whose creation triggered the signal. In this case a
+          Estudio.
+      created : BooleanField
+          A value indicating if this instance is being created for the first time. Or if set
+          to false if it is being edited.
+    """
+    if created:
+        preguntas = Pregunta.objects.all()
+        for pregunta in preguntas:
+            Respuesta.objects.create(estudio=instance, pregunta=pregunta)
 
 
 class Seccion(models.Model):
