@@ -40,6 +40,14 @@ class TestAdministracionUrls(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
 
+    def test_focus_mode(self):
+        """ Test for the view of the focus mode.
+
+        """
+        test_url_name = 'administracion:focus'
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
+
 
 class TestUserForm(TestCase):
     """Basic Suite for testing UserForm.

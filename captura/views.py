@@ -2,10 +2,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-
-
 from rest_framework import status
-
 from perfiles_usuario.utils import is_capturista
 from estudios_socioeconomicos.forms import RespuestaForm
 from perfiles_usuario.models import Capturista
@@ -109,6 +106,60 @@ def remove_answer_study(request):
 
 @login_required
 @user_passes_test(is_capturista)
+def pending_studies(request):
+    """ View to see the list of pending studies.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+
+    """
+
+    return render(request, 'administracion/dashboard_users.html')
+
+
+@login_required
+@user_passes_test(is_capturista)
+def show_family(request):
+    """ View to see the members of the family of a certain study.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+
+    return render(request, 'captura/family.html')
+
+
+@login_required
+@user_passes_test(is_capturista)
+def show_economy(request):
+    """ View to see the ingresos and egresos of the family.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+
+    return render(request, 'captura/economy.html')
+
+
+@login_required
+@user_passes_test(is_capturista)
+def show_housing(request):
+    """ View to see data about the vivienda of the family.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+
+    return render(request, 'captura/housing.html')
+
+
+@login_required
+@user_passes_test(is_capturista)
+def cycle_sections(request):
+    """ View to cycle through the sections above.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+
+    return render(request, 'captura/sections.html')
+
+
 def capture_study(request, id_estudio, numero_seccion):
     """ View for filling the non statistic parts of a study.
 

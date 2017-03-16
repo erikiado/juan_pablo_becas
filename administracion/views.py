@@ -12,6 +12,8 @@ from estudios_socioeconomicos.models import Estudio
 def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
+    The content to be shown in this view is the
+    list of Estudios (familias).
     """
     return render(request, 'administracion/dashboard_main.html', {'Estudio': Estudio})
 
@@ -40,6 +42,17 @@ def admin_users_create(request):
         if forma.is_valid():
             forma.save()
             return redirect('administracion:users')
+
+
+@login_required
+@user_passes_test(is_administrador)
+def admin_focus_mode(request):
+    """ View to show the focus mode of a certain study.
+
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+    return render(request, 'administracion/focus_mode.html')
 
 
 @login_required
