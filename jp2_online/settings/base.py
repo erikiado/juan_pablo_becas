@@ -36,7 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
-    'tosp_auth.apps.TospAuthConfig'
+    'becas.apps.BecasConfig',
+    'familias.apps.FamiliasConfig',
+    'indicadores.apps.IndicadoresConfig',
+    'tosp_auth.apps.TospAuthConfig',
+    'administracion.apps.AdministracionConfig',
+    'perfiles_usuario.apps.PerfilesUsuarioConfig',
+    'estudios_socioeconomicos.apps.EstudiosSocioeconomicosConfig',
+    'captura.apps.CapturaConfig',
+    'core.apps.CoreConfig',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'jp2_online.urls'
@@ -66,6 +79,24 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
 
 WSGI_APPLICATION = 'jp2_online.wsgi.application'
 
@@ -118,6 +149,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# CROSS ORIGIN
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -140,3 +175,5 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = 'tosp_auth:login'
