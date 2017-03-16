@@ -9,7 +9,6 @@ def reinscription_studies_left(request):
     """ View to see the list of studies that require to
     be marked for reinscription and therefore assing a new
     scolarship for the student.
-    
     TODO. This is a dummy view, therefore it may
     be changed in the future.
 

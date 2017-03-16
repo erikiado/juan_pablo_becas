@@ -19,7 +19,7 @@ def families_directory(request):
 @user_passes_test(is_administrador)
 def family_member(request):
     """ View to show the detail of a family member.
-    
+
     TODO. This is a dummy view, therefore it may
     be changed in the future.
     """

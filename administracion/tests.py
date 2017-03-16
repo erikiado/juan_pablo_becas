@@ -40,7 +40,6 @@ class TestAdministracionUrls(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
 
-    
     def test_focusmode(self):
         """ Test for the view of the focus mode.
 
