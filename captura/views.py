@@ -238,5 +238,5 @@ class APIQuestionsInformation(generics.ListAPIView):
         Seccion, Subseccion, Preguntas, OpcionRespuesta
     """
     serializer_class = SeccionSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Seccion.objects.all()
