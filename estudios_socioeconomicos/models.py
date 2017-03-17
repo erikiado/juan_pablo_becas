@@ -101,7 +101,7 @@ class Subseccion(models.Model):
     numero : IntegerField
         The number of the section.
     """
-    seccion = models.ForeignKey(Seccion)
+    seccion = models.ForeignKey(Seccion, related_name='subsecciones')
 
     nombre = models.TextField()
     numero = models.IntegerField()
@@ -126,7 +126,7 @@ class Pregunta(models.Model):
     orden : IntegerField
         The relative order of the question within the subsection.
     """
-    subseccion = models.ForeignKey(Subseccion, null=True)
+    subseccion = models.ForeignKey(Subseccion, null=True, related_name='preguntas')
 
     texto = models.TextField()
     descripcion = models.TextField(blank=True)
@@ -146,7 +146,7 @@ class OpcionRespuesta(models.Model):
     texto : TextField
         The option for answer itself.
     """
-    pregunta = models.ForeignKey(Pregunta)
+    pregunta = models.ForeignKey(Pregunta, related_name='opciones_pregunta')
 
     texto = models.TextField()
 

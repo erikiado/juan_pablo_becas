@@ -3,14 +3,16 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-
+from rest_framework import generics, permissions
 from rest_framework import status
 
 from perfiles_usuario.utils import is_capturista
-from estudios_socioeconomicos.forms import RespuestaForm
 from perfiles_usuario.models import Capturista
+from estudios_socioeconomicos.forms import RespuestaForm
+from estudios_socioeconomicos.serializers import SeccionSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from familias.models import Familia
+
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -186,6 +188,7 @@ def capture_study(request, id_estudio, numero_seccion):
     context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
+    context['Estudio'] = Estudio
 
     return render(request, 'captura/captura_estudio.html', context)
 
@@ -218,3 +221,22 @@ def create_estudio(request):
         familia = Familia.objects.create()
         Estudio.objects.create(capturista=request.user.capturista, familia=familia)
         return redirect(reverse('home'))
+
+
+class APIQuestionsInformation(generics.ListAPIView):
+    """ API to get all information for question, section and subsections.
+
+        This view is a REST endpoint for the offline application to
+        get all the logic for creating studies.
+
+        Retrieves all objects from database.
+
+        Returns
+        --------
+
+        Returns a JSON object with nested objects in this order:
+        Seccion, Subseccion, Preguntas, OpcionRespuesta
+    """
+    serializer_class = SeccionSerializer
+    permission_classes = (permissions.AllowAny,)
+    queryset = Seccion.objects.all()
