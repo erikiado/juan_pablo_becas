@@ -1,0 +1,13 @@
+{% extends "administracion/dashboard_base.html" %}
+{% load staticfiles %}
+{% block dashboard_body %}
+
+{% if feedback_form %}
+  <form action="{% url 'administracion:reject_study' %}" method="POST" >
+    {% csrf_token %}
+    {{ feedback_form }}
+    <button type="submit">Rechazar</button>
+  </form>
+{% endif %}
+
+{% endblock %}
