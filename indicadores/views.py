@@ -12,3 +12,13 @@ def all_indicadores(request):
     TODO: name properly and implement everything
     """
     return render(request, 'administracion/dashboard_users.html')
+
+
+@login_required
+def show_indicator(request):
+    """ View to see the detail of an indicator.
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+
+    return render(request, 'indicadores/indicator_detail.html')

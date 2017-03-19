@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^captura/', include('captura.urls')),
     url(r'^indicadores/', include('indicadores.urls')),
     url(r'^becas/', include('becas.urls')),
+    url(r'^familias/', include('familias.urls')),
 ]
