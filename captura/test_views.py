@@ -363,7 +363,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
                      status=Estudio.REVISION, numero_sae=2)
         e2.save()
-
         test_url_name = 'captura:estudios'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         # Check for nav_bar partial
@@ -375,7 +374,5 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         # Check that the following text isn't present if exists any socio-economic study
         self.assertFalse(self.browser.is_text_present('No hay registro'))
         # Check that the following texts are present if exists any socio-economic study
-        self.assertTrue(self.browser.is_text_present('Estudios en revisión'))
-        self.assertTrue(self.browser.is_text_present('Estudios pendientes a revisar'))
         self.assertTrue(self.browser.is_text_present('Editar'))
-        self.assertTrue(self.browser.is_text_present('Ver retroalimentación'))
+        self.assertTrue(self.browser.is_text_present('Ver Retroalimentación'))

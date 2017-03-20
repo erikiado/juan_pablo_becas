@@ -203,11 +203,15 @@ def capturista_dashboard(request):
        Also shows the edit and see feedback buttons to each socio-economic study
        shown in the list if this exists for the current user (capturist).
     """
+    context = {}
+
     estudios = Estudio.objects.filter(
             status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
-            capturista=Capturista.objects.get(user=request.user))
-    return render(request, 'captura/dashboard_capturista.html',
-                  {'estudios': estudios, 'Estudio': Estudio})
+            capturista=Capturista.objects.get(user=request.user)).order_by('status')
+
+    context['estudios'] = estudios
+    context['Estudio'] = Estudio
+    return render(request, 'captura/dashboard_capturista.html', context)
 
 
 @login_required
