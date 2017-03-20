@@ -92,7 +92,7 @@ class Comentario(models.Model):
     - Determine if this model should have a relationship with an user model.
     """
 
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='comentario_familia')
     fecha = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     texto = models.TextField()
 
@@ -168,7 +168,7 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),
                                (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
                                (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='integrante_familia')
     nombres = models.TextField()
     apellidos = models.TextField()
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
@@ -210,7 +210,7 @@ class Alumno(models.Model):
     administracion app.
     """
 
-    integrante = models.OneToOneField(Integrante)
+    integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
     # escuela = models.ForeignKey(Escuela)
 
@@ -243,7 +243,7 @@ class Tutor(models.Model):
     OPCIONES_RELACION = ((OPCION_RELACION_MADRE, 'Madre'),
                          (OPCION_RELACION_PADRE, 'Padre'),
                          (OPCION_RELACION_TUTOR, 'Tutor'))
-    integrante = models.OneToOneField(Integrante)
+    integrante = models.OneToOneField(Integrante, related_name='tutor_integrante')
     relacion = models.TextField(choices=OPCIONES_RELACION)
 
     def __str__(self):

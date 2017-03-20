@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
+from familias.serializers import FamiliaSerializer
+from familias.models import Familia
+
 from .models import Pregunta, Subseccion, Seccion, OpcionRespuesta
+from .models import Estudio, Respuesta
+from .utils import save_foreign_relashionship, update_foreign_relashionsip
 
 
 class OpcionRespuestaSerializer(serializers.ModelSerializer):
@@ -63,3 +68,101 @@ class SeccionSerializer(serializers.ModelSerializer):
             'nombre',
             'numero',
             'subsecciones')
+
+
+class RespuestaSerializer(serializers.ModelSerializer):
+    """ Serializer for using .models.Subseccion objects
+        in REST endpoint.
+    """
+    class Meta:
+        model = Respuesta
+        fields = (
+            'estudio',
+            'pregunta',
+            'eleccion',
+            'respuesta')
+
+        read_only_fields = ('estudio', )
+
+
+class EstudioSerializer(serializers.ModelSerializer):
+    """ Serializer to represent a .models.Comentario instance
+        through a REST endpoint for the offline application
+        to submit information.
+    """
+    respuesta_estudio = RespuestaSerializer(many=True, allow_null=True)
+    familia = FamiliaSerializer()
+
+    class Meta:
+        model = Estudio
+        fields = (
+            'id',
+            'familia',
+            'status',
+            'capturista',
+            'respuesta_estudio')
+
+        read_only_fields = ('id', 'status', 'capturista')
+
+    def create(self, capturista):
+        """ This function overides the default behaviour for creating
+            an object through a serializer.
+
+            Django Rest Framework does not implement saving nested
+            serializers.
+
+            Estudio object depends on a Familia insance. This function
+            first creates the familia, then creates the Estudio and
+            finally creates all answers that depend on the Estudio.
+
+            Notes
+            -----
+            Saves the Estudio instance using .save_base(raw=True). This
+            is required because Estudio has a Trigger required for online
+            client to create empy answers for any new study. The offline
+            client does not require this functionality.
+        """
+        familia_data = self.validated_data.pop('familia')
+        respuestas = self.validated_data.pop('respuesta_estudio')
+        instance = save_foreign_relashionship([familia_data], FamiliaSerializer)
+
+        self.validated_data['familia'] = instance[0]
+        self.validated_data['capturista'] = capturista
+        estudio = Estudio(**self.validated_data)
+        estudio.save_base(raw=True)  # Do not call Trigger (.models)
+
+        for respuesta in respuestas:
+            respuesta['estudio'] = estudio
+            Respuesta.objects.create(**respuesta)
+
+        return estudio
+
+    def update(self):
+        """ This function overides the default behaviour for creating
+            an object through a serializer.
+
+            Django Rest Framework does not implement saving nested
+            serializers.
+
+            Updates an Estudio intance and all objects related to it
+            when an offline clients submits an update.
+
+            Deletes all existing answers and saves with the new
+            information from the stuyd. This is because offline client
+            can delete, modify or add a given number of answers and will
+            always send the all.
+        """
+        familia = self.validated_data.pop('familia')
+        respuestas = self.validated_data.pop('respuesta_estudio')
+        familia_data = self.data.get('familia')
+
+        update_foreign_relashionsip([familia_data], FamiliaSerializer, Familia, [familia])
+        Estudio.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+
+        Respuesta.objects.filter(estudio=self.instance).delete()
+
+        for respuesta in respuestas:
+            respuesta['estudio'] = self.instance
+            Respuesta.objects.create(**respuesta)
+
+        return Estudio.objects.get(pk=self.instance.pk)

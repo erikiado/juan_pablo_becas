@@ -3,11 +3,14 @@ from django.contrib.auth.models import User
 
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 
-from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion
-from perfiles_usuario.models import Capturista
+from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
+from estudios_socioeconomicos.models import Respuesta
 from estudios_socioeconomicos.load import load_data
+from familias.models import Familia, Comentario, Integrante
+from perfiles_usuario.models import Capturista
 
-from .views import APIQuestionsInformation
+
+from .views import APIQuestionsInformation, APIUploadRetrieveStudy
 
 
 class TestAPIStudyMetaInformationRetrieval(APITestCase):
@@ -68,3 +71,369 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
         self.assertEqual(num_preguntas, Pregunta.objects.all().count())
         self.assertEqual(num_subsecciones, Subseccion.objects.all().count())
         self.assertEqual(num_secciones, Seccion.objects.all().count())
+
+
+class TestAPIUploadRetrieveStudy(APITestCase):
+    """ Test case for API REST endpoint with CRUD
+        operations on a Study.
+    """
+    def setUp(self):
+        """ Creates users for testing study.
+            Sets that study data that will be used through
+            the tests.
+        """
+        self.factory = APIRequestFactory()
+        self.test_url_name = 'captura:estudio'
+
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        self.user = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.capturista = Capturista.objects.create(user=self.user)
+        self.capturista.save()
+
+        self.unauthorized_user = User.objects.create_user(
+            username='elbukok',
+            email='elbukok@junipero.sas',
+            password=test_password,
+            first_name='Charles',
+            last_name='Bukowski')
+
+        self.unauthorized_capturista = Capturista.objects.create(user=self.unauthorized_user)
+        self.unauthorized_capturista.save()
+
+        self.view = APIUploadRetrieveStudy.as_view({
+                'get': 'list',
+                'post': 'create',
+                'put': 'update',
+                })
+
+        load_data()
+
+        self.study_data = {
+            'familia': {
+                'numero_hijos_diferentes_papas': 10,
+                'explicacion_solvencia': 'Trabajando Duro',
+                'estado_civil': 'soltero',
+                'localidad': 'poblado_jurica',
+                'comentario_familia': [
+                    {
+                        'fecha': '2017-03-19T19:18:48.158466Z',
+                        'texto': 'Trabajan bien'
+                    },
+                    {
+                        'fecha': '2017-03-19T19:18:48.160690Z',
+                        'texto': 'Necesitan la beca'
+                    }
+                ],
+                'integrante_familia': [
+                    {
+                        'nombres': 'Lao',
+                        'apellidos': 'Tse',
+                        'telefono': '',
+                        'correo': '',
+                        'nivel_estudios': '5_grado',
+                        'fecha_de_nacimiento': '2003-03-19',
+                        'alumno_integrante': {
+                            'activo': True
+                        },
+                        'tutor_integrante': None
+                    },
+                    {
+                        'nombres': 'Telma',
+                        'apellidos': 'Ibarra',
+                        'telefono': '',
+                        'correo': '',
+                        'nivel_estudios': 'universidad',
+                        'fecha_de_nacimiento': '2017-03-19',
+                        'alumno_integrante': None,
+                        'tutor_integrante': {
+                            'relacion': 'madre'
+                        }
+                    },
+                    {
+                        'nombres': 'Herman',
+                        'apellidos': 'Hesse',
+                        'telefono': '',
+                        'correo': '',
+                        'nivel_estudios': 'doctorado',
+                        'fecha_de_nacimiento': '2017-03-19',
+                        'alumno_integrante': None,
+                        'tutor_integrante': {
+                            'relacion': 'tutor'
+                        }
+                    }
+                    ]
+                }, 'respuesta_estudio': [
+                    {
+                        'pregunta': Pregunta.objects.all()[0].id,
+                        'eleccion': None,
+                        'respuesta': ''
+                    },
+                    {
+                        'pregunta': Pregunta.objects.all()[1].id,
+                        'eleccion': None,
+                        'respuesta': ''
+                    }
+                ], 'status': Estudio.BORRADOR
+            }
+
+        self.initial_studies = 0
+        data = {'username': test_username, 'password': test_password}
+
+        response = self.client.post(
+            reverse('perfiles_usuario:obtain_auth_token'),
+            data,
+            format='json')
+
+        self.token = response.data['token']
+
+    def create_base_study(self):
+        """ This function creates a new study using the REST API
+            endpoint. Most cases will need to create a study to
+            test editing certain information, this allows us to
+            keep it DRY.
+
+            Returns
+            ----------
+                Response
+                    The response object with the data of the
+                    newly created object.
+
+            Notes
+            ---------
+            With this every function that calls this asserts a
+            new study is being generated.
+        """
+        self.assertEqual(Estudio.objects.all().count(), self.initial_studies)
+        url = reverse('{}-list'.format(self.test_url_name))
+        request = self.factory.post(url, self.study_data)
+        force_authenticate(request, user=self.user, token=self.token)
+        response = self.view(request)
+        self.assertEqual(Estudio.objects.all().count(), self.initial_studies+1)
+
+        return response
+
+    def update_existing_study(self, data, pk):
+        """ This function updates an existing study using the REST API
+            endpoint. Most cases will need to update a study to
+            test editing certain information, this allows us to
+            keep it DRY.
+
+            Parameters
+            ----------
+            data : dictionary
+                Dictionary with study data to modify
+            pk : int
+                The id of the instance that will be modified.
+
+        """
+        url = reverse('{}-detail'.format(self.test_url_name), kwargs={'pk': pk})
+        request = self.factory.put(url, data)
+        force_authenticate(request, user=self.user, token=self.token)
+
+        return self.view(request, pk)
+
+    def test_upload_study(self):
+        """ Test that a study can be uploaded using a REST endpoint
+            and that the nested information is being saved to the
+            database.
+        """
+        response = self.create_base_study()
+
+        familia = Familia.objects.get(pk=response.data['familia']['id'])
+
+        self.assertEqual(
+            self.study_data['familia']['numero_hijos_diferentes_papas'],
+            familia.numero_hijos_diferentes_papas)
+
+        self.assertEqual(
+            self.study_data['familia']['explicacion_solvencia'],
+            familia.explicacion_solvencia)
+
+        comentarios = Comentario.objects.filter(familia=familia)
+
+        comentarios_request = self.study_data['familia']['comentario_familia']
+
+        for coment_bd, coment_rq in zip(comentarios, comentarios_request):
+            self.assertEqual(coment_bd.texto, coment_rq['texto'])
+
+        integrantes = Integrante.objects.filter(familia=familia)
+
+        for integrante in self.study_data['familia']['integrante_familia']:
+            int_bd = integrantes.filter(nombres=integrante['nombres'])[0]
+            self.assertEqual(int_bd.apellidos, integrante['apellidos'])
+
+    def test_update_study(self):
+        """ Tests that the information in existing study can be updated
+            using a REST endpoint.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+
+        change_study = response.data
+        change_study['familia']['numero_hijos_diferentes_papas'] = 1000
+
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(Estudio.objects.all().count(), self.initial_studies+1)
+        self.assertEqual(response.data['familia']['numero_hijos_diferentes_papas'], 1000)
+
+    def test_remove_integrante(self):
+        """ Tests that an integrante can be removed from a study
+            using a REST endpoint.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+        change_study = response.data
+        del change_study['familia']['integrante_familia'][0]
+
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(len(response.data['familia']['integrante_familia']), 2)
+
+    def test_agregar_integrante(self):
+        """ Test that an integrante can be added to a study
+            using a REST endpoint.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+        change_study = response.data
+
+        integrantes_nuevos = [
+            {
+                'nombres': 'juan',
+                'apellidos': 'rulfo',
+                'telefono': '',
+                'correo': '',
+                'nivel_estudios': '4_grado',
+                'fecha_de_nacimiento': '2002-03-19',
+                'alumno_integrante': {
+                    'activo': True
+                },
+                'tutor_integrante': None
+            },
+            {
+                'nombres': 'Conchita',
+                'apellidos': 'Felix',
+                'telefono': '',
+                'correo': '',
+                'nivel_estudios': 'doctorado',
+                'fecha_de_nacimiento': '1950-03-19',
+                'alumno_integrante': None,
+                'tutor_integrante': {
+                    'relacion': 'tutor'
+                }
+            }
+        ]
+
+        for integrante_nuevo in integrantes_nuevos:
+            change_study['familia']['integrante_familia'].append(integrante_nuevo)
+
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(len(response.data['familia']['integrante_familia']), 5)
+
+    def test_remove_comentario(self):
+        """ Test that a Comentario can be removed from a study
+            using a REST endpoint.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+        change_study = response.data
+        del change_study['familia']['comentario_familia'][0]
+
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(len(response.data['familia']['comentario_familia']), 1)
+
+    def test_add_respuesta(self):
+        """ Tests that an answer can be added to a study using a REST
+            endpoint.
+        """
+        self.assertEqual(Respuesta.objects.all().count(), 0)
+
+        response = self.create_base_study()
+
+        num_answers = Respuesta.objects.all().count()
+
+        self.assertEqual(num_answers, len(response.data['respuesta_estudio']))
+
+        change_study = response.data
+
+        change_study['respuesta_estudio'].append({
+                'pregunta': Pregunta.objects.all()[3].id,
+                'eleccion': None,
+                'respuesta': ''
+            })
+
+        study_id = response.data['id']
+
+        response = self.update_existing_study(change_study, study_id)
+        self.assertEqual(num_answers + 1, len(response.data['respuesta_estudio']))
+
+    def test_remove_respuesta(self):
+        """ Tests that an answer can be removed from a study using a
+            REST endpoint.
+        """
+        response = self.create_base_study()
+
+        num_answers = Respuesta.objects.all().count()
+        study_id = response.data['id']
+        change_study = response.data
+        del change_study['respuesta_estudio']
+
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(num_answers - 1, len(response.data['respuesta_estudio']))
+
+    def test_unauthorized_access_listing(self):
+        """ Test that a user can not access studies from another user.
+        """
+        response = self.create_base_study()
+
+        data = {'username': 'elbukok', 'password': 'vacalalo'}
+
+        response = self.client.post(
+            reverse('perfiles_usuario:obtain_auth_token'),
+            data,
+            format='json')
+
+        request = self.factory.get(reverse('{}-list'.format(self.test_url_name)))
+        force_authenticate(request, user=self.unauthorized_user, token=response.data['token'])
+        response = self.view(request)
+
+        self.assertEqual(response.data['detail'], 'Not found.')
+
+    def test_unauthorized_access_study(self):
+        """ Test that a user can not access a specific study from another user.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+        self.assertEqual(Estudio.objects.all().count(), self.initial_studies + 1)
+
+        data = {'username': 'elbukok', 'password': 'vacalalo'}
+        response = self.client.post(
+            reverse('perfiles_usuario:obtain_auth_token'),
+            data,
+            format='json')
+
+        token = response.data['token']
+
+        url = reverse('{}-detail'.format(self.test_url_name), kwargs={'pk': study_id})
+        request = self.factory.get(url)
+        force_authenticate(request, user=self.unauthorized_user, token=token)
+        response = self.view(request)
+
+        self.assertEqual(response.data['detail'], 'Not found.')
