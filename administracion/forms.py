@@ -132,7 +132,7 @@ class FeedbackForm(forms.ModelForm):
         the feedback.
 
         If the study was under revision from the admin, it goes to
-        rejected. Conversely, it can fo from rejected to revision.
+        rejected. Conversely, it can go from rejected to revision.
         """
         feedback = super(FeedbackForm, self).save(*args, **kwargs)
         estudio = feedback.estudio
