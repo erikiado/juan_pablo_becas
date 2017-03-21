@@ -65,10 +65,7 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
-    numero_hijos_diferentes_papas = models.IntegerField(default=0,
-                                                        widget=forms.NumberInput(attrs={'class': 'form-control'}))
-
-
+    numero_hijos_diferentes_papas = models.IntegerField(default=0)
 
     explicacion_solvencia = models.TextField(blank=True)
     estado_civil = models.CharField(max_length=100,
