@@ -47,7 +47,7 @@
                             {% else %}
                             {{estudio.status}}
                             {% endif %}</td>
-                        <td><a class="btn btn-primary btn-circle-sm" href="#"><span class="glyphicon glyphicon-circle-arrow-right"></span></a></td>
+                        <td><a class="btn btn-primary btn-circle-sm" href="{% url 'administracion:focus_mode' estudio.id %}"><span class="glyphicon glyphicon-circle-arrow-right"></span></a></td>
                       </tr>
                   {% endfor %}
                   </tbody>
