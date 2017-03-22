@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
 
-from .forms import UserForm, DeleteUserForm
+from .forms import UserForm, DeleteUserForm, FeedbackForm
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 
@@ -105,3 +105,32 @@ def list_studies(request, status_study):
     estudios = Estudio.objects.filter(status=status_study)
     contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def focus_mode(request, study_id):
+    """ View to show the detail of a study.
+
+    TODO: This should be filled with all the info of the study.
+    """
+    context = {'Estudio': Estudio}  # this should be changed once we correct the bug
+    estudio = Estudio.objects.get(pk=study_id)
+    if estudio.status == Estudio.REVISION:
+        feedback_form = FeedbackForm(initial={'estudio': estudio,
+                                              'usuario': request.user})
+        context['feedback_form'] = feedback_form
+    return render(request, 'administracion/focus_mode.html', context)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def reject_study(request):
+    """ View to reject a study.
+
+    """
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('administracion:main_estudios', Estudio.RECHAZADO)

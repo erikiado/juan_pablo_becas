@@ -5,6 +5,8 @@ from django.contrib.auth.models import User, Group
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
+from captura.models import Retroalimentacion
+from estudios_socioeconomicos.models import Estudio
 
 
 class UserModelForm(forms.ModelForm):
@@ -108,3 +110,35 @@ class DeleteUserForm(forms.Form):
         data = self.cleaned_data
         user_instance = User.objects.get(pk=data['user_id'])
         user_instance.delete()
+
+
+class FeedbackForm(forms.ModelForm):
+    """ Form to save the feedback given on a study.
+
+    Note that we expect the study and user pre-filled when
+    creating this form.
+    """
+
+    class Meta:
+        model = Retroalimentacion
+        fields = ['estudio', 'usuario', 'descripcion']
+        widgets = {
+            'estudio': forms.HiddenInput(),
+            'usuario': forms.HiddenInput()
+        }
+
+    def save(self, *args, **kwargs):
+        """ Change the status of the study after submiting
+        the feedback.
+
+        If the study was under revision from the admin, it goes to
+        rejected. Conversely, it can go from rejected to revision.
+        """
+        feedback = super(FeedbackForm, self).save(*args, **kwargs)
+        estudio = feedback.estudio
+        if estudio.status == Estudio.REVISION:
+            estudio.status = Estudio.RECHAZADO
+        elif estudio.status == Estudio.RECHAZADO:
+            estudio.status = Estudio.REVISION
+        estudio.save()
+        return feedback

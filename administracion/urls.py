@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from .views import admin_main_dashboard, admin_users_dashboard, \
                    admin_users_create, admin_users_edit, admin_users_edit_form, \
-                   admin_users_delete_modal, admin_users_delete, list_studies
+                   admin_users_delete_modal, admin_users_delete, list_studies, \
+                   focus_mode, reject_study
 
 app_name = 'administracion'
 
@@ -15,4 +16,6 @@ urlpatterns = [
     url(r'^usuarios/borrar/confirmar/', admin_users_delete, name='users_delete'),
     url(r'^usuarios/', admin_users_dashboard, name='users'),
     url(r'^principal/(?P<status_study>[\w\-]+)/$', list_studies, name='main_estudios'),
+    url(r'^principal/(?P<study_id>[\w\-]+)/detalle', focus_mode, name='focus_mode'),
+    url(r'^estudio/rechazar/$', reject_study, name='reject_study'),
 ]

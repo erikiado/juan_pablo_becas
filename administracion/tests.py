@@ -4,7 +4,9 @@ from django.contrib.auth.models import User, Group
 
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
-from .forms import UserForm, DeleteUserForm
+from familias.models import Familia
+from estudios_socioeconomicos.models import Estudio
+from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
 class TestAdministracionUrls(TestCase):
@@ -152,3 +154,93 @@ class TestDeleteUserForm(TestCase):
         data_form['user_id'] = 'id falso'
         form = DeleteUserForm(data_form)
         self.assertFalse(form.is_valid())
+
+
+class TestFeedBack(TestCase):
+    """ Suite to test Feedback Form and related urls.
+
+    """
+
+    def setUp(self):
+        test_username = 'thelma'
+        test_password = 'junipero'
+        self.admin = User.objects.create_user(
+            username=test_username, email='juan@pablo.com', password=test_password,
+            first_name='Thelma', last_name='Thelmapellido')
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(self.admin)
+        administrators.save()
+
+        estebes = User.objects.create_user(
+            username='estebes', email='juan@example.com', password='contrasena',
+            first_name='Estebes', last_name='glez')
+        capturista = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
+        capturista.user_set.add(estebes)
+        capturista.save()
+        self.capturista = Capturista.objects.create(user=estebes)
+
+        solvencia = 'No tienen dinero'
+        estado = Familia.OPCION_ESTADO_SOLTERO
+        localidad = Familia.OPCION_LOCALIDAD_JURICA
+        f1 = Familia.objects.create(numero_hijos_diferentes_papas=1,
+                                    explicacion_solvencia=solvencia,
+                                    estado_civil=estado, localidad=localidad)
+
+        self.study = Estudio.objects.create(capturista=self.capturista, familia=f1,
+                                            status=Estudio.REVISION)
+
+    def test_url(self):
+        """ Check that the url for focus mode of the study exists.
+
+        """
+        self.client.login(username='thelma', password='junipero')
+        test_url_name = 'administracion:focus_mode'
+        response = self.client.get(reverse(test_url_name,
+                                           kwargs={'study_id': self.study.id}), follow=True)
+        self.assertEqual(200, response.status_code)
+
+    def test_valid_form(self):
+        """ Check that the form is valid with correct data.
+
+        """
+        form = FeedbackForm({'estudio': self.study.id,
+                             'usuario': self.admin.id,
+                             'descripcion': 'nooooo'})
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_form(self):
+        """ Check that the form is invalid with incorrect data.
+
+        """
+        form = FeedbackForm({'estudio': -1,
+                             'usuario': self.admin.id,
+                             'descripcion': 'nooooo'})
+        self.assertFalse(form.is_valid())
+
+    def test_change_status_admin(self):
+        """ Check that the form changes the status of a study.
+
+        When the admin submits feedback on a study, it should change to rejected.
+        """
+        form = FeedbackForm({'estudio': self.study.id,
+                             'usuario': self.admin.id,
+                             'descripcion': 'nooooo'})
+        self.assertTrue(form.is_valid())
+        form.save()
+        status = Estudio.objects.get(id=self.study.id).status
+        self.assertEqual(status, Estudio.RECHAZADO)
+
+    def test_change_status_capturista(self):
+        """ Check that the form changes the status of a study.
+
+        When the capturista submits feedback on a study, it should change to revision.
+        """
+        self.study.status = Estudio.RECHAZADO
+        self.study.save()
+        form = FeedbackForm({'estudio': self.study.id,
+                             'usuario': self.capturista.user.id,
+                             'descripcion': 'siiiii'})
+        self.assertTrue(form.is_valid())
+        form.save()
+        status = Estudio.objects.get(id=self.study.id).status
+        self.assertEqual(status, Estudio.REVISION)
