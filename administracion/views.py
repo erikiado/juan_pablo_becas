@@ -105,3 +105,14 @@ def list_studies(request, status_study):
     estudios = Estudio.objects.filter(status=status_study)
     contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def admin_focus_mode(request):
+    """ View to show the focus mode of a certain study.
+
+    TODO. This is a dummy view, therefore it may
+    be changed in the future.
+    """
+    return render(request, 'administracion/focus_mode.html')
