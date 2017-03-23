@@ -1,7 +1,6 @@
-from django import forms
 from django.db import models
 from core.validators import PHONE_REGEX
-# from administracion.models import Escuela
+from administracion.models import Escuela
 
 
 class Familia(models.Model):
@@ -174,13 +173,15 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),
                                (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
                                (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
-    familia = models.ForeignKey(Familia, related_name='integrante_familia')
-    nombres = models.TextField()
-    apellidos = models.TextField()
+    familia = models.ForeignKey(Familia)
+    nombres = models.CharField(max_length=200, default='Javier')
+    apellidos = models.CharField(max_length=200, default='López')
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
-    nivel_estudios = models.TextField(choices=OPCIONES_NIVEL_ESTUDIOS)
-    fecha_de_nacimiento = models.DateField()
+    nivel_estudios = models.CharField(max_length=200,
+                                      choices=OPCIONES_NIVEL_ESTUDIOS,
+                                      default=OPCION_ESTUDIOS_6)
+    fecha_de_nacimiento = models.DateField(default='1996-02-26')
     activo = models.BooleanField(default=True)
 
     def __str__(self):
@@ -218,7 +219,8 @@ class Alumno(models.Model):
 
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
-    # escuela = models.ForeignKey(Escuela)
+    numero_sae = models.CharField(max_length=30)
+    escuela = models.ForeignKey(Escuela)
 
     def __str__(self):
         """ Returns the name of the student
@@ -249,8 +251,9 @@ class Tutor(models.Model):
     OPCIONES_RELACION = ((OPCION_RELACION_MADRE, 'Madre'),
                          (OPCION_RELACION_PADRE, 'Padre'),
                          (OPCION_RELACION_TUTOR, 'Tutor'))
+
     integrante = models.OneToOneField(Integrante, related_name='tutor_integrante')
-    relacion = models.TextField(choices=OPCIONES_RELACION)
+    relacion = models.CharField(max_length=75, choices=OPCIONES_RELACION)
 
     def __str__(self):
         """ Return the name of the tutor.

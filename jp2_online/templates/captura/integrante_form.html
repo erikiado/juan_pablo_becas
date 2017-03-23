@@ -1,0 +1,15 @@
+<form action="{% url 'captura:integrante' integrante.id %}" method="post">
+  {% csrf_token %}
+  {{ forms.integrante_form.non_field_errors }}
+  {{ forms.integrante_form }}
+
+  {% if  forms.form_alumno %}
+  	<hr>
+  	{{ forms.form_alumno }}
+  {% endif %}
+  {% if forms.form_tutor %}
+  	<hr>
+  	{{ forms.form_tutor}}
+  {% endif %}
+  <input type="submit" value="Submit" />
+</form>
