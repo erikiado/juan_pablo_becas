@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -11,9 +12,9 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
-from familias.forms import FamiliaForm
-from familias.models import Familia
-
+from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
+from familias.models import Familia, Integrante, Alumno, Tutor
+from administracion.models import Escuela
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -227,6 +228,7 @@ def create_estudio(request):
         Estudio.objects.create(capturista=request.user.capturista, familia=familia)
         return redirect(reverse('captura:familia', kwargs={'id_familia': familia.id}))
 
+
 @login_required
 @user_passes_test(is_capturista)
 def familia(request, id_familia):
@@ -234,15 +236,105 @@ def familia(request, id_familia):
     to a specific family.
     """
     if request.method == 'POST':
-        form = FamiliaForm(request.POST)
+        instance = get_object_or_404(Familia, pk=id_familia)
+        form = FamiliaForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            return redirect(reverse('captura:familia', kwargs={'id_familia': form.instance.pk}))
-            # return redirect(reverse('captura:integrante', kwargs={'familia': form.instance.pk}))
+            return redirect(reverse('captura:integrantes',
+                                    kwargs={'id_familia': form.instance.pk}))
     else:
         familia = Familia.objects.get(pk=id_familia)
         form = FamiliaForm(instance=familia)
         return render(request, 'captura/familia_form.html', {'form': form, 'familia': familia})
+
+
+@login_required
+@user_passes_test(is_capturista)
+def integrantes(request, id_familia):
+    """ This view allows a capturista to see all the information about the
+    integrantes of a specific family, they are displayed inside a table,
+    and the capturista can select each of them individually.
+    """
+    context = {}
+
+    integrantes = Integrante.objects.filter(familia__pk=id_familia)
+    familia = Familia.objects.get(pk=id_familia)
+    context['integrantes'] = integrantes
+    context['familia'] = familia
+    return render(request, 'captura/dashboard_integrantes.html', context)
+
+
+def integrante(request, id_integrante):
+    """ This view allows, the users to edit the information of a family memeber.
+    """
+    Tutores = ['Tutor', 'Madre', 'Padre']
+    if request.method == 'POST':
+        tutores = ['']
+        instance = get_object_or_404(Integrante, pk=id_integrante)
+        integrante_form = IntegranteForm(request.POST, instance=instance)
+        if integrante_form.is_valid():
+            integrante_form.save()
+            rol = integrante_form.cleaned_data['Rol']
+            if rol == 'Alumno':
+                print("Rol es alumno")
+                try:
+                    alumno = instance.alumno
+                    alumno_form = AlumnoForm(request.POST, instance=alumno)
+                    if alumno_form.is_valid():
+                        alumno_form.save()
+                except ObjectDoesNotExist:
+                    print("Creating new alumno")
+                    escuela = Escuela.objects.all().first()
+                    Alumno.objects.create(integrante=instance, numero_sae='000', escuela=escuela)
+                    return redirect(reverse('captura:integrante', kwargs={'id_integrante': id_integrante}))
+            elif rol in Tutores:
+                try:
+                    tutor = instance.tutor
+                    tutor_form = TutorForm(request.POST, instance=tutor)
+                    if tutor_form.is_valid():
+                        tutor_form.save()
+                except ObjectDoesNotExist:
+                    Tutor.objects.create(relacion=integrante_form.cleaned_data['Rol'], integrante=instance)
+                    redirect(reverse('captura:integrante', kwargs={'id_integrante': id_integrante}))
+            return redirect(reverse('captura:integrantes',
+                                    kwargs={'id_familia': integrante_form.instance.familia.pk}))
+    else:
+        forms = {}
+        integrante = Integrante.objects.get(pk=id_integrante)
+        rol_integrante = 'Ninguno'
+        rol_disabled = False
+        try:
+            alumno = integrante.alumno
+            forms['form_alumno'] = AlumnoForm(instance=alumno)
+            rol_integrante = 'Alumno'
+            rol_disabled = True
+        except ObjectDoesNotExist:
+            pass
+        try:
+            tutor = integrante.tutor
+            forms['form_tutor'] = TutorForm(instance=tutor)
+            rol_integrante = 'Tutor'
+            rol_disabled = True
+        except ObjectDoesNotExist:
+            pass
+
+        forms['integrante_form'] = IntegranteForm(instance=integrante, initial={'Rol': rol_integrante})
+        forms['integrante_form'].fields['Rol'].widget.attrs['readonly'] = rol_disabled
+        return render(request, 'captura/integrante_form.html', {'forms': forms,
+                                                                'integrante': integrante})
+
+
+@login_required
+@user_passes_test(is_capturista)
+def create_integrante(request, id_familia):
+    """ This view creates a new integrante with default values, and redirects the user
+    to the view for editing the newly created integrante.
+    """
+    if request.method == 'POST':
+        familia = Familia.objects.get(pk=id_familia)
+        integrante = Integrante.objects.create(familia=familia)
+        return redirect(reverse('captura:integrante', kwargs={'id_integrante': integrante.id}))
+
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.
