@@ -92,6 +92,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         Test Update Integrante
 
         @TODO TESTS:
+        Test Add Comentario
 
     """
     def setUp(self):
