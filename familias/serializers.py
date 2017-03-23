@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from estudios_socioeconomicos.utils import save_foreign_relashionship
+from estudios_socioeconomicos.utils import save_foreign_relationship
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
 
@@ -13,6 +13,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comentario
         fields = ('id', 'fecha', 'texto')
+        extra_kwargs = {"id": {"read_only": False, "required": False}}
 
     def create(self, family):
         """ This function overides the default behaviour for creating
@@ -27,6 +28,18 @@ class ComentarioSerializer(serializers.ModelSerializer):
         self.validated_data['familia'] = family
         return Comentario.objects.create(**self.validated_data)
 
+    def update(self):
+        """ This function overides the default behaviour for creating
+            an object through a serializer since Nested Updates are
+            not implemented by DRF.
+
+            Returns
+            -------
+            Updated Instance of Comentario model.
+        """
+        Comentario.objects.filter(pk=self.instance.id).update(**self.validated_data)
+        return Comentario.objects.get(pk=self.instance.id)
+
 
 class AlumnoSerializer(serializers.ModelSerializer):
     """ Serializer to represent a .models.Alumno instance
@@ -36,6 +49,7 @@ class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
         fields = ('id', 'activo')
+        extra_kwargs = {"id": {"read_only": False, "required": False}}
 
     def create(self, integrante):
         """ This function overides the default behaviour for creating
@@ -50,6 +64,18 @@ class AlumnoSerializer(serializers.ModelSerializer):
         self.validated_data['integrante'] = integrante
         return Alumno.objects.create(**self.validated_data)
 
+    def update(self):
+        """ This function overides the default behaviour for creating
+            an object through a serializer since Nested Updates are
+            not implemented by DRF.
+
+            Returns
+            -------
+            Updated Instance of Alumno model.
+        """
+        Alumno.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+        return Alumno.objects.get(pk=self.instance.pk)
+
 
 class TutorSerializer(serializers.ModelSerializer):
     """ Serializer to represent a .models.Tutor instance
@@ -59,6 +85,7 @@ class TutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tutor
         fields = ('id', 'relacion')
+        extra_kwargs = {"id": {"read_only": False, "required": False}}
 
     def create(self, integrante):
         """ This function overides the default behaviour for creating
@@ -73,11 +100,29 @@ class TutorSerializer(serializers.ModelSerializer):
         self.validated_data['integrante'] = integrante
         return Tutor.objects.create(**self.validated_data)
 
+    def update(self):
+        """ This function overides the default behaviour for creating
+            an object through a serializer since Nested Updates are
+            not implemented by DRF.
+
+            Returns
+            -------
+            Updated Instance of Tutor model.
+        """
+        Tutor.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+        return Tutor.objects.get(pk=self.instance.pk)
+
 
 class IntegranteSerializer(serializers.ModelSerializer):
     """ Serializer to represent a .models.Integrante instance
         through a REST endpoint for the offline application
         to submit information.
+
+        DRF by default sets the id field to read_only. This
+        makes it unaccesible in validated_data. When an instance
+        is being updated we need to acces the id in the nested
+        serializers so that we can send the actual instance to
+        the update method.
     """
     alumno_integrante = AlumnoSerializer(allow_null=True)
     tutor_integrante = TutorSerializer(allow_null=True)
@@ -93,7 +138,10 @@ class IntegranteSerializer(serializers.ModelSerializer):
             'nivel_estudios',
             'fecha_de_nacimiento',
             'alumno_integrante',
-            'tutor_integrante')
+            'tutor_integrante',
+            'activo')
+
+        extra_kwargs = {"id": {"read_only": False, "required": False}}
 
     def create(self, family):
         """ This function overides the default behaviour for creating
@@ -115,7 +163,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
 
             Notes
             -----
-            save_foreign_relashionship does not create object on None
+            save_foreign_relationship does not create object on None
             object. Therefore if one of the specilizations is not
             indicated it is not created.
         """
@@ -126,10 +174,30 @@ class IntegranteSerializer(serializers.ModelSerializer):
 
         integrante = Integrante.objects.create(**self.validated_data)
 
-        save_foreign_relashionship([alumno], AlumnoSerializer, integrante)
-        save_foreign_relashionship([tutor], TutorSerializer, integrante)
+        save_foreign_relationship([alumno], AlumnoSerializer, Alumno, integrante)
+        save_foreign_relationship([tutor], TutorSerializer, Alumno, integrante)
 
         return integrante
+
+    def update(self):
+        """ This function overides the default behaviour for creating
+            an object through a serializer since Nested Updates are
+            not implemented by DRF.
+
+            Updates dependent object Alumno and Tutor.
+
+            Returns
+            -------
+            Updated Instance of an Integrante model.
+        """
+        alumno = self.validated_data.pop('alumno_integrante')
+        tutor = self.validated_data.pop('tutor_integrante')
+
+        save_foreign_relationship([alumno], AlumnoSerializer, Alumno, self.instance)
+        save_foreign_relationship([tutor], TutorSerializer, Tutor, self.instance)
+
+        Integrante.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+        return Integrante.objects.filter(pk=self.instance.pk)
 
 
 class FamiliaSerializer(serializers.ModelSerializer):
@@ -137,8 +205,8 @@ class FamiliaSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
-    integrante_familia = IntegranteSerializer(many=True)
-    comentario_familia = ComentarioSerializer(many=True)
+    integrante_familia = IntegranteSerializer(many=True, allow_null=True)
+    comentario_familia = ComentarioSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Familia
@@ -150,6 +218,8 @@ class FamiliaSerializer(serializers.ModelSerializer):
             'localidad',
             'comentario_familia',
             'integrante_familia',)
+
+        extra_kwargs = {"id": {"read_only": False, "required": False}}
 
     def create(self):
         """ This function overides the default behaviour for creating
@@ -168,11 +238,10 @@ class FamiliaSerializer(serializers.ModelSerializer):
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
-
         family_instance = Familia.objects.create(**self.validated_data)
 
-        save_foreign_relashionship(integrantes, IntegranteSerializer, family_instance)
-        save_foreign_relashionship(comentarios, ComentarioSerializer, family_instance)
+        save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, family_instance)
+        save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, family_instance)
 
         return family_instance
 
@@ -185,23 +254,26 @@ class FamiliaSerializer(serializers.ModelSerializer):
 
             Updates a familia object and all other objects that
             depend on it. Since the offline client will submit a
-            complete JSON of the study each time. We first remove
-            all dependant objets (Integrante and Comentario). Then
-            we create them again. This is because the client can
-            delete or create many of this objects locally but upload
-            them after certain time.
+            complete JSON of the study each time.
+
+            When an offline client submits an update of a study,
+            new information can be created. save_foreign_relationship
+            looks for the id in the object. If there is no data it will
+            create the object.
+
+            Integrantes has a non-destructive way of disactivating. This
+            is donde by changin the is_active field.
+
+            Comentario does not have this field, so all comentario instances
+            that were not sent by the offline application most be removed.
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
 
-        for integrante in self.data.pop('integrante_familia'):
-            Integrante.objects.get(pk=integrante.get('id')).delete()
+        Comentario.objects.exclude(id__in=[comment['id'] for comment in comentarios]).delete()
 
-        for commentario in self.data.pop('comentario_familia'):
-            Comentario.objects.get(pk=commentario.get('id')).delete()
-
-        save_foreign_relashionship(integrantes, IntegranteSerializer, self.instance)
-        save_foreign_relashionship(comentarios, ComentarioSerializer, self.instance)
+        save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, self.instance)
+        save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, self.instance)
 
         Familia.objects.filter(pk=self.instance.pk).update(**self.validated_data)
 

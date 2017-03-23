@@ -76,6 +76,23 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 class TestAPIUploadRetrieveStudy(APITestCase):
     """ Test case for API REST endpoint with CRUD
         operations on a Study.
+
+        Currents Tests:
+
+        Test Creating Study
+        Test Updating Study
+        Test Updating Family
+        Test Remove Integrante
+        Test Add Integrante
+        Test Remove Comentario
+        Test Add Respuesta
+        Test Remove Respuesta
+        Test Unauthorized Access Listing
+        Test Unauthorized Access Study
+        Test Update Integrante
+
+        @TODO TESTS:
+
     """
     def setUp(self):
         """ Creates users for testing study.
@@ -237,7 +254,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         url = reverse('{}-detail'.format(self.test_url_name), kwargs={'pk': pk})
         request = self.factory.put(url, data)
         force_authenticate(request, user=self.user, token=self.token)
-
         return self.view(request, pk)
 
     def test_upload_study(self):
@@ -294,11 +310,14 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         study_id = response.data['id']
         change_study = response.data
-        del change_study['familia']['integrante_familia'][0]
+        change_study['familia']['integrante_familia'][0]['activo'] = False
+        integrante_id = change_study['familia']['integrante_familia'][0]['id']
 
         response = self.update_existing_study(change_study, study_id)
 
-        self.assertEqual(len(response.data['familia']['integrante_familia']), 2)
+        integrante = Integrante.objects.get(pk=integrante_id)
+        self.assertEqual(integrante.activo, False)
+        # self.assertEqual(len(response.data['familia']['integrante_familia']), 2)
 
     def test_agregar_integrante(self):
         """ Test that an integrante can be added to a study
@@ -437,3 +456,42 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         response = self.view(request)
 
         self.assertEqual(response.data['detail'], 'Not found.')
+
+    def test_update_integrante(self):
+        """ Test updating the information of an integrante.
+        """
+        response = self.create_base_study()
+
+        study_id = response.data['id']
+        change_study = response.data
+
+        integrantes = change_study['familia']['integrante_familia']
+        current_num_integrantes = len(integrantes)
+        change_name_id = integrantes[0]['id']
+        integrantes[0]['nombres'] = 'Chaos Monkey'
+
+        integrante_nuevo = {
+            'nombres': 'Juan',
+            'apellidos': 'Rulfo',
+            'telefono': '',
+            'correo': '',
+            'nivel_estudios': 'doctorado',
+            'fecha_de_nacimiento': '1930-03-19',
+            'alumno_integrante': None,
+            'tutor_integrante': {
+                'relacion': 'tutor'
+            }
+        }
+
+        change_study['familia']['integrante_familia'].append(integrante_nuevo)
+        response = self.update_existing_study(change_study, study_id)
+
+        integrantes = response.data['familia']['integrante_familia']
+        mono_chaos = Integrante.objects.get(pk=change_name_id)
+
+        self.assertEqual('Chaos Monkey', mono_chaos.nombres)
+        self.assertEqual(len(integrantes), current_num_integrantes+1)
+
+        for integrante in integrantes:
+            if integrante['id'] == change_name_id:
+                self.assertEqual('Chaos Monkey', integrante['nombres'])

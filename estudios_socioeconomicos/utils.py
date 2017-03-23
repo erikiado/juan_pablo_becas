@@ -1,71 +1,50 @@
 
-
-def save_foreign_relashionship(objects, serializer_class, foreign_key=None):
-    """ Saves nested relashionships in serializer of objects that have a Foreign
-        Key object that must be saved first.
-
-        Parameters
-        ----------
-            objects : list
-                A list with the data of the object to be created
-
-            serializer_class: rest_framework.serializers.ModelSerializer
-                A class to serialize the data into a model instance.
-
-            foreign_key : django.db.models.Model
-                A instance of an object that needs to be referenced.
-
-        Returns
-        --------
-            created_objects : list
-                A list of all instances created.
-
-
-    """
-    created_objects = []
-
-    for obj in objects:
-        obj_serializer = serializer_class(data=obj)
-
-        if obj_serializer.is_valid():
-            if foreign_key:
-                created_objects.append(obj_serializer.create(foreign_key))
-            else:
-                created_objects.append(obj_serializer.create())
-
-    return created_objects
-
-
-def update_foreign_relashionsip(objects, serializer_class, model_class, validated_data):
+def save_foreign_relationship(objects, serializer_class, model_class, foreign_instance=None):
     """ Updated nested relashionships in serializer of objects.
 
+        Saves or updates a nested serializer that has a Foreign Relashionship.
+
         Parameters
-        ----------
-        objects : list
-            A list with the data of the object to be updated.
+        -----------
+        objects: []
+            List of objects to save of update.
 
-        serializer_class: rest_framework.serializers.ModelSerializer
-            A class to serialize the data into a model instance.
+        serializer_class:
+            from rest_framework import serializers.ModelSerializers class that
+            creates or updates this object.
 
-        model_cass : django.db.models.Model
-            The class of object that must be retrieved to update.
+        model_class:
+            django.db.models.Model class to which the objects belong to.
 
-        validated_data : list
-            A list with the validated data of the object to be updated.
-            DRF validation removes IDS on validation.
+        foreign_instance:
+            Serializer that creates this object might have am inverse Foreign
+            relashionship an the object needs a reference to the instance.
 
         Returns
         --------
-            created_objects : list
-                A list of all instances updated.
+        List of created and updated objects.
     """
     updated_objects = []
 
-    for obj_info, data in zip(objects, validated_data):
-        instance = model_class.objects.get(pk=obj_info.get('id'))
-        serializer = serializer_class(instance, data=data)
+    for obj in objects:
 
-        if serializer.is_valid():
-            updated_objects.append(serializer.update())
+        if not obj:  # In case we get a None value (can't trust kids this days)
+            break
+
+        if obj.get('id'):  # Does the object exists?
+            instance = model_class.objects.get(pk=obj.get('id'))
+            serializer = serializer_class(instance, data=obj)
+
+            if serializer.is_valid():
+                updated_objects.append(serializer.update())  # Update
+
+        else:
+            serializer = serializer_class(data=obj)
+
+            if serializer.is_valid():
+                if not foreign_instance:
+                    updated_objects.append(serializer.create())  # Create
+                else:
+                    updated_objects.append(serializer.create(foreign_instance))  # Create
 
     return updated_objects

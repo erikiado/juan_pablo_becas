@@ -5,7 +5,7 @@ from familias.models import Familia
 
 from .models import Pregunta, Subseccion, Seccion, OpcionRespuesta
 from .models import Estudio, Respuesta
-from .utils import save_foreign_relashionship, update_foreign_relashionsip
+from .utils import save_foreign_relationship
 
 
 class OpcionRespuestaSerializer(serializers.ModelSerializer):
@@ -71,7 +71,7 @@ class SeccionSerializer(serializers.ModelSerializer):
 
 
 class RespuestaSerializer(serializers.ModelSerializer):
-    """ Serializer for using .models.Subseccion objects
+    """ Serializer for using .models.Respuesta objects
         in REST endpoint.
     """
     class Meta:
@@ -86,7 +86,7 @@ class RespuestaSerializer(serializers.ModelSerializer):
 
 
 class EstudioSerializer(serializers.ModelSerializer):
-    """ Serializer to represent a .models.Comentario instance
+    """ Serializer to represent a .models.Estudio instance
         through a REST endpoint for the offline application
         to submit information.
     """
@@ -121,12 +121,17 @@ class EstudioSerializer(serializers.ModelSerializer):
             is required because Estudio has a Trigger required for online
             client to create empy answers for any new study. The offline
             client does not require this functionality.
+
+            save_foreign_relationship returns a list of created or updated
+            objects. We just care about the first.
         """
         familia_data = self.validated_data.pop('familia')
         respuestas = self.validated_data.pop('respuesta_estudio')
-        instance = save_foreign_relashionship([familia_data], FamiliaSerializer)
+        family_instance = save_foreign_relationship([familia_data], FamiliaSerializer, Familia)
 
-        self.validated_data['familia'] = instance[0]
+        assert len(family_instance) == 1
+
+        self.validated_data['familia'] = family_instance[0]
         self.validated_data['capturista'] = capturista
         estudio = Estudio(**self.validated_data)
         estudio.save_base(raw=True)  # Do not call Trigger (.models)
@@ -148,15 +153,15 @@ class EstudioSerializer(serializers.ModelSerializer):
             when an offline clients submits an update.
 
             Deletes all existing answers and saves with the new
-            information from the stuyd. This is because offline client
+            information from the study. This is because offline client
             can delete, modify or add a given number of answers and will
             always send the all.
         """
         familia = self.validated_data.pop('familia')
         respuestas = self.validated_data.pop('respuesta_estudio')
-        familia_data = self.data.get('familia')
 
-        update_foreign_relashionsip([familia_data], FamiliaSerializer, Familia, [familia])
+        save_foreign_relationship([familia], FamiliaSerializer, Familia)
+
         Estudio.objects.filter(pk=self.instance.pk).update(**self.validated_data)
 
         Respuesta.objects.filter(estudio=self.instance).delete()
