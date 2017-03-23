@@ -49,6 +49,19 @@ class Estudio(models.Model):
                                 familia=self.familia.__str__(),
                                 status=self.status)
 
+    @staticmethod
+    def get_options_status():
+        """ Returns a dictionary with the options for status to be used in the templates.
+
+        """
+        return {
+            'APROBADO': Estudio.APROBADO,
+            'BORRADOR': Estudio.BORRADOR,
+            'ELIMINADO': Estudio.ELIMINADO,
+            'REVISION': Estudio.REVISION,
+            'RECHAZADO': Estudio.RECHAZADO
+        }
+
 
 @receiver(post_save, sender=Estudio)
 def create_answers_for_study(sender, instance=None, created=False, **kwargs):

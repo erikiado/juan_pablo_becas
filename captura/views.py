@@ -188,7 +188,7 @@ def capture_study(request, id_estudio, numero_seccion):
     context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
-    context['Estudio'] = Estudio
+    context['status_options'] = Estudio.get_options_status()
 
     return render(request, 'captura/captura_estudio.html', context)
 
@@ -210,7 +210,7 @@ def capturista_dashboard(request):
             capturista=Capturista.objects.get(user=request.user)).order_by('status')
 
     context['estudios'] = estudios
-    context['Estudio'] = Estudio
+    context['status_options'] = Estudio.get_options_status()
     return render(request, 'captura/dashboard_capturista.html', context)
 
 
