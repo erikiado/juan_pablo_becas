@@ -58,6 +58,17 @@ class EstudioTestCase(TestCase):
 
         self.assertEqual(respuestas.count(), preguntas.count())
 
+    def test_get_status(self):
+        """ Test whether the static method to return a dict with status options works correctly.
+
+        """
+        options = Estudio.get_options_status()
+        self.assertEqual(options['APROBADO'], Estudio.APROBADO)
+        self.assertEqual(options['RECHAZADO'], Estudio.RECHAZADO)
+        self.assertEqual(options['BORRADOR'], Estudio.BORRADOR)
+        self.assertEqual(options['REVISION'], Estudio.REVISION)
+        self.assertEqual(options['ELIMINADO'], Estudio.ELIMINADO)
+
 
 class SeccionTestCase(TestCase):
     """ Suite to test things related to the Seccion Model.

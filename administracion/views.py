@@ -13,7 +13,8 @@ def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
     """
-    return render(request, 'administracion/dashboard_main.html', {'Estudio': Estudio})
+    return render(request, 'administracion/dashboard_main.html',
+                  {'status_options': Estudio.get_options_status()})
 
 
 @login_required
@@ -26,7 +27,9 @@ def admin_users_dashboard(request):
     create_user_form = UserForm()
 
     return render(request, 'administracion/dashboard_users.html',
-                  {'all_users': users, 'create_user_form': create_user_form, 'Estudio': Estudio})
+                  {'all_users': users,
+                   'create_user_form': create_user_form,
+                   'status_options': Estudio.get_options_status()})
 
 
 @login_required
@@ -103,7 +106,8 @@ def list_studies(request, status_study):
 
     """
     estudios = Estudio.objects.filter(status=status_study)
-    contexto = {'estudios': estudios, 'estado': status_study, 'Estudio': Estudio}
+    contexto = {'estudios': estudios, 'estado': status_study,
+                'status_options': Estudio.get_options_status()}
     return render(request, 'estudios_socioeconomicos/principal.html', contexto)
 
 
@@ -114,7 +118,7 @@ def focus_mode(request, study_id):
 
     TODO: This should be filled with all the info of the study.
     """
-    context = {'Estudio': Estudio}  # this should be changed once we correct the bug
+    context = {'status_options': Estudio.get_options_status()}
     estudio = Estudio.objects.get(pk=study_id)
     if estudio.status == Estudio.REVISION:
         feedback_form = FeedbackForm(initial={'estudio': estudio,

@@ -26,11 +26,13 @@
              </a>
              <!-- Sub menu -->
              <ul>
-                <li><a href="{% url 'administracion:main_estudios' Estudio.APROBADO %}">Aprobados</a></li>
-                <li><a href="{% url 'administracion:main_estudios' Estudio.REVISION %}">Pendientes</a></li>
-                <li><a href="{% url 'administracion:main_estudios' Estudio.RECHAZADO %}">En revisión</a></li>
-                <li><a href="{% url 'administracion:main_estudios' Estudio.ELIMINADO %}">Eliminados</a></li>
-                <li><a href="{% url 'administracion:main_estudios' Estudio.BORRADOR %}">En borrador</a></li>
+                {% if status_options %}
+                  <li><a href="{% url 'administracion:main_estudios' status_options.APROBADO %}">Aprobados</a></li>
+                  <li><a href="{% url 'administracion:main_estudios' status_options.REVISION %}">Pendientes</a></li>
+                  <li><a href="{% url 'administracion:main_estudios' status_options.RECHAZADO %}">En revisión</a></li>
+                  <li><a href="{% url 'administracion:main_estudios' status_options.ELIMINADO %}">Eliminados</a></li>
+                  <li><a href="{% url 'administracion:main_estudios' status_options.BORRADOR %}">En borrador</a></li>
+                {% endif %}
             </ul>
         </li>
     </ul>

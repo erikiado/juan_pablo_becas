@@ -34,7 +34,7 @@
                   <tbody>
                       {% if estudios %}
                         {% for estudio in estudios %}
-                        <tr class="odd gradeX {%if estudio.status == Estudio.RECHAZADO%} danger {%endif%}">
+                        <tr class="odd gradeX {%if estudio.status == status_options.RECHAZADO%} danger {%endif%}">
                             <td>
                               {{estudio.id}}
                             </td>
@@ -56,7 +56,7 @@
                                 <i class="glyphicon glyphicon-eye-open"></i> Ver
                               </button>
 
-                              {% if estudio.status == Estudio.RECHAZADO %}
+                              {% if estudio.status == status_options.RECHAZADO %}
                                 <button class="btn btn-info">
                                   <i class="glyphicon glyphicon-inbox"></i> Ver Retroalimentación
                                 </button>
