@@ -1,0 +1,28 @@
+{% extends "layouts/basic.html" %}
+{% load staticfiles %}
+{% block page_title %}Captura{% endblock %}
+{% block extra_css %} 
+	<link rel="stylesheet" type="text/css" href={% static 'css/base/dashboard.css' %}>
+	<link rel="stylesheet" type="text/css" href={% static 'css/base/home.css' %}>
+{% endblock %}
+{% block header %}
+	{% include "base/nav_bar.html" %}
+{% endblock %}
+
+{% block body_content %}
+<div class="page-content container">
+    <div class="row text-center">
+      <div class="col-md-6 col-md-offset-3">
+        	{% include form_view %}
+      </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block footer_content %}
+{% endblock %}
+
+{% block extra_js %}
+	<script type="text/javascript" src={% static "js/administracion/dashboard.js" %}></script>
+	{% block extra_page_js %}{% endblock %}
+{% endblock %}

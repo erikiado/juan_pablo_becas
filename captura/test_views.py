@@ -7,6 +7,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User, Group
 from splinter import Browser
 
+from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
 from familias.models import Familia
@@ -274,6 +275,100 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
             self.browser.find_by_id('next_section_button').first.click()
 
 
+class TestViewsRightSide(StaticLiveServerTestCase):
+    """Integration test suite for testing the views in the app: captura.
+
+    Test the urls for 'captura' which make up the capturista dashboard.
+    A user is created in order to test they are displayed.
+
+    Attributes
+    ----------
+    browser : Browser
+        Driver to navigate through websites and to run integration tests.
+    """
+
+    def setUp(self):
+        """Initialize the browser and create a user, before running the tests.
+        """
+        self.browser = Browser('chrome')
+        test_username = 'estebes'
+        test_password = 'junipero'
+        estebes = User.objects.create_user(
+            username=test_username, email='juan@example.com', password=test_password,
+            first_name='Estebes', last_name='Thelmapellido')
+        capturista = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
+        capturista.user_set.add(estebes)
+        capturista.save()
+        Escuela.objects.create(nombre='Juan Pablo')
+        self.capturista = Capturista.objects.create(user=estebes)
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+
+    def tearDown(self):
+        """At the end of tests, close the browser.
+        """
+        self.browser.quit()
+
+    def test_creation_of_estudio(self):
+        """ Checks that an estudio can be created through the form
+        in the capturista dashboard
+        """
+        generic_integrante_name = 'Javier'
+        alumno_integrante_name = 'Marco'
+        tutor_integrante_name = 'Fabio'
+        test_url_name = 'captura:estudios'
+        # Test new integrante creation
+        self.browser.visit(self.live_server_url + reverse(test_url_name))
+        self.browser.find_by_id('create_integrante')[0].click()
+        # Test integrante edition
+        self.assertTrue(self.browser.is_text_present('Numero hijos diferentes papas:'))
+        self.browser.fill('numero_hijos_diferentes_papas', 3)
+        self.browser.find_by_id('update_familia')[0].click()
+        self.assertTrue(self.browser.is_text_present('Agregar Integrante'))
+        # Test generic integrante creation
+        self.browser.find_by_id('create_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present('Edición de Integrante'))
+        self.browser.find_by_id('update_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present(generic_integrante_name))
+        # Test alumno integrante creation
+        self.browser.find_by_id('create_integrante')[0].click()
+        self.browser.fill('nombres', alumno_integrante_name)
+        self.browser.select('Rol', 'Alumno')
+        self.browser.find_by_id('update_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present('Numero sae:'))
+        self.browser.find_by_id('update_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present(alumno_integrante_name))
+        # Test tutor integrante creation
+        self.browser.find_by_id('create_integrante')[0].click()
+        self.browser.fill('nombres', tutor_integrante_name)
+        self.browser.select('Rol', 'Tutor')
+        self.browser.find_by_id('update_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present('Relacion:'))
+        self.browser.fill('nombres', tutor_integrante_name)
+        self.browser.select('relacion', 'madre')
+        self.browser.fill('nombres', tutor_integrante_name)
+        self.assertTrue(self.browser.is_text_present('Madre'))
+        self.browser.find_by_id('update_integrante')[0].click()
+        self.assertTrue(self.browser.is_text_present(tutor_integrante_name))
+
+    def test_check_invalid_user(self):
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:logout'))
+        test_username = 'Pedro'
+        test_password = 'Paramo'
+        User.objects.create_user(
+            username=test_username, email='juan@example.com', password=test_password,
+            first_name='Estebes', last_name='Thelmapellido')
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+        self.assertTrue(self.browser.is_text_present('Hello'))
+        self.browser.visit(self.live_server_url + reverse('captura:estudios'))
+        self.assertFalse(self.browser.is_text_present('Agregar Integrante'))
+
+
 class TestViewsAdministracion(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: captura.
 
@@ -358,10 +453,10 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.RECHAZADO, numero_sae=1)
+                     status=Estudio.RECHAZADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.REVISION, numero_sae=2)
+                     status=Estudio.REVISION)
         e2.save()
         test_url_name = 'captura:estudios'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
