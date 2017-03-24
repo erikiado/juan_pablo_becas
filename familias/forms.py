@@ -23,12 +23,12 @@ class IntegranteForm(ModelForm):
                     (OPCION_ROL_TUTOR, 'Tutor'),
                     (OPCION_ROL_ALUMNO, 'Alumno'))
 
-    Rol = ChoiceField(choices=OPCIONES_ROL)
+    Rol = ChoiceField(choices=OPCIONES_ROL, required=False)
 
     class Meta:
         model = Integrante
         exclude = ['familia']
-    
+
     def __init__(self, *args, **kwargs):
         super(IntegranteForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():

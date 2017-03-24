@@ -1,5 +1,8 @@
 <form action="{% url 'captura:familia' familia.id %}" method="post">
   {% csrf_token %}
   {{ form }}
-  <input type="submit" value="Submit" />
+  <input type="submit" value="Submit" class="btn-primary" id="update_familia"/>
+  <br>
+  <br>
+  <br>
 </form>

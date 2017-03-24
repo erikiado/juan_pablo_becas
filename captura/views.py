@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms import HiddenInput
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
@@ -246,7 +247,10 @@ def familia(request, id_familia):
     else:
         familia = Familia.objects.get(pk=id_familia)
         form = FamiliaForm(instance=familia)
-        return render(request, 'captura/familia_form.html', {'form': form, 'familia': familia})
+        form_view = 'captura/familia_form.html'
+        return render(request, 'captura/captura_base.html', {'form_view': form_view,
+                                                             'form': form,
+                                                             'familia': familia})
 
 
 @login_required
@@ -268,35 +272,35 @@ def integrantes(request, id_familia):
 def integrante(request, id_integrante):
     """ This view allows, the users to edit the information of a family memeber.
     """
-    Tutores = ['Tutor', 'Madre', 'Padre']
+    tutores = ['Tutor', 'Madre', 'Padre']
     if request.method == 'POST':
-        tutores = ['']
         instance = get_object_or_404(Integrante, pk=id_integrante)
         integrante_form = IntegranteForm(request.POST, instance=instance)
         if integrante_form.is_valid():
             integrante_form.save()
             rol = integrante_form.cleaned_data['Rol']
             if rol == 'Alumno':
-                print("Rol es alumno")
                 try:
                     alumno = instance.alumno
                     alumno_form = AlumnoForm(request.POST, instance=alumno)
                     if alumno_form.is_valid():
                         alumno_form.save()
                 except ObjectDoesNotExist:
-                    print("Creating new alumno")
                     escuela = Escuela.objects.all().first()
                     Alumno.objects.create(integrante=instance, numero_sae='000', escuela=escuela)
-                    return redirect(reverse('captura:integrante', kwargs={'id_integrante': id_integrante}))
-            elif rol in Tutores:
+                    return redirect(reverse('captura:integrante',
+                                            kwargs={'id_integrante': id_integrante}))
+            elif rol in tutores:
                 try:
                     tutor = instance.tutor
                     tutor_form = TutorForm(request.POST, instance=tutor)
                     if tutor_form.is_valid():
                         tutor_form.save()
                 except ObjectDoesNotExist:
-                    Tutor.objects.create(relacion=integrante_form.cleaned_data['Rol'], integrante=instance)
-                    redirect(reverse('captura:integrante', kwargs={'id_integrante': id_integrante}))
+                    Tutor.objects.create(relacion=integrante_form.cleaned_data['Rol'],
+                                         integrante=instance)
+                    return redirect(reverse('captura:integrante',
+                                            kwargs={'id_integrante': id_integrante}))
             return redirect(reverse('captura:integrantes',
                                     kwargs={'id_familia': integrante_form.instance.familia.pk}))
     else:
@@ -319,10 +323,14 @@ def integrante(request, id_integrante):
         except ObjectDoesNotExist:
             pass
 
-        forms['integrante_form'] = IntegranteForm(instance=integrante, initial={'Rol': rol_integrante})
-        forms['integrante_form'].fields['Rol'].widget.attrs['readonly'] = rol_disabled
-        return render(request, 'captura/integrante_form.html', {'forms': forms,
-                                                                'integrante': integrante})
+        forms['integrante_form'] = IntegranteForm(instance=integrante,
+                                                  initial={'Rol': rol_integrante})
+        if rol_disabled:
+            forms['integrante_form'].fields['Rol'].widget = HiddenInput()
+        form_view = 'captura/integrante_form.html'
+        return render(request, 'captura/captura_base.html', {'form_view': form_view,
+                                                             'forms': forms,
+                                                             'integrante': integrante})
 
 
 @login_required
