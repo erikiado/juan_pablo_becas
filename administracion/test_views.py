@@ -383,10 +383,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.RECHAZADO, numero_sae=1)
+                     status=Estudio.RECHAZADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.RECHAZADO, numero_sae=2)
+                     status=Estudio.RECHAZADO)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -460,10 +460,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.REVISION, numero_sae=1)
+                     status=Estudio.REVISION)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.REVISION, numero_sae=2)
+                     status=Estudio.REVISION)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -537,10 +537,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.APROBADO, numero_sae=1)
+                     status=Estudio.APROBADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.APROBADO, numero_sae=2)
+                     status=Estudio.APROBADO)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -614,10 +614,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.BORRADOR, numero_sae=1)
+                     status=Estudio.BORRADOR)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.BORRADOR, numero_sae=2)
+                     status=Estudio.BORRADOR)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -690,10 +690,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.ELIMINADO, numero_sae=1)
+                     status=Estudio.ELIMINADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.ELIMINADO, numero_sae=2)
+                     status=Estudio.ELIMINADO)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
