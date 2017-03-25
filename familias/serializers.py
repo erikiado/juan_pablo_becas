@@ -238,6 +238,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
+
         family_instance = Familia.objects.create(**self.validated_data)
 
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, family_instance)
@@ -271,7 +272,6 @@ class FamiliaSerializer(serializers.ModelSerializer):
         comentarios = self.validated_data.pop('comentario_familia')
 
         Comentario.objects.exclude(id__in=[comment.get('id') for comment in comentarios]).delete()
-
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, self.instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, self.instance)
 

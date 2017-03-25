@@ -1,3 +1,4 @@
+from django.db.transaction import atomic
 from rest_framework import serializers
 
 from familias.serializers import FamiliaSerializer
@@ -104,6 +105,7 @@ class EstudioSerializer(serializers.ModelSerializer):
 
         read_only_fields = ('id', 'status', 'capturista')
 
+    @atomic
     def create(self, capturista):
         """ This function overides the default behaviour for creating
             an object through a serializer.
@@ -124,12 +126,21 @@ class EstudioSerializer(serializers.ModelSerializer):
 
             save_foreign_relationship returns a list of created or updated
             objects. We just care about the first.
+
+            The familia_data.pop('id', None) is just a defense mechanism in
+            case somebody for some strange reason decides it's a good idea to
+            send a study without an ID but a family with ID. We would just
+            create e new family (family and estudio can only have 1 - 1 relashionship).
         """
         familia_data = self.validated_data.pop('familia')
         respuestas = self.validated_data.pop('respuesta_estudio')
+
+        familia_data.pop('id', None)  # In the catastrofic case someone decides on sending
+
         family_instance = save_foreign_relationship([familia_data], FamiliaSerializer, Familia)
 
-        assert len(family_instance) == 1
+        if len(family_instance) != 1 or family_instance[0] is None:
+            raise serializers.ValidationError('Family could not be created')
 
         self.validated_data['familia'] = family_instance[0]
         self.validated_data['capturista'] = capturista
@@ -142,6 +153,7 @@ class EstudioSerializer(serializers.ModelSerializer):
 
         return estudio
 
+    @atomic
     def update(self):
         """ This function overides the default behaviour for creating
             an object through a serializer.

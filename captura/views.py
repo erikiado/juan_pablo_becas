@@ -6,6 +6,7 @@ from django.urls import reverse
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 
+
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import RespuestaForm
@@ -291,7 +292,7 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             instance = serializer.create(request.user.capturista)
             return Response(EstudioSerializer(instance).data)
 
-        return Response(serializer.errors)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk):
         """ Retrieves a specific instance of a Study.
@@ -313,7 +314,7 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
         study = get_object_or_404(queryset, pk=pk)
         serializer = EstudioSerializer(study)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk):
         """ Updates a specific instance of a Study.
@@ -342,4 +343,4 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             update = serializer.update()
             return Response(EstudioSerializer(update).data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
