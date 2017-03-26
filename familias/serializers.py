@@ -13,7 +13,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comentario
         fields = ('id', 'fecha', 'texto')
-        extra_kwargs = {"id": {"read_only": False, "required": False}}
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, family):
         """ This function overides the default behaviour for creating
@@ -49,7 +49,7 @@ class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
         fields = ('id', 'activo')
-        extra_kwargs = {"id": {"read_only": False, "required": False}}
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
         """ This function overides the default behaviour for creating
@@ -85,7 +85,7 @@ class TutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tutor
         fields = ('id', 'relacion')
-        extra_kwargs = {"id": {"read_only": False, "required": False}}
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
         """ This function overides the default behaviour for creating
@@ -141,7 +141,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
             'tutor_integrante',
             'activo')
 
-        extra_kwargs = {"id": {"read_only": False, "required": False}}
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, family):
         """ This function overides the default behaviour for creating
@@ -219,7 +219,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
             'comentario_familia',
             'integrante_familia',)
 
-        extra_kwargs = {"id": {"read_only": False, "required": False}}
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self):
         """ This function overides the default behaviour for creating
@@ -271,7 +271,10 @@ class FamiliaSerializer(serializers.ModelSerializer):
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
 
-        Comentario.objects.exclude(id__in=[comment.get('id') for comment in comentarios]).delete()
+        Comentario.objects.filter(
+            familia=self.instance).exclude(
+                id__in=[comment.get('id') for comment in comentarios]).delete()
+
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, self.instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, self.instance)
 
