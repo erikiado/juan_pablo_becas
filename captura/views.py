@@ -245,12 +245,11 @@ def familia(request, id_familia):
             return redirect(reverse('captura:integrantes',
                                     kwargs={'id_familia': form.instance.pk}))
     else:
-        familia = Familia.objects.get(pk=id_familia)
-        form = FamiliaForm(instance=familia)
-        form_view = 'captura/familia_form.html'
-        return render(request, 'captura/captura_base.html', {'form_view': form_view,
-                                                             'form': form,
-                                                             'familia': familia})
+        context = { }
+        context['familia'] = Familia.objects.get(pk=id_familia)
+        context['form'] = FamiliaForm(instance=context['familia'])
+        context['form_view'] = 'captura/familia_form.html'
+        return render(request, 'captura/captura_base.html', context)
 
 
 @login_required
@@ -269,17 +268,44 @@ def integrantes(request, id_familia):
     return render(request, 'captura/dashboard_integrantes.html', context)
 
 
-def integrante(request, id_integrante):
-    """ This view allows, the users to edit the information of a family memeber.
+def edit_integrante(request, id_integrante):
+    """ View for updating the information of an integrante.
+    
+    This view will allow the Capturista to create and update
+    the information of the integrante. It is used during the
+    filling of the form.
+    
+    Ong get this view loads the form for update of a specific user.
+
+    On POST we receive the data of an integrante and save it. In case
+    the integrante has a rol as Alumno, or as a Tutor, we check if
+    the integrante has the related model, if it does we updated with
+    the form input, otherwise we create a new one with the default
+    values, and redirect the user to it in order to fill it.
+
+    Returns
+    ----------
+    GET:
+        On succes returns HTTP 200 with captura/integrante_form.html
+        template rendeered.
+
+        On error returns HTTP 404
+
+    POST:
+        On succes returns HTTP 301 redirect to the integrante table
+        or to itself in case it associates a new model to an user.
+
+        On error returns HTTP 404
+
     """
-    tutores = ['Tutor', 'Madre', 'Padre']
+    integrante_form = None
     if request.method == 'POST':
         instance = get_object_or_404(Integrante, pk=id_integrante)
         integrante_form = IntegranteForm(request.POST, instance=instance)
         if integrante_form.is_valid():
             integrante_form.save()
             rol = integrante_form.cleaned_data['Rol']
-            if rol == 'Alumno':
+            if rol == integrante_form.OPCION_ROL_ALUMNO:
                 try:
                     alumno = instance.alumno
                     alumno_form = AlumnoForm(request.POST, instance=alumno)
@@ -287,10 +313,10 @@ def integrante(request, id_integrante):
                         alumno_form.save()
                 except ObjectDoesNotExist:
                     escuela = Escuela.objects.all().first()
-                    Alumno.objects.create(integrante=instance, numero_sae='000', escuela=escuela)
+                    Alumno.objects.create(integrante=instance, escuela=escuela)
                     return redirect(reverse('captura:integrante',
                                             kwargs={'id_integrante': id_integrante}))
-            elif rol in tutores:
+            elif rol == integrante_form.OPCION_ROL_TUTOR:
                 try:
                     tutor = instance.tutor
                     tutor_form = TutorForm(request.POST, instance=tutor)
@@ -303,34 +329,36 @@ def integrante(request, id_integrante):
                                             kwargs={'id_integrante': id_integrante}))
             return redirect(reverse('captura:integrantes',
                                     kwargs={'id_familia': integrante_form.instance.familia.pk}))
-    else:
-        forms = {}
-        integrante = Integrante.objects.get(pk=id_integrante)
-        rol_integrante = 'Ninguno'
-        rol_disabled = False
-        try:
-            alumno = integrante.alumno
-            forms['form_alumno'] = AlumnoForm(instance=alumno)
-            rol_integrante = 'Alumno'
-            rol_disabled = True
-        except ObjectDoesNotExist:
-            pass
-        try:
-            tutor = integrante.tutor
-            forms['form_tutor'] = TutorForm(instance=tutor)
-            rol_integrante = 'Tutor'
-            rol_disabled = True
-        except ObjectDoesNotExist:
-            pass
+    forms = {}
+    integrante = Integrante.objects.get(pk=id_integrante)
+    rol_integrante = 'ninguno'
+    rol_disabled = False
+    try:
+        alumno = integrante.alumno
+        forms['form_alumno'] = AlumnoForm(instance=alumno)
+        rol_integrante = 'alumno'
+        rol_disabled = True
+    except ObjectDoesNotExist:
+        pass
+    try:
+        tutor = integrante.tutor
+        forms['form_tutor'] = TutorForm(instance=tutor)
+        rol_integrante = 'tutor'
+        rol_disabled = True
+    except ObjectDoesNotExist:
+        pass
 
+    if integrante_form:
+        forms['integrante_form'] = integrante_form
+    else:
         forms['integrante_form'] = IntegranteForm(instance=integrante,
                                                   initial={'Rol': rol_integrante})
-        if rol_disabled:
-            forms['integrante_form'].fields['Rol'].widget = HiddenInput()
-        form_view = 'captura/integrante_form.html'
-        return render(request, 'captura/captura_base.html', {'form_view': form_view,
-                                                             'forms': forms,
-                                                             'integrante': integrante})
+    if rol_disabled:
+        forms['integrante_form'].fields['Rol'].widget = HiddenInput()
+    form_view = 'captura/integrante_form.html'
+    return render(request, 'captura/captura_base.html', {'form_view': form_view,
+                                                         'forms': forms,
+                                                         'integrante': integrante})
 
 
 @login_required

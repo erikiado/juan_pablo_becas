@@ -219,7 +219,7 @@ class Alumno(models.Model):
 
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
-    numero_sae = models.CharField(max_length=30)
+    numero_sae = models.CharField(max_length=30, default='000')
     escuela = models.ForeignKey(Escuela)
 
     def __str__(self):

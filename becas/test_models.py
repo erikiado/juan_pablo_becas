@@ -1,5 +1,6 @@
 import decimal
 from django.test import TestCase
+from administracion.models import Escuela
 from familias.models import Familia, Integrante, Alumno
 from .models import Beca
 
@@ -12,13 +13,14 @@ class TestBeca(TestCase):
         """ Setup required for the tests in this suite.
 
         """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
         familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
         integrante = Integrante.objects.create(familia=familia,
                                                nombres='Mario',
                                                apellidos='Molina',
                                                nivel_estudios='doctorado',
                                                fecha_de_nacimiento='1943-03-19')
-        alumno = Alumno.objects.create(integrante=integrante)
+        alumno = Alumno.objects.create(integrante=integrante, escuela=escuela)
         Beca.objects.create(alumno=alumno,
                             monto=decimal.Decimal('250'))
 

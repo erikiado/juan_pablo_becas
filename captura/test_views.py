@@ -354,6 +354,9 @@ class TestViewsRightSide(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(tutor_integrante_name))
 
     def test_check_invalid_user(self):
+        """ Checks that if an user without proper permissions enters the
+        the view it won't be able to create a new study.
+        """
         self.browser.visit(self.live_server_url + reverse('tosp_auth:logout'))
         test_username = 'Pedro'
         test_password = 'Paramo'
