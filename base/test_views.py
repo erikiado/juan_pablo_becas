@@ -144,4 +144,4 @@ class TestRedirects(TestCase):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('captura:estudios'))
         response = self.client.get(reverse('tosp_auth:login'))
-        self.assertTrue(response, reverse('home'))
+        self.assertRedirects(response, reverse('home'), target_status_code=302)
