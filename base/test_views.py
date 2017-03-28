@@ -132,3 +132,16 @@ class TestRedirects(TestCase):
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('becas:services'))
+
+    def test_redirect_login(self):
+        """ Test that a logged user gets redirected to home.
+
+        """
+        self.create_group(CAPTURISTA_GROUP)
+        self.capturista = Capturista.objects.create(user=self.user)
+        self.create_group(CAPTURISTA_GROUP)
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('captura:estudios'))
+        response = self.client.get(reverse('tosp_auth:login'))
+        self.assertRedirects(response, reverse('home'), target_status_code=302)
