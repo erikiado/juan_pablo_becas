@@ -48,7 +48,7 @@ class AlumnoSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Alumno
-        fields = ('id', 'activo')
+        fields = ('id', 'activo', 'escuela_alumno')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):

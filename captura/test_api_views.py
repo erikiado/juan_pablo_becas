@@ -7,6 +7,7 @@ from rest_framework import status
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
 from estudios_socioeconomicos.models import Respuesta
 from estudios_socioeconomicos.load import load_data
+from administracion.models import Escuela
 from familias.models import Familia, Comentario, Integrante
 from perfiles_usuario.models import Capturista
 
@@ -34,6 +35,7 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.capturista = Capturista.objects.create(user=self.user)
         self.capturista.save()
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
         load_data()
 
@@ -172,6 +174,9 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'alumno_integrante': {
                             'activo': True
                         },
+                        'escuela_alumno': {
+                            escuela = Escuela.objects.all().first()
+                        }
                         'tutor_integrante': None
                     },
                     {
