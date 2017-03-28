@@ -147,6 +147,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         load_data()
 
+        Escuela.objects.create(nombre='El ITESM')
+
         self.study_data = {
             'familia': {
                 'numero_hijos_diferentes_papas': 10,
@@ -172,11 +174,12 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'nivel_estudios': '5_grado',
                         'fecha_de_nacimiento': '2003-03-19',
                         'alumno_integrante': {
-                            'activo': True
+                            'activo': True,
+                            'escuela_alumno': {
+                                'nombre': Escuela.objects.all().first().nombre
+                            }
                         },
-                        'escuela_alumno': {
-                            escuela = Escuela.objects.all().first()
-                        }
+                        
                         'tutor_integrante': None
                     },
                     {
@@ -576,13 +579,13 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         """ Test API send correct feedback and status code if information
             is not sent correctly.
         """
-        del self.study_data['familia']['integrante_familia'][0]['nombres']
+        del self.study_data['familia']['integrante_familia'][0]['alumno_integrante']
 
         url = reverse('{}-list'.format(self.test_url_name))
         request = self.factory.post(url, self.study_data)
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
-
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Estudio.objects.all().count(), 0)
 

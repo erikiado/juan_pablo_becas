@@ -173,7 +173,7 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),
                                (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
                                (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='integrante_familia')
     nombres = models.CharField(max_length=200, default='Javier')
     apellidos = models.CharField(max_length=200, default='López')
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
