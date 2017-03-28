@@ -315,6 +315,7 @@ def edit_integrante(request, id_integrante):
                     Alumno.objects.create(integrante=instance, escuela=escuela)
                     return redirect(reverse('captura:integrante',
                                             kwargs={'id_integrante': id_integrante}))
+                    
             elif rol == integrante_form.OPCION_ROL_TUTOR:
                 try:
                     tutor = instance.tutor
@@ -326,6 +327,7 @@ def edit_integrante(request, id_integrante):
                                          integrante=instance)
                     return redirect(reverse('captura:integrante',
                                             kwargs={'id_integrante': id_integrante}))
+
             return redirect(reverse('captura:integrantes',
                                     kwargs={'id_familia': integrante_form.instance.familia.pk}))
     forms = {}
