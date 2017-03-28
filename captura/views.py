@@ -1,15 +1,16 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
 
-from rest_framework import generics, permissions
-from rest_framework import status
+from rest_framework import generics, permissions, status, viewsets
+from rest_framework.response import Response
+
 
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import RespuestaForm
-from estudios_socioeconomicos.serializers import SeccionSerializer
+from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from familias.models import Familia
 
@@ -244,3 +245,106 @@ class APIQuestionsInformation(generics.ListAPIView):
     serializer_class = SeccionSerializer
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Seccion.objects.all()
+
+
+class APIUploadRetrieveStudy(viewsets.ViewSet):
+    """ Viewset for the CRUD REST operations of a Study.
+
+        This view handles all REST operation for a Study
+        to be submitted, retrieved or updated.
+    """
+
+    def list(self, request):
+        """ Retrieves all Studies in a given state that belong to
+            the Capturista making the Query.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If there are no studies for the capturista in the database.
+
+            Returns
+            -------
+            Response
+                Response object containing the serializer data
+        """
+        queryset = Estudio.objects.filter(
+            status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR])
+        studys = get_list_or_404(queryset, capturista=request.user.capturista)
+        serializer = EstudioSerializer(studys, many=True)
+
+        return Response(serializer.data)
+
+    def create(self, request):
+        """ Creates and saves a new Estudio object.
+
+            If the object is not properly serializer, a JSON
+            object is returned indicating format errors.
+
+            Returns
+            -------
+            On Success
+                Response
+                    Response object containing the serializer data
+            On Error
+                Response
+                    Response object containing the serializer errors
+        """
+        serializer = EstudioSerializer(data=request.data)
+
+        if serializer.is_valid():
+            instance = serializer.create(request.user.capturista)
+            return Response(EstudioSerializer(instance).data)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk):
+        """ Retrieves a specific instance of a Study.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If the study does not exist or it does not belong to the capturista.
+
+            Returns
+            -------
+            Response
+                Response object containing the serializer data
+        """
+        queryset = Estudio.objects.filter(
+            status__in=[Estudio.RECHAZADO, Estudio.REVISION, Estudio.BORRADOR],
+            capturista=self.request.user.capturista)
+
+        study = get_object_or_404(queryset, pk=pk)
+        serializer = EstudioSerializer(study)
+
+        return Response(serializer.data, status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk):
+        """ Updates a specific instance of a Study.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If the study does not exist or it does not belong to the capturista.
+
+            Returns
+            -------
+            On Success
+                Response
+                    Response object containing the serializer data
+            On Error
+                Response
+                    Response object containing the serializer errors
+
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        study = get_object_or_404(queryset, pk=pk)
+
+        serializer = EstudioSerializer(study, data=request.data)
+
+        if serializer.is_valid():
+            update = serializer.update()
+            return Response(EstudioSerializer(update).data)
+        else:
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

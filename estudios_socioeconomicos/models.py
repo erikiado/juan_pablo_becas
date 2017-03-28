@@ -72,6 +72,10 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
     in the database, we want to populate all the answers to query them and display
     them to the user.
 
+    When we create a study through a REST endpoint for an offline client we dont
+    want to create all answers (the client will already providing them). We can skip
+    this trigger using .save_base(raw=True) on a estudio object.
+
     Parameters:
     -----------
       instance : estudios_socioeconomicos.models.Estudio
@@ -80,8 +84,12 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
       created : BooleanField
           A value indicating if this instance is being created for the first time. Or if set
           to false if it is being edited.
+
+      kwargs['raw']: BooleanField
+        A value indicating us if we can skip the trigger.
     """
-    if created:
+    raw = kwargs['raw']
+    if created and not raw:
         preguntas = Pregunta.objects.all()
         for pregunta in preguntas:
             Respuesta.objects.create(estudio=instance, pregunta=pregunta)
@@ -190,8 +198,8 @@ class Respuesta(models.Model):
     respuesta : TextField
         If the answer needs to have text, it will be stored in this attribute.
     """
-    estudio = models.ForeignKey(Estudio)
-    pregunta = models.ForeignKey(Pregunta)
+    estudio = models.ForeignKey(Estudio, related_name='respuesta_estudio')
+    pregunta = models.ForeignKey(Pregunta, related_name='respuesta_pregunta')
     eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
