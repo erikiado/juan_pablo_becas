@@ -14,7 +14,7 @@ def login(request):
 
     In the case of a POST request, the view authenticates the user and
     logs him in. If it receives any other type of request, the view
-    renders the login form.
+    renders the login form. If the user is logged already, it gets redirected to home.
 
     Parameters
     ----------
@@ -33,5 +33,8 @@ def login(request):
             return redirect('home')
         else:
             error_message = 'El usuario o la contraseña son incorrectos.'
+    elif request.method == 'GET':
+        if request.user.is_authenticated():
+            return redirect('home')
     context = {'error_message': error_message}
     return render(request, 'tosp_auth/login.html', context)
