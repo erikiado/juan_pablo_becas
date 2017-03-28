@@ -251,7 +251,6 @@ def familia(request, id_familia):
         context['form_view'] = 'captura/familia_form.html'
         return render(request, 'captura/captura_base.html', context)
 
-
 @login_required
 @user_passes_test(is_capturista)
 def integrantes(request, id_familia):

@@ -22,7 +22,11 @@ urlpatterns = [
     url(r'^familia/create-integrante/(?P<id_familia>[0-9]+)',
         create_integrante,
         name='create_integrante'),
+<<<<<<< HEAD
     url(r'^integrante/(?P<id_integrante>[0-9]+)', edit_integrante, name='integrante'),
+=======
+    url(r'^integrante/(?P<id_integrante>[0-9]+)', integrante, name='integrante'),
+>>>>>>> 7d306b786206205b48b6886a2b1908b04ce82344
     url(r'^api-obtener-informacion-preguntas/', APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
 ]

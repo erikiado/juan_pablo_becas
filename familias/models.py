@@ -251,8 +251,12 @@ class Tutor(models.Model):
     OPCIONES_RELACION = ((OPCION_RELACION_MADRE, 'Madre'),
                          (OPCION_RELACION_PADRE, 'Padre'),
                          (OPCION_RELACION_TUTOR, 'Tutor'))
+<<<<<<< HEAD
 
     integrante = models.OneToOneField(Integrante, related_name='tutor_integrante')
+=======
+    integrante = models.OneToOneField(Integrante)
+>>>>>>> 7d306b786206205b48b6886a2b1908b04ce82344
     relacion = models.CharField(max_length=75, choices=OPCIONES_RELACION)
 
     def __str__(self):
