@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.core.exceptions import ObjectDoesNotExist
 from django.forms import HiddenInput
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -245,11 +244,12 @@ def familia(request, id_familia):
             return redirect(reverse('captura:integrantes',
                                     kwargs={'id_familia': form.instance.pk}))
     else:
-        context = { }
+        context = {}
         context['familia'] = Familia.objects.get(pk=id_familia)
         context['form'] = FamiliaForm(instance=context['familia'])
         context['form_view'] = 'captura/familia_form.html'
         return render(request, 'captura/captura_base.html', context)
+
 
 @login_required
 @user_passes_test(is_capturista)
@@ -269,11 +269,11 @@ def integrantes(request, id_familia):
 
 def edit_integrante(request, id_integrante):
     """ View for updating the information of an integrante.
-    
+
     This view will allow the Capturista to create and update
     the information of the integrante. It is used during the
     filling of the form.
-    
+
     Ong get this view loads the form for update of a specific user.
 
     On POST we receive the data of an integrante and save it. In case
@@ -299,32 +299,34 @@ def edit_integrante(request, id_integrante):
     """
     integrante_form = None
     if request.method == 'POST':
-        instance = get_object_or_404(Integrante, pk=id_integrante)
-        integrante_form = IntegranteForm(request.POST, instance=instance)
+        integrante = get_object_or_404(Integrante, pk=id_integrante)
+        integrante_form = IntegranteForm(request.POST, instance=integrante)
         if integrante_form.is_valid():
             integrante_form.save()
             rol = integrante_form.cleaned_data['Rol']
             if rol == integrante_form.OPCION_ROL_ALUMNO:
-                try:
-                    alumno = instance.alumno
+                alumnos = Alumno.objects.filter(integrante=integrante)
+                if alumnos:
+                    alumno = alumnos[0]
                     alumno_form = AlumnoForm(request.POST, instance=alumno)
                     if alumno_form.is_valid():
                         alumno_form.save()
-                except ObjectDoesNotExist:
+                else:
                     escuela = Escuela.objects.all().first()
-                    Alumno.objects.create(integrante=instance, escuela=escuela)
+                    Alumno.objects.create(integrante=integrante, escuela=escuela)
                     return redirect(reverse('captura:integrante',
                                             kwargs={'id_integrante': id_integrante}))
-                    
+
             elif rol == integrante_form.OPCION_ROL_TUTOR:
-                try:
-                    tutor = instance.tutor
+                tutores = Tutor.objects.filter(integrante=integrante)
+                if tutores:
+                    tutor = tutores[0]
                     tutor_form = TutorForm(request.POST, instance=tutor)
                     if tutor_form.is_valid():
                         tutor_form.save()
-                except ObjectDoesNotExist:
+                else:
                     Tutor.objects.create(relacion=integrante_form.cleaned_data['Rol'],
-                                         integrante=instance)
+                                         integrante=integrante)
                     return redirect(reverse('captura:integrante',
                                             kwargs={'id_integrante': id_integrante}))
 
@@ -334,20 +336,20 @@ def edit_integrante(request, id_integrante):
     integrante = Integrante.objects.get(pk=id_integrante)
     rol_integrante = 'ninguno'
     rol_disabled = False
-    try:
-        alumno = integrante.alumno
+
+    alumnos = Alumno.objects.filter(integrante=integrante)
+    if alumnos:
+        alumno = alumnos[0]
         forms['form_alumno'] = AlumnoForm(instance=alumno)
         rol_integrante = 'alumno'
         rol_disabled = True
-    except ObjectDoesNotExist:
-        pass
-    try:
-        tutor = integrante.tutor
+
+    tutores = Tutor.objects.filter(integrante=integrante)
+    if tutores:
+        tutor = tutores[0]
         forms['form_tutor'] = TutorForm(instance=tutor)
         rol_integrante = 'tutor'
         rol_disabled = True
-    except ObjectDoesNotExist:
-        pass
 
     if integrante_form:
         forms['integrante_form'] = integrante_form

@@ -335,7 +335,7 @@ class TestViewsRightSide(StaticLiveServerTestCase):
         # Test alumno integrante creation
         self.browser.find_by_id('create_integrante')[0].click()
         self.browser.fill('nombres', alumno_integrante_name)
-        self.browser.select('Rol', 'Alumno')
+        self.browser.select('Rol', 'alumno')
         self.browser.find_by_id('update_integrante')[0].click()
         self.assertTrue(self.browser.is_text_present('Numero sae:'))
         self.browser.find_by_id('update_integrante')[0].click()
@@ -343,7 +343,7 @@ class TestViewsRightSide(StaticLiveServerTestCase):
         # Test tutor integrante creation
         self.browser.find_by_id('create_integrante')[0].click()
         self.browser.fill('nombres', tutor_integrante_name)
-        self.browser.select('Rol', 'Tutor')
+        self.browser.select('Rol', 'tutor')
         self.browser.find_by_id('update_integrante')[0].click()
         self.assertTrue(self.browser.is_text_present('Relacion:'))
         self.browser.fill('nombres', tutor_integrante_name)

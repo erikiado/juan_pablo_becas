@@ -179,7 +179,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                                 'nombre': Escuela.objects.all().first().nombre
                             }
                         },
-                        
                         'tutor_integrante': None
                     },
                     {
@@ -585,7 +584,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         request = self.factory.post(url, self.study_data)
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Estudio.objects.all().count(), 0)
 

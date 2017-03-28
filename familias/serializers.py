@@ -58,7 +58,7 @@ class AlumnoSerializer(serializers.ModelSerializer):
     def get_escuela(self):
         escuela_alumno = None
         return escuela_alumno
-   
+
     def create(self, integrante):
         """ This function overides the default behaviour for creating
             an object through a serializer.
