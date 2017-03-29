@@ -546,7 +546,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-       
+
         # Check that the following texts are present in the dashboard
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
@@ -692,7 +692,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-  
+
         # Check that the following texts are present in the dashboard
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
