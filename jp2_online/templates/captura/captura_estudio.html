@@ -7,6 +7,7 @@
 
     <form id="parentForm" method="post" action="" data-parsley-validate="" enctype="multipart/form-data" class="form-horizontal form-label-left" novalidate="">
 
+
         {% csrf_token %}
 
         {% for hidden in form.hidden_fields %}

@@ -1,9 +1,10 @@
- <h3></h3>
-    {% load permissions_extras %}
+  {% load permissions_extras %}
 
-    <ul class="nav side-menu">
+  <ul class="nav side-menu">
+      
       {% if request.user|has_group:'Administrador' %}
         <h3>Administración</h3>
+        
         <li>
           <a href="{% url 'administracion:main' %}">
             <i class="fa fa-laptop"></i> Dashboard
@@ -46,16 +47,19 @@
                 En borrador
               </a>
             </li>
-          {% endif %}
+          
 
-          {% if request.user|has_group:'Administrador' %}
-            <li>
-              <a href="{% url 'administracion:main' %}">
-                <i class="fa fa-laptop"></i> Estudios
-              </a>
-            </li>
-          {% endif %}
         </ul>
       </li>
-    
-    </ul>
+    {% endif %}
+
+    {% if request.user|has_group:'Capturista' %}
+
+      <li>
+        <a href="{% url 'captura:estudios' %}">
+          <i class="fa fa-file-text"></i> Estudios
+        </a>
+      </li>
+
+    {% endif %}
+  </ul>
