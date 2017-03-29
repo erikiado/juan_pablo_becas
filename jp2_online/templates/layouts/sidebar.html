@@ -47,6 +47,14 @@
               </a>
             </li>
           {% endif %}
+
+          {% if request.user|has_group:'Administrador' %}
+            <li>
+              <a href="{% url 'administracion:main' %}">
+                <i class="fa fa-laptop"></i> Estudios
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </li>
     
