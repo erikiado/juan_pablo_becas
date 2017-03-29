@@ -39,9 +39,10 @@ def admin_users_create(request):
 
     """
     if request.method == 'POST':
+        # kwargs = {'request': request}
         forma = UserForm(request.POST)
         if forma.is_valid():
-            forma.save()
+            forma.save(request=request)
             return redirect('administracion:users')
 
 

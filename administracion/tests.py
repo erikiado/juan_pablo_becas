@@ -1,7 +1,7 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Group
-
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
 from familias.models import Familia
@@ -60,6 +60,7 @@ class TestUserForm(TestCase):
         """Setup the dictionary with data for feeding the form.
 
         """
+        self.factory = RequestFactory()
         self.valid_data_form = {
             'username': 'raul',
             'first_name': 'raul',
@@ -79,9 +80,10 @@ class TestUserForm(TestCase):
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = ADMINISTRADOR_GROUP
+        request = self.factory.get('administracion:users')
         form = UserForm(data_form)
         self.assertTrue(form.is_valid())
-        user = form.save()
+        user = form.save(request=request)
         self.assertTrue(user.groups.filter(name=ADMINISTRADOR_GROUP).exists())
 
     def test_valid_data_capturista(self):
@@ -92,9 +94,10 @@ class TestUserForm(TestCase):
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = CAPTURISTA_GROUP
+        request = self.factory.get('administracion:users')
         form = UserForm(data_form)
         self.assertTrue(form.is_valid())
-        user = form.save()
+        user = form.save(request=request)
         self.assertTrue(user.groups.filter(name=CAPTURISTA_GROUP).exists())
         self.assertTrue(Capturista.objects.filter(user=user).exists())
 

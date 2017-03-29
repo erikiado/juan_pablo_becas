@@ -11,20 +11,11 @@
 
 {% block body_content %}
 <div class="page-content">
-    <div class="row">
-      <div class="col-md-2">
-        {% include "administracion/side_nav.html" %}
-      </div>
-      <div class="col-md-10">
-        	{% block dashboard_body %}{% endblock %}
-      </div>
-	</div>
+  {% block main_body %}{% endblock %}
 </div>
 {% endblock %}
 
 {% block footer_content %}
-<footer>
-</footer>
 {% endblock %}
 
 {% block extra_js %}
