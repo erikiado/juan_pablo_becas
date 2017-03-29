@@ -49,7 +49,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.fill('password', self.password)
         self.assertFalse(self.browser.find_by_css('input:invalid'))
         self.browser.find_by_name('login-submit').first.click()
-        test_string = 'Hello, world!'
+        test_string = 'Instituto Juan Pablo Segundo'
         self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_valid_login(self):
@@ -67,7 +67,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.fill('username', self.username)
         self.browser.fill('password', self.password)
         self.browser.find_by_name('login-submit').first.click()
-        test_string = 'Hello, world!'
+        test_string = 'Instituto Juan Pablo Segundo'
         self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_bad_password(self):

@@ -1,3 +1,5 @@
+import time
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -69,5 +71,6 @@ class TestCapturaEstudio(StaticLiveServerTestCase):
         starting_estudios_count = Estudio.objects.filter(status='borrador').count()
         self.browser.visit(self.live_server_url + reverse('captura:estudios'))
         self.browser.find_by_id('create_estudio').click()
+        time.sleep(.1)
         new_estudios_count = Estudio.objects.filter(status='borrador').count()
         self.assertEqual(new_estudios_count, starting_estudios_count + 1)

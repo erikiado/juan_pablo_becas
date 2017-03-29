@@ -78,7 +78,7 @@ class WidgetLogoutTest(StaticLiveServerTestCase):
         self.browser.find_by_id('login-submit').click()
         self.browser.visit(self.live_server_url)
         self.browser.find_by_id('my-account-btn').first.click()
-        self.assertTrue(self.browser.is_text_present('Logout'))
+        self.assertTrue(self.browser.is_text_present('cerrar sesion'))
 
     def test_option_appear_to_no_logged_client(self):
         """Test: if the option log out appear for not log users
