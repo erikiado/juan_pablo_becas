@@ -1,14 +1,19 @@
 <h1>Edición de Integrante</h1>
 <form action="{% url 'captura:integrante' integrante.id %}" method="post">
   {% csrf_token %}
+  <h2>Datos Generales</h2>
   {{ forms.integrante_form.non_field_errors }}
   {{ forms.integrante_form }}
 
   {% if  forms.form_alumno %}
+    <h2>Datos del Alumno</h2>
+    {{ forms.form_alumno.non_field_errors }}
   	{{ forms.form_alumno }}
   {% endif %}
 
   {% if forms.form_tutor %}
+    <h2>Datos del Tutor</h2>
+    {{ forms.form_tutor.non_field_errors }}
   	{{ forms.form_tutor}}
   {% endif %}
   <br>
