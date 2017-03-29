@@ -1,91 +1,107 @@
 {% extends "administracion/dashboard_users.html" %}
 {% load staticfiles %}
 
-{% block dashboard_body %}
+{% block content %}
 
-	<link rel="stylesheet" type="text/css" href={% static 'css/captura/capturar_estudio.css' %}>
+    <link rel="stylesheet" type="text/css" href={% static 'css/captura/capturar_estudio.css' %}>
 
-	<form id="parentForm" method="post" action="" data-parsley-validate="" enctype="multipart/form-data" class="form-horizontal form-label-left" novalidate="">
+    <form id="parentForm" method="post" action="" data-parsley-validate="" enctype="multipart/form-data" class="form-horizontal form-label-left" novalidate="">
 
         {% csrf_token %}
 
         {% for hidden in form.hidden_fields %}
             {{ hidden }}
         {% endfor %}
-		
-		<div>
-        	<h2>{{seccion}}</h2>
-		</div>
+        
+        <div>
+            <h2>{{seccion}}</h2>
+        </div>
 
-		{% for subseccion in data %}
-			
-			<h2>{{subseccion.nombre}}</h2>
+        {% for subseccion in data %}
+            
+            <div class="col-md-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>
+                    {{subseccion.nombre}} <small>Subsección</small>
+                </h2>
+               
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    {% for pregunta in subseccion.preguntas %}
+                        
+                        <div id="question-container-{{pregunta.id}}" class="question-container">
+                            
+                            <h4>{{pregunta.texto}}</h4>
 
-			{% for pregunta in subseccion.preguntas %}
-				
-				<h4>{{pregunta.texto}}</h4>
+                            {% for respuesta in pregunta.respuestas %}
+                                <div class='form-container'>
 
-				<div id="question-container-{{pregunta.id}}" class='question-container'>
-					{% for respuesta in pregunta.respuestas %}
-						
-						<div class='form-container'>
+                                    {% if pregunta.opciones_respuesta.1 %}
+                                            
+                                        {{ respuesta.form.eleccion }}
 
-							{% if pregunta.opciones_respuesta.1 %}
-									
-								{{ respuesta.form.eleccion }}
+                                    {% else %}
 
-							{% else %}
+                                        <div class="item form-group">
 
-	                            <div class="item form-group">
+                                            <div class="col-xs-12 col-md-11 col-sm-11 col-lg-11">
+                                                <div class="col-sm-12">
+                                                   <p>{{ respuesta.form.respuesta }}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-md-1 col-sm-1 col-lg-1">
+                                                <a id="delete-for-{{respuesta.id}}" class="btn btn-danger delete-answer" href="javascript:void(0)">-</a>
+                                            </div>
 
-	                                <div class="col-md-6 col-sm-6 col-xs-12">
-	                                    <div class="col-sm-12">
-	                                       <p>{{ respuesta.form.respuesta }}</p>
-	                                    </div>
-	                                </div>
-									
-									<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-										<a id="delete-for-{{respuesta.id}}" class="btn btn-danger delete-answer" href="javascript:void(0)">-</a>
-									</div>
+                                        </div>
 
-	                            </div>
-
-	                            {{ field.errors }}
+                                        {{ field.errors }}
 
 
-                    		{% endif %}
-						
-						</div>
-						
-					{% endfor%}
-				</div>
-				
-				{% if not pregunta.opciones_respuesta.1 %}
-					<a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer" href="javascript:void(0)">
-						+
-					</a>
-				{% endif %}
-			
-			{% endfor %}
-		
-		{% endfor %}
+                                    {% endif %}
+                                
+                                </div>
+                            {% endfor %}
+                            
+                            
+                        </div>
 
-        <div class="form-group">
-        	<div class="col-xs-12 col-sm-1 col-md-1 col-lg-1"></div>
+                    {% if not pregunta.opciones_respuesta.1 %}
+                    <div style="padding-right: 30px;">
+                        <a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer pull-right" href="javascript:void(0)">
+                            +
+                        </a>
+                    </div>
+                    <br><br><br>
+                    {% endif %}
+  
+                    <div class="divider-dashed"></div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+        
+        {% endfor %}
 
-        	{% if seccion.numero > 1 %}
-	        	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">   
-	                <button id="previous_section_button" type="submit" class="btn btn-success">
-	                	Anterior
-	                </button>
-	            </div>
-	        {% endif %}
-			
-			<div class="col-xs-12 col-sm-1 col-md-1 col-lg-1"></div>
+        <div class="row form-group">
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
+            
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"> 
+               {% if seccion.numero > 1 %}
+                    <button id="previous_section_button" type="submit" class="btn btn-success">
+                        Anterior
+                    </button>
+               {% endif %}
+            </div>
+
+            <div class="col-xs-12 col-sm-1 col-md-1 col-lg-1"></div>
             
             <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">   
                 <button id="next_section_button" type="submit" class="btn btn-success"> 
-                	Siguiente
+                    Siguiente
                 </button>
             </div>
 
@@ -98,20 +114,20 @@
 
 
 {% block extra_js %}
-	<script type="text/javascript" src="{% static 'js/captura/capturar_estudio.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/captura/capturar_estudio.js' %}"></script>
 
 <script>
 
-	
-	capturar_estudio_dynamic_form.init(
-		{	
-			"url_add_answer": "{% url 'captura:agregar_respuesta_estudio' %}",
+    
+    capturar_estudio_dynamic_form.init(
+        {   
+            "url_add_answer": "{% url 'captura:agregar_respuesta_estudio' %}",
 
-			"url_remove_answer": "{% url 'captura:quitar_respuesta_estudio' %}",
+            "url_remove_answer": "{% url 'captura:quitar_respuesta_estudio' %}",
 
-			"id_study": {{id_estudio}}
-		}
-	);
+            "id_study": {{id_estudio}}
+        }
+    );
 
 </script>
 
