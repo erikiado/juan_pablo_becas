@@ -1,0 +1,12 @@
+<h1>Creación de Tutor</h1>
+<form action="{% url 'captura:create_tutor' id_integrante %}" method="post">
+  {% csrf_token %}
+  <h2>Datos del Tutor</h2>
+  {{ form.non_field_errors }}
+  {{ form }}
+  <br>
+  <input type="submit" value="Submit" class="btn btn-primary" id="create_tutor"/>
+  <br>
+  <br>
+  <br>
+</form>

@@ -1,5 +1,10 @@
-<form action="{% url 'captura:familia' familia.id %}" method="post">
+{% if create %}
+	<form action="{% url 'captura:create_estudio' %}" method="post">
+{% else %}
+	<form action="{% url 'captura:familia' familia.id %}" method="post">
+{% endif %}
   {% csrf_token %}
+  {{ form.non_field_errors }}
   {{ form }}
   <input type="submit" value="Submit" class="btn-primary" id="update_familia"/>
   <br>

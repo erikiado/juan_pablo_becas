@@ -1,4 +1,12 @@
-<form action="{% url 'captura:create_integrante' familia.id %}" method="post">
+<h1>Creación de Integrante</h1>
+<form action="{% url 'captura:create_integrante' id_familia %}" method="post">
   {% csrf_token %}
-  <button class="btn btn-primary" type="submit" value="Create new integrante" id="create_integrante"><i class="glyphicon glyphicon-plus"></i> Agregar Integrante</button></a>
+  <h2>Datos Generales</h2>
+  {{ form.non_field_errors }}
+  {{ form }}
+  <br>
+  <input type="submit" value="Submit" class="btn btn-primary" id="create_integrante"/>
+  <br>
+  <br>
+  <br>
 </form>

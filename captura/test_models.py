@@ -30,6 +30,7 @@ class RetroalimentacionTestCase(TestCase):
                                     password='some_pass')
         capturista = Capturista.objects.create(user=self.user)
         familia = Familia.objects.create(
+                                numero_hijos_diferentes_papas=2,
                                 explicacion_solvencia='aaa',
                                 estado_civil='soltero',
                                 localidad='otro')

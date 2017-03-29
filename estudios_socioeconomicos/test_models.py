@@ -31,6 +31,7 @@ class EstudioTestCase(TestCase):
                                     password='some_pass')
         self.capturista = Capturista.objects.create(user=self.user)
         self.familia = Familia.objects.create(
+                                numero_hijos_diferentes_papas=2,
                                 explicacion_solvencia='aaa',
                                 estado_civil='soltero',
                                 localidad='otro')
@@ -229,6 +230,7 @@ class RespuestaTestCase(TestCase):
                                     password='some_pass')
         self.capturista = Capturista.objects.create(user=self.user)
         self.familia = Familia.objects.create(
+                                numero_hijos_diferentes_papas=2,
                                 explicacion_solvencia='aaa',
                                 estado_civil='soltero',
                                 localidad='otro')

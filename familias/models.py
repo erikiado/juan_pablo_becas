@@ -64,15 +64,13 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
-    numero_hijos_diferentes_papas = models.IntegerField(default=0)
+    numero_hijos_diferentes_papas = models.IntegerField()
 
     explicacion_solvencia = models.TextField(blank=True)
     estado_civil = models.CharField(max_length=100,
-                                    choices=OPCIONES_ESTADO_CIVIL,
-                                    default=OPCION_ESTADO_SOLTERO)
+                                    choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
-                                 choices=OPCIONES_LOCALIDAD,
-                                 default=OPCION_LOCALIDAD_JURICA)
+                                 choices=OPCIONES_LOCALIDAD)
 
 
 class Comentario(models.Model):
@@ -174,14 +172,13 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
                                (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
     familia = models.ForeignKey(Familia, related_name='integrante_familia')
-    nombres = models.CharField(max_length=200, default='Javier')
-    apellidos = models.CharField(max_length=200, default='López')
+    nombres = models.CharField(max_length=200)
+    apellidos = models.CharField(max_length=200)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
     nivel_estudios = models.CharField(max_length=200,
-                                      choices=OPCIONES_NIVEL_ESTUDIOS,
-                                      default=OPCION_ESTUDIOS_6)
-    fecha_de_nacimiento = models.DateField(default='1996-02-26')
+                                      choices=OPCIONES_NIVEL_ESTUDIOS)
+    fecha_de_nacimiento = models.DateField()
     activo = models.BooleanField(default=True)
 
     def __str__(self):
@@ -219,7 +216,7 @@ class Alumno(models.Model):
 
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
-    numero_sae = models.CharField(max_length=30, default='000')
+    numero_sae = models.CharField(max_length=30)
     escuela = models.ForeignKey(Escuela, related_name='escuela_alumno')
 
     def __str__(self):

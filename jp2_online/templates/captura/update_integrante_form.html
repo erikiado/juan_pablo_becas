@@ -5,16 +5,16 @@
   {{ forms.integrante_form.non_field_errors }}
   {{ forms.integrante_form }}
 
-  {% if  forms.form_alumno %}
+  {% if  forms.alumno_form %}
     <h2>Datos del Alumno</h2>
-    {{ forms.form_alumno.non_field_errors }}
-  	{{ forms.form_alumno }}
+    {{ forms.alumno_form.non_field_errors }}
+  	{{ forms.alumno_form }}
   {% endif %}
 
-  {% if forms.form_tutor %}
+  {% if forms.tutor_form %}
     <h2>Datos del Tutor</h2>
-    {{ forms.form_tutor.non_field_errors }}
-  	{{ forms.form_tutor}}
+    {{ forms.tutor_form.non_field_errors }}
+  	{{ forms.tutor_form }}
   {% endif %}
   <br>
   <input type="submit" value="Submit" class="btn btn-primary" id="update_integrante"/>

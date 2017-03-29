@@ -1,4 +1,1 @@
-<form action="{% url 'captura:create_estudio' %}" method="post">
-  {% csrf_token %}
-  <button class="btn btn-primary" type="submit" value="Create new integrante" id="create_integrante"><i class="glyphicon glyphicon-plus"></i> Agregar estudio</button></a>
-</form>
+<a class="btn btn-primary" href="{% url 'captura:create_estudio' %}" id="create_estudio"><i class="glyphicon glyphicon-plus"></i>Agregar estudio</a>

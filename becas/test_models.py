@@ -14,7 +14,9 @@ class TestBeca(TestCase):
 
         """
         escuela = Escuela.objects.create(nombre='Juan Pablo')
-        familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         integrante = Integrante.objects.create(familia=familia,
                                                nombres='Mario',
                                                apellidos='Molina',

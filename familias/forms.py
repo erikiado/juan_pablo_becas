@@ -1,4 +1,4 @@
-from django.forms import ModelForm, ChoiceField
+from django.forms import ModelForm, ChoiceField, HiddenInput
 from .models import Familia, Integrante, Alumno, Tutor
 
 
@@ -35,12 +35,16 @@ class IntegranteForm(ModelForm):
 
     class Meta:
         model = Integrante
-        fields = ('nombres',
+        fields = ('familia',
+                  'nombres',
                   'apellidos',
                   'telefono',
                   'correo',
                   'nivel_estudios',
                   'fecha_de_nacimiento')
+        widgets = {
+            'familia': HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
@@ -57,7 +61,12 @@ class AlumnoForm(ModelForm):
     """
     class Meta:
         model = Alumno
-        exclude = ['integrante', 'activo']
+        fields = ('integrante',
+                  'numero_sae',
+                  'escuela')
+        widgets = {
+            'integrante': HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
@@ -74,7 +83,10 @@ class TutorForm(ModelForm):
     """
     class Meta:
         model = Tutor
-        exclude = ['integrante']
+        fields = ('integrante', 'relacion')
+        widgets = {
+            'integrante': HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
