@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from estudios_socioeconomicos.utils import save_foreign_relationship
 from administracion.models import Escuela
+from administracion.serializers import EscuelaSerializer
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
 
@@ -47,10 +48,11 @@ class AlumnoSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+    escuela = EscuelaSerializer()
 
     class Meta:
         model = Alumno
-        fields = ('id', 'activo')
+        fields = ('id', 'activo', 'escuela')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
@@ -63,7 +65,9 @@ class AlumnoSerializer(serializers.ModelSerializer):
             created first and passed as parameter to the
             created function.
         """
-        self.validated_data['escuela'] = Escuela.objects.first()
+
+        escuela = Escuela.objects.filter(nombre=self.validated_data['escuela']['nombre'])
+        self.validated_data['escuela'] = escuela[0]
         self.validated_data['integrante'] = integrante
         return Alumno.objects.create(**self.validated_data)
 
@@ -76,6 +80,8 @@ class AlumnoSerializer(serializers.ModelSerializer):
             -------
             Updated Instance of Alumno model.
         """
+        escuela = Escuela.objects.filter(nombre=self.validated_data['escuela']['nombre'])
+        self.validated_data['escuela'] = escuela[0]
         Alumno.objects.filter(pk=self.instance.pk).update(**self.validated_data)
         return Alumno.objects.get(pk=self.instance.pk)
 

@@ -175,7 +175,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'fecha_de_nacimiento': '2003-03-19',
                         'alumno_integrante': {
                             'activo': True,
-                            'escuela': self.escuela.id
+                            'escuela': {
+                                'id': self.escuela.id,
+                                'nombre': self.escuela.nombre
+                            }
                         },
                         'tutor_integrante': None
                     },
@@ -250,6 +253,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         request = self.factory.post(url, self.study_data)
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
+        # print(response.data)
         self.assertEqual(Estudio.objects.all().count(), self.initial_studies+1)
 
         return response
@@ -375,7 +379,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         for integrante_nuevo in integrantes_nuevos:
             change_study['familia']['integrante_familia'].append(integrante_nuevo)
-        
+
         response = self.update_existing_study(change_study, study_id)
 
         self.assertEqual(len(response.data['familia']['integrante_familia']), 5)
