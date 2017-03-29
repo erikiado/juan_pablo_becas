@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
 
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
@@ -46,7 +48,7 @@ class UserForm(UserModelForm):
     def generate_user_password(self):
         return self.instance.first_name+'_'+self.instance.last_name
 
-    def save(self, *args, **kwargs):
+    def save(self, request=None, *args, **kwargs):
         """ Override save method to add group to the user.
 
         This overrides the save method of forms.ModelForm so that we can
@@ -57,8 +59,8 @@ class UserForm(UserModelForm):
         # Create user
         if self.instance.pk is None:
             user = super(UserForm, self).save(*args, **kwargs)
-            # TODO: Change the password generation for an PasswordResetForm
             user.set_password(self.generate_user_password())
+
             if data['rol_usuario'] == CAPTURISTA_GROUP:
                 user.save()
                 # capturista's group is added in the save method of the Model.
@@ -68,6 +70,20 @@ class UserForm(UserModelForm):
                 user_group = Group.objects.get_or_create(name=data['rol_usuario'])[0]
                 user.groups.add(user_group)
                 user.save()
+
+            # Send password reset form to new user email
+            reset_form = PasswordResetForm({'email': data['email']})
+            if reset_form.is_valid():
+                opts = {
+                    'request': request,
+                    'html_email_template_name': 'registration/password_reset_email.html',
+                    'email_template_name': 'registration/password_reset_email.html',
+                    'subject_template_name': 'registration/password_reset_subject.txt',
+                    'use_https': request.is_secure(),
+                    'token_generator': default_token_generator,
+                    'extra_email_context': None,
+                }
+                reset_form.save(**opts)
 
         # Update user
         else:
