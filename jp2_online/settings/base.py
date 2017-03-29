@@ -179,8 +179,8 @@ STATIC_URL = '/static/'
 LOGIN_URL = 'tosp_auth:login'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'isjp2.thelma'
-EMAIL_HOST_PASSWORD = 'juanPablo2'
+EMAIL_HOST_USER = os.environ['SENDGRID_USER']
+EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Instituto San Juan Pablo II <noreply@isjp2.com>'
