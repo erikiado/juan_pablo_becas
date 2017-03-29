@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from estudios_socioeconomicos.utils import save_foreign_relationship
-from administracion.serializers import EscuelaSerializer
 from administracion.models import Escuela
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
@@ -48,16 +47,11 @@ class AlumnoSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
-    escuela_alumno = EscuelaSerializer(read_only=True)
 
     class Meta:
         model = Alumno
-        fields = ('id', 'activo', 'escuela_alumno')
+        fields = ('id', 'activo')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
-
-    def get_escuela(self):
-        escuela_alumno = None
-        return escuela_alumno
 
     def create(self, integrante):
         """ This function overides the default behaviour for creating

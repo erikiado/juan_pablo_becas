@@ -136,6 +136,11 @@ class EstudioSerializer(serializers.ModelSerializer):
         respuestas = self.validated_data.pop('respuesta_estudio')
 
         familia_data.pop('id', None)  # In the catastrofic case someone decides on sending
+        
+        # for integrante in familia_data['integrante_familia']:
+        #     if integrante['alumno_integrante']:
+        #         integrante['alumno_integrante']['escuela'] = integrante['alumno_integrante']['escuela'].id
+        
 
         family_instance = save_foreign_relationship([familia_data], FamiliaSerializer, Familia)
 

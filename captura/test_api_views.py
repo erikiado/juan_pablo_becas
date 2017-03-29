@@ -147,7 +147,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         load_data()
 
-        Escuela.objects.create(nombre='El ITESM')
+        self.escuela = Escuela.objects.create(nombre='El ITESM')
 
         self.study_data = {
             'familia': {
@@ -175,9 +175,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'fecha_de_nacimiento': '2003-03-19',
                         'alumno_integrante': {
                             'activo': True,
-                            'escuela_alumno': {
-                                'nombre': Escuela.objects.all().first().nombre
-                            }
+                            'escuela': self.escuela.id
                         },
                         'tutor_integrante': None
                     },
@@ -356,7 +354,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                 'nivel_estudios': '4_grado',
                 'fecha_de_nacimiento': '2002-03-19',
                 'alumno_integrante': {
-                    'activo': True
+                    'activo': True,
+                    'escuela': str(self.escuela.id)
                 },
                 'tutor_integrante': None
             },
@@ -376,7 +375,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         for integrante_nuevo in integrantes_nuevos:
             change_study['familia']['integrante_familia'].append(integrante_nuevo)
-
+        
         response = self.update_existing_study(change_study, study_id)
 
         self.assertEqual(len(response.data['familia']['integrante_familia']), 5)
