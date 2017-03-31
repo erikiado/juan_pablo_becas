@@ -139,6 +139,12 @@
     <!-- Custom Theme Scripts -->
     <script src="{% static 'template/build/js/custom.min.js' %}"></script>
 
+    <script>
+      $(document).ready( function () {
+        $('#datatable').DataTable();
+      });
+    </script>
+
     {% block extra_js %}
 
     {% endblock %}
