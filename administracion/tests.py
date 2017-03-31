@@ -42,6 +42,15 @@ class TestAdministracionUrls(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
 
+    def test_view_search_students(self):
+        """ Test we can access the search_students view.
+
+        """
+        test_url_name = 'administracion:search_students'
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'administracion/search_students.html')
+
 
 class TestUserForm(TestCase):
     """Basic Suite for testing UserForm.
