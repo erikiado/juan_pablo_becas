@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
+from familias.models import Alumno
 
 
 @login_required
@@ -140,3 +141,10 @@ def reject_study(request):
         if form.is_valid():
             form.save()
         return redirect('administracion:main_estudios', Estudio.RECHAZADO)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def search_students(request):
+    students = Alumno.objects.filter(activo=True)
+    return render(request, 'administracion/search_students.html', {'students': students})
