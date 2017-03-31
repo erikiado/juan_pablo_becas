@@ -168,7 +168,9 @@ USE_L10N = True
 USE_TZ = True
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'static'),
+    # we can refer to everything from the template using the prefix 'template'
+    ('template', os.path.join(os.path.dirname(BASE_DIR), 'node_modules', 'gentelella')),
 )
 
 # Static files (CSS, JavaScript, Images)
