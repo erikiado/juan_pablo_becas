@@ -146,5 +146,8 @@ def reject_study(request):
 @login_required
 @user_passes_test(is_administrador)
 def search_students(request):
+    """ View to list all active students.
+    
+    """
     students = Alumno.objects.filter(activo=True)
     return render(request, 'administracion/search_students.html', {'students': students})
