@@ -12,17 +12,11 @@ from splinter import Browser
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
-from familias.models import Familia, Integrante
+from familias.models import Familia, Integrante, Alumno, Tutor
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
 from perfiles_usuario.utils import CAPTURISTA_GROUP
 
-def to_list(value):
-    if value is None:
-        value = []
-    elif not isinstance(value, list):
-        value = [value]
-    return value
 
 class TestViewsCapturaEstudio(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: capturista.
@@ -296,14 +290,14 @@ class TestViewsFamilia(TestCase):
     elerik : User
         User that will be used as a capturista in order to fill all everything
         related with familia.
-    familia1 : Familia
-        Used in tests that depend on creating an object related to a familia
-    integrante1 : Integrante
-        Used in tests that depend on creating an object related to an integrante
-    escuela : Used in tests that depend on creating an object related to an escuela
     capturista : Capturista
         Asociated with the User, as this object is required for permissions and
         creation.
+    escuela : Used in tests that depend on creating an object related to an escuela.
+    familia1 : Familia
+        Used in tests that depend on creating or editing an object related to a familia.
+    integrante1 : Integrante
+        Used in tests that depend on creating or editing an object related to an integrante.
     integrante_contructor_dictionary : dictrionary
         Used in order to prevent repetitive code, when creating very similar integrantes
         in different tests.
@@ -329,6 +323,10 @@ class TestViewsFamilia(TestCase):
             first_name='telma',
             last_name='suapellido')
 
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
         numero_hijos_inicial = 3
         estado_civil_inicial = 'soltero'
         localidad_inicial = 'salitre'
@@ -341,11 +339,6 @@ class TestViewsFamilia(TestCase):
                                                      apellidos='Astley',
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
-
-        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
-
-        self.capturista = Capturista.objects.create(user=elerik)
-        self.capturista.save()
 
         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
                                                   'nombres': 'Arturo',
@@ -527,10 +520,7 @@ class TestViewsFamilia(TestCase):
         self.tutor_constructor_dictionary['relacion'] = ''
         response = self.client.post(reverse('captura:create_tutor',
                                             kwargs={'id_integrante': integrante.id}),
-                                     self.tutor_constructor_dictionary)
-        print('Pasa con form')
-        contexts = to_list(response.context)
-        print(contexts)
+                                    self.tutor_constructor_dictionary)
         self.assertFormError(response, 'form', 'relacion', 'This field is required.')
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'captura/captura_base.html')
@@ -549,7 +539,9 @@ class TestViewsFamilia(TestCase):
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)
 
-    # This test is properly implemented but fails due to a bug in the assertFormError method.
+    # This test is properly implemented but fails due to a bug in the assertFormError method;
+    # following tests that would rely on the assertFormErrorMethod will be tested in the class
+    # TestViewsFamiliaLive.
     # def test_edit_integrante_incompleto(self):
     #     """ Test that the view and form for edit_integrante fail gracefully when provided
     #     with invalid data
@@ -568,6 +560,7 @@ class TestViewsFamilia(TestCase):
     #     integrante = Integrante.objects.get(id=self.integrante1.id)
     #     self.assertNotEqual(new_name, integrante.nombres)
 
+
 class TestViewsFamiliaLive(StaticLiveServerTestCase):
     """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
     cannot be ran via de django client.
@@ -580,9 +573,17 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         User that will be used as a capturista in order to fill all everything
         related with familia.
     familia1 : Familia
-        Used in tests that depend on creating an object related to a familia
+        Used in tests that depend on creating an object related to a familia.
     integrante1 : Integrante
-        Used in tests that depend on creating an object related to an integrante
+        Used in tests that depend on creating an object related to an integrante.
+    integrante2 : Integrante
+        Used in tests that depend on editing an alumno object.
+    integrante3 : Integrante
+        Used in tests that depend on editing a tutor object.
+    alumno1 : Alumno
+        Used in the tests that depend on creating or editing an object related to an alumno.
+    tutor1: Tutor
+        Used in the tests that depend on creating or editing an object related to a tutor.
     escuela : Used in tests that depend on creating an object related to an escuela
     capturista : Capturista
         Asociated with the User, as this object is required for permissions and
@@ -599,7 +600,6 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
     """
 
     def setUp(self):
-        def setUp(self):
         """ Creates all the initial necessary objects for the tests
         """
         self.browser = Browser('chrome')
@@ -612,6 +612,10 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
             password=test_password,
             first_name='telma',
             last_name='suapellido')
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        self.capturista = Capturista.objects.create(user=elerik)
 
         numero_hijos_inicial = 3
         estado_civil_inicial = 'soltero'
@@ -626,10 +630,24 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
 
-        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+        self.integrante2 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Rick',
+                                                     apellidos='Astley',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
 
-        self.capturista = Capturista.objects.create(user=elerik)
-        self.capturista.save()
+        self.integrante3 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Rick',
+                                                     apellidos='Astley',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
+
+        self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
+                                             numero_sae='5876',
+                                             escuela=self.escuela)
+
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
+                                           relacion='padre')
 
         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
                                                   'nombres': 'Arturo',
@@ -656,107 +674,117 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         """
         self.browser.quit()
 
-    def test_edit_integrante_incompleto(self):
+    def test_edit_integrante_incomplete(self):
         """ Test that the view and form for edit_integrante fail gracefully when provided
         with invalid data.
         """
-        self.browser.visit(self.live_server_url + reverse)
+        nombres = ''
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante1.id})
+        self.browser.visit(url)
+        self.browser.fill('nombres', nombres)
+        self.browser.find_by_id('update_integrante').first.click()
+        self.assertEqual(self.browser.url, url)
 
-class TestViewsRightSide(StaticLiveServerTestCase):
-    """Integration test suite for testing the views in the app: captura.
-
-    Test the urls for 'captura' which make up the capturista dashboard.
-    A user is created in order to test they are displayed.
-
-    Attributes
-    ----------
-    browser : Browser
-        Driver to navigate through websites and to run integration tests.
-    """
-
-    def setUp(self):
-        """Initialize the browser and create a user, before running the tests.
+    def test_edit_alumno(self):
+        """ Test that an already exisiting alumno can be edited, through the
+        edit_integrante view and form.
         """
-        self.browser = Browser('chrome')
-        test_username = 'estebes'
-        test_password = 'junipero'
-        estebes = User.objects.create_user(
-            username=test_username, email='juan@example.com', password=test_password,
-            first_name='Estebes', last_name='Thelmapellido')
-        capturista = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
-        capturista.user_set.add(estebes)
-        capturista.save()
-        Escuela.objects.create(nombre='Juan Pablo')
-        self.capturista = Capturista.objects.create(user=estebes)
-        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
-        self.browser.fill('username', test_username)
-        self.browser.fill('password', test_password)
-        self.browser.find_by_id('login-submit').click()
+        numero_sae = '42'
 
-    def tearDown(self):
-        """At the end of tests, close the browser.
-        """
-        self.browser.quit()
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante2.id})
+        self.browser.visit(url)
 
-    def test_creation_of_estudio(self):
-        """ Checks that an estudio can be created through the form
-        in the capturista dashboard
-        """
-        generic_integrante_name = 'Javier'
-        alumno_integrante_name = 'Marco'
-        tutor_integrante_name = 'Fabio'
-        test_url_name = 'captura:estudios'
-        # Test new integrante creation
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
-        self.browser.find_by_id('create_estudio')[0].click()
-        # Test integrante edition
-        self.assertTrue(self.browser.is_text_present('Numero hijos diferentes papas:'))
-        self.browser.fill('numero_hijos_diferentes_papas', 3)
-        self.browser.find_by_id('update_familia')[0].click()
-        self.assertTrue(self.browser.is_text_present('Agregar Integrante'))
-        # Test generic integrante creation
-        self.browser.find_by_id('create_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present('Edición de Integrante'))
-        self.browser.find_by_id('update_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present(generic_integrante_name))
-        # Test alumno integrante creation
-        self.browser.find_by_id('create_integrante')[0].click()
-        self.browser.fill('nombres', alumno_integrante_name)
-        self.browser.select('Rol', 'alumno')
-        self.browser.find_by_id('update_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present('Numero sae:'))
-        self.browser.find_by_id('update_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present(alumno_integrante_name))
-        # Test tutor integrante creation
-        self.browser.find_by_id('create_integrante')[0].click()
-        self.browser.fill('nombres', tutor_integrante_name)
-        self.browser.select('Rol', 'tutor')
-        self.browser.find_by_id('update_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present('Relacion:'))
-        self.browser.fill('nombres', tutor_integrante_name)
-        self.browser.select('relacion', 'madre')
-        self.browser.fill('nombres', tutor_integrante_name)
-        self.assertTrue(self.browser.is_text_present('Madre'))
-        self.browser.find_by_id('update_integrante')[0].click()
-        self.assertTrue(self.browser.is_text_present(tutor_integrante_name))
+        self.browser.fill('numero_sae', numero_sae)
 
-    def test_check_invalid_user(self):
-        """ Checks that if an user without proper permissions enters the
-        the view it won't be able to create a new study.
+        self.browser.find_by_id('update_integrante').first.click()
+        alumno = Alumno.objects.get(integrante=self.integrante2)
+        self.assertEqual(numero_sae, alumno.numero_sae)
+
+    def test_edit_alumno_incomplete(self):
+        """ Test that the view and form for edit_integrante fail gracefully when provided
+        with invalid data for an alumno.
         """
-        self.browser.visit(self.live_server_url + reverse('tosp_auth:logout'))
-        test_username = 'Pedro'
-        test_password = 'Paramo'
-        User.objects.create_user(
-            username=test_username, email='juan@example.com', password=test_password,
-            first_name='Estebes', last_name='Thelmapellido')
-        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
-        self.browser.fill('username', test_username)
-        self.browser.fill('password', test_password)
-        self.browser.find_by_id('login-submit').click()
-        self.assertTrue(self.browser.is_text_present('Hello'))
-        self.browser.visit(self.live_server_url + reverse('captura:estudios'))
-        self.assertFalse(self.browser.is_text_present('Agregar Integrante'))
+        numero_sae = ''
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante2.id})
+        self.browser.visit(url)
+        self.browser.fill('numero_sae', numero_sae)
+        self.browser.find_by_id('update_integrante').first.click()
+        self.assertEqual(self.browser.url, url)
+
+    def test_edit_tutor(self):
+        """ Test that an already exisiting tutor can be edited, through the
+        edit_integrante view and form.
+        """
+        relacion = 'padre'
+
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante3.id})
+        self.browser.visit(url)
+
+        self.browser.select('relacion', relacion)
+
+        self.browser.find_by_id('update_integrante').first.click()
+        tutor = Tutor.objects.get(integrante=self.integrante3)
+        self.assertEqual(relacion, tutor.relacion)
+
+    def test_edit_tutor_incomplete(self):
+        """ Test that the view and form for edit_integrante fail gracefully when provided
+        with invalid data for an alumno.
+        """
+        relacion = ''
+
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante3.id})
+        self.browser.visit(url)
+        self.browser.select('relacion', relacion)
+        self.browser.find_by_id('update_integrante').first.click()
+        self.assertEqual(self.browser.url, url)
+
+    def test_create_alumno_from_existing_integrante(self):
+        """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
+        'alumno' redirects you to the create page for a new alumno and saves the object.
+        """
+        rol = 'alumno'
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante1.id})
+        self.browser.visit(url)
+        self.browser.select('Rol', rol)
+        self.browser.find_by_id('update_integrante').first.click()
+        url = self.live_server_url + reverse('captura:create_alumno',
+                                             kwargs={'id_integrante': self.integrante1.id})
+        self.assertEqual(self.browser.url, url)
+
+        # Fill information
+        numero_sae = '9999'
+        self.browser.fill('numero_sae', numero_sae)
+        self.browser.select('escuela', self.escuela.id)
+        self.browser.find_by_id('create_alumno').first.click()
+        alumno = Alumno.objects.get(integrante=self.integrante1)
+        self.assertEqual(alumno.numero_sae, numero_sae)
+
+    def test_create_tutor_from_existing_integrante(self):
+        """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
+        'tutor' redirects you to the create page for a new tutor and saves the object.
+        """
+        rol = 'tutor'
+        url = self.live_server_url + reverse('captura:integrante',
+                                             kwargs={'id_integrante': self.integrante1.id})
+        self.browser.visit(url)
+        self.browser.select('Rol', rol)
+        self.browser.find_by_id('update_integrante').first.click()
+        url = self.live_server_url + reverse('captura:create_tutor',
+                                             kwargs={'id_integrante': self.integrante1.id})
+        self.assertEqual(self.browser.url, url)
+
+        # Fill information
+        relacion = 'padre'
+        self.browser.select('relacion', relacion)
+        self.browser.find_by_id('create_tutor').first.click()
+        tutor = Tutor.objects.get(integrante=self.integrante1)
+        self.assertEqual(tutor.relacion, relacion)
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):

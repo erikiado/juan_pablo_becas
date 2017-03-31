@@ -397,7 +397,7 @@ def edit_integrante(request, id_integrante):
         if integrante_form.is_valid():
             integrante_form.save()
             rol = integrante_form.cleaned_data['Rol']
-            if rol == integrante_form.OPCION_ROL_ALUMNO:
+            if rol == IntegranteForm.OPCION_ROL_ALUMNO:
                 alumnos = Alumno.objects.filter(integrante=integrante)
                 if alumnos:
                     alumno = alumnos[0]
@@ -408,7 +408,7 @@ def edit_integrante(request, id_integrante):
                     return redirect(reverse('captura:create_alumno',
                                             kwargs={'id_integrante': id_integrante}))
 
-            elif rol == integrante_form.OPCION_ROL_TUTOR:
+            elif rol == IntegranteForm.OPCION_ROL_TUTOR:
                 tutores = Tutor.objects.filter(integrante=integrante)
                 if tutores:
                     tutor = tutores[0]
@@ -423,21 +423,21 @@ def edit_integrante(request, id_integrante):
                                     kwargs={'id_familia': integrante_form.instance.familia.pk}))
     forms = {}
     integrante = Integrante.objects.get(pk=id_integrante)
-    rol_integrante = 'ninguno'
+    rol_integrante = IntegranteForm.OPCION_ROL_NINGUNO
     rol_disabled = False
 
     alumnos = Alumno.objects.filter(integrante=integrante)
     if alumnos:
         alumno = alumnos[0]
         forms['alumno_form'] = AlumnoForm(instance=alumno)
-        rol_integrante = 'alumno'
+        rol_integrante = IntegranteForm.OPCION_ROL_ALUMNO
         rol_disabled = True
 
     tutores = Tutor.objects.filter(integrante=integrante)
     if tutores:
         tutor = tutores[0]
         forms['tutor_form'] = TutorForm(instance=tutor)
-        rol_integrante = 'tutor'
+        rol_integrante = IntegranteForm.OPCION_ROL_TUTOR
         rol_disabled = True
 
     if integrante_form:
