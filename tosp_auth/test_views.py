@@ -1,7 +1,9 @@
+from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from splinter import Browser
+from perfiles_usuario.utils import ADMINISTRADOR_GROUP
 
 
 class TestAuthViews(StaticLiveServerTestCase):
@@ -25,8 +27,11 @@ class TestAuthViews(StaticLiveServerTestCase):
         """
         self.username = 'ArthurD'
         self.password = 'notAgainFord'
-        get_user_model().objects.create_user(username=self.username,
+        user = get_user_model().objects.create_user(username=self.username,
                                              password=self.password)
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(user)
+        administrators.save()
         self.browser = Browser('chrome')
 
     def tearDown(self):
