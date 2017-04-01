@@ -13,7 +13,7 @@ def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
     """
-    return render(request, 'administracion/dashboard_main.html',
+    return render(request, 'administracion/dashboard_administrador.html',
                   {'status_options': Estudio.get_options_status()})
 
 
@@ -26,7 +26,7 @@ def admin_users_dashboard(request):
     users = User.objects.all()
     create_user_form = UserForm()
 
-    return render(request, 'administracion/dashboard_users.html',
+    return render(request, 'administracion/crud_users.html',
                   {'all_users': users,
                    'create_user_form': create_user_form,
                    'status_options': Estudio.get_options_status()})
@@ -109,7 +109,7 @@ def list_studies(request, status_study):
     estudios = Estudio.objects.filter(status=status_study)
     contexto = {'estudios': estudios, 'estado': status_study,
                 'status_options': Estudio.get_options_status()}
-    return render(request, 'estudios_socioeconomicos/principal.html', contexto)
+    return render(request, 'estudios_socioeconomicos/listado_estudios.html', contexto)
 
 
 @login_required
