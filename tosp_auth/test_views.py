@@ -1,7 +1,9 @@
+from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from splinter import Browser
+from perfiles_usuario.utils import ADMINISTRADOR_GROUP
 
 
 class TestAuthViews(StaticLiveServerTestCase):
@@ -25,8 +27,12 @@ class TestAuthViews(StaticLiveServerTestCase):
         """
         self.username = 'ArthurD'
         self.password = 'notAgainFord'
-        get_user_model().objects.create_user(username=self.username,
-                                             password=self.password)
+        user = get_user_model().objects.create_user(
+            username=self.username,
+            password=self.password)
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(user)
+        administrators.save()
         self.browser = Browser('chrome')
 
     def tearDown(self):
@@ -38,9 +44,9 @@ class TestAuthViews(StaticLiveServerTestCase):
     def test_empty_fields(self):
         """ Test for empty fields
 
-        Visit the url of name 'login', and check that the form can't
-        be submitted without filling out each field in the form. Then
-        check that filling the form, allows it to be submitted.
+            Visit the url of name 'login', and check that the form can't
+            be submitted without filling out each field in the form. Then
+            check that filling the form, allows it to be submitted.
         """
         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.find_by_name('login-submit').first.click()
@@ -49,7 +55,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.fill('password', self.password)
         self.assertFalse(self.browser.find_by_css('input:invalid'))
         self.browser.find_by_name('login-submit').first.click()
-        test_string = 'Instituto Juan Pablo Segundo'
+        test_string = self.username
         self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_valid_login(self):
@@ -67,7 +73,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.fill('username', self.username)
         self.browser.fill('password', self.password)
         self.browser.find_by_name('login-submit').first.click()
-        test_string = 'Instituto Juan Pablo Segundo'
+        test_string = self.username
         self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_bad_password(self):

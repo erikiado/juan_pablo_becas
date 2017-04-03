@@ -11,4 +11,4 @@ def estudios(request):
 
     TODO: name properly and implement everything
     """
-    return render(request, 'administracion/dashboard_users.html')
+    return render(request, 'layouts/dashboard_base.html')

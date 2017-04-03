@@ -115,7 +115,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                 self.test_url_name,
                 kwargs={'id_estudio': 0, 'numero_seccion': secciones[0].numero}))
 
-        self.assertTrue(self.browser.is_text_present('Not Found'))
+        self.assertTrue(self.browser.is_text_present('Lo sentimos'))
 
     def test_adding_more_answers(self):
         """ Test that a user can dynamically add more questions to a

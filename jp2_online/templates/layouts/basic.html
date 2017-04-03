@@ -7,12 +7,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	{% load staticfiles %}
+  
+  {% load staticfiles %}
     
     <title>
-    	{% block page_title %}
-    	{% endblock %}
+      {% block page_title %}
+      {% endblock %}
     </title>
 
     <!-- Bootstrap -->
@@ -22,7 +22,7 @@
     <!-- NProgress -->
     <link href="{% static 'template/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
 
-
+    <!-- style for tables -->
     <link href="{% static 'template/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'template/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'template/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
@@ -40,8 +40,8 @@
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
               <a href="" class="site_title">
-              	<i class="fa fa-bank"></i> 
-              	Instituto Juan Pablo Segundo
+                <i class="fa fa-bank"></i> 
+                Instituto Juan Pablo Segundo
               </a>
             </div>
 
@@ -63,7 +63,7 @@
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
-               		{% include 'layouts/sidebar.html' %}
+                  {% include 'layouts/sidebar.html' %}
               </div>
 
             </div>
@@ -90,7 +90,7 @@
 
         <!-- top navigation -->
         <div class="top_nav">
-        	{% include 'layouts/navbar.html' %}
+          {% include 'layouts/navbar.html' %}
         </div>
         <!-- /top navigation -->
 
@@ -101,7 +101,7 @@
           {% endblock %}
         </div>
         <!-- /page content -->
-		
+    
         <!-- footer content -->
         <footer>
           <div class="pull-right">
@@ -150,4 +150,3 @@
     {% endblock %}
   </body>
 </html>
-

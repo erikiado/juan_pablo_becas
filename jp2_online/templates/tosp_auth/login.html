@@ -1,40 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'layouts/landing_base.html' %}
 
-    <title>JP2 | LOGIN </title>
-    {% load staticfiles %}
-    <!-- Bootstrap -->
-    <link href="{% static 'template/vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="{% static 'template/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
-    <!-- NProgress -->
-    <link href="{% static 'template/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+{% block content %}
 
-    <!-- Custom Theme Style -->
-    <link href="{% static 'template/build/css/custom.min.css' %}" rel="stylesheet">
+<div class="row text-center">
+  <h1>Iniciar Sesion</h1>
+</div>
 
-    <link href="{% static 'template/vendors/animate.css/animate.min.css' %}" rel="stylesheet">
-  </head>
-
-  <body class="login">
-    <div>
-      <a class="hiddenanchor" id="signin"></a>
-
-      <div class="login_wrapper">
-        <div class="animate form login_form">
-          <section class="login_content">
-            {% include 'tosp_auth/login_form.html'%}
-          </section>
-        </div>
-
+  <form id="login_form" method="post" class="form-group">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="formUser">Usuario</label>
+        
+        <input type="text" class="required form-control col-sm-2 col-md-4 col-form-label" name="username" value="" size="50" placeholder="Usuario" id="login-username" oninvalid="this.setCustomValidity('Introduzca un nombre de usuario')" oninput="setCustomValidity('')" required="true" required/>
       </div>
-    </div>
-  </body>
-</html>
 
+      <div class="form-group">
+        <label for="formPassword">Contraseña</label>
+        <input type="password" class="required form-control col-sm-2 col-md-4 col-form-label" name="password" id="formPassword" placeholder="Contraseña" id="login-password" oninvalid="this.setCustomValidity('Introduzca una contraseña')" oninput="setCustomValidity('')" required="true" required>
+      </div>
+
+      <br>
+      <br>
+      <br>
+
+      {% if error_message %}
+        <div class="alert alert-danger">
+          {{error_message}}
+        </div>
+      {% endif %}
+
+      <div class="form-group row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <button type="submit" class="btn btn-primary" name="login-submit" id="login-submit">Enviar</button>
+        </div>
+      </div>
+  </form>
+  
+
+
+{% endblock %}
