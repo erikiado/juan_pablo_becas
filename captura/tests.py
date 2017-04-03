@@ -1,13 +1,13 @@
-import time
+# import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.urls import reverse
+# from django.urls import reverse
 from splinter import Browser
 from perfiles_usuario.models import Capturista
-from perfiles_usuario.utils import CAPTURISTA_GROUP
-from estudios_socioeconomicos.models import Estudio
+# from perfiles_usuario.utils import CAPTURISTA_GROUP
+# from estudios_socioeconomicos.models import Estudio
 
 
 class TestCapturaEstudio(StaticLiveServerTestCase):
