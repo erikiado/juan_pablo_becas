@@ -1,4 +1,3 @@
-import time
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -57,7 +56,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.assertFalse(self.browser.find_by_css('input:invalid'))
         self.browser.find_by_name('login-submit').first.click()
         test_string = 'Bienvenido'
-        # self.assertTrue(self.browser.is_text_present(test_string))
+        self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_valid_login(self):
         """ Test for valid login at url 'tosp_auth:login'
@@ -75,7 +74,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         self.browser.fill('password', self.password)
         self.browser.find_by_name('login-submit').first.click()
         test_string = 'Bienvenido'
-        # self.assertTrue(self.browser.is_text_present(test_string))
+        self.assertTrue(self.browser.is_text_present(test_string))
 
     def test_bad_password(self):
         """ Test for invalid password at url 'tosp_auth:login'
