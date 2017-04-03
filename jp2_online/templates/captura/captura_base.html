@@ -1,18 +1,10 @@
 {% extends "layouts/basic.html" %}
 {% load staticfiles %}
 {% block page_title %}Captura{% endblock %}
-{% block extra_css %} 
-  <link rel="stylesheet" type="text/css" href={% static 'css/base/dashboard.css' %}>
-  <link rel="stylesheet" type="text/css" href={% static 'css/base/home.css' %}>
-  <link rel="stylesheet" href={% static 'js/jquery/jquery-ui-1.12.1.custom/jquery-ui.min.css' %}>
-    <link rel="stylesheet" href={% static 'js/jquery/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css' %}>
-    <link rel="stylesheet" href={% static 'js/jquery/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css' %}>
-{% endblock %}
-{% block header %}
-  {% include "base/nav_bar.html" %}
-{% endblock %}
 
-{% block body_content %}
+
+
+{% block content %}
 <div class="page-content container">
     <div class="row text-center">
       <div class="col-md-6 col-md-offset-3">
@@ -22,21 +14,17 @@
 </div>
 {% endblock %}
 
-{% block footer_content %}
-{% endblock %}
 
-{% block extra_js %}
-  <script type="text/javascript" src={% static "js/administracion/dashboard.js" %}></script>
-  <script type="text/javascript" src={% static 'js/jquery/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}></script>
-  {% block extra_page_js %}
-  <script>
-    $( function() {
-      $( "#id_fecha_de_nacimiento" ).datepicker({
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true
-      });
-    } );
-  </script>
+  {% block extra_js %}
+  
+    <script>
+      $( function() {
+        $( "#id_fecha_de_nacimiento" ).datepicker({
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true
+        });
+      } );
+    </script>
+  
   {% endblock %}
-{% endblock %}

@@ -37,10 +37,10 @@ $("#previous_section_button").on('click', function(e){
     function append_anwser(id_question, response) {
 		
 		var id = $(response).attr('id').replace(/\D/g,'');
-		var div = '<div class="form-container"><div class="item form-group"><div class="col-md-6 col-sm-6 col-xs-12"><div class="col-sm-12"><p>';
+		var div = '<div class="form-container"><div class="item form-group"><div class="col-xs-12 col-md-11 col-sm-11 col-lg-11"><div class="col-sm-12"><p>';
 		
 		div += response;
-		div += '</p></div></div><div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"><a id="delete-for-' 
+		div += '</p></div></div><div class="col-xs-12 col-md-1 col-sm-1 col-lg-1"><a id="delete-for-' 
 		div += id + '"';
 		div += ' class="btn btn-danger delete-answer" href="javascript:void(0)">-</a></div></div></div>'
 

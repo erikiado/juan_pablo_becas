@@ -17,16 +17,19 @@ class ControlerLogoutTest(TestCase):
     def setUp(self):
         """Initialize the browser and create a user, before running the tests.
         """
-        User.objects.create_user(
+        thelma = User.objects.create_user(
             username='thelma', email='juan@pablo.com', password='junipero')
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(thelma)
+        administrators.save()
 
     def test_logout_does_not_do_that(self):
         """Verify if the Logout works.
         """
         self.client.login(username='thelma', password='junipero')
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('home'), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Logout')
+        self.assertContains(response, 'cerrar sesion')
         self.client.logout()
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('tosp_auth:login') + '?next=/')
@@ -35,7 +38,7 @@ class ControlerLogoutTest(TestCase):
         """Verify if redirect to the right url.
         """
         self.client.login(username='thelma', password='junipero')
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('home'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
@@ -78,7 +81,7 @@ class WidgetLogoutTest(StaticLiveServerTestCase):
         self.browser.find_by_id('login-submit').click()
         self.browser.visit(self.live_server_url)
         self.browser.find_by_id('my-account-btn').first.click()
-        self.assertTrue(self.browser.is_text_present('Logout'))
+        self.assertTrue(self.browser.is_text_present('cerrar sesion'))
 
     def test_option_appear_to_no_logged_client(self):
         """Test: if the option log out appear for not log users

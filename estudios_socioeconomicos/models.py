@@ -40,7 +40,6 @@ class Estudio(models.Model):
 
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
-
     status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
 
     def __str__(self):

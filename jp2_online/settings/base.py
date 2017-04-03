@@ -168,7 +168,9 @@ USE_L10N = True
 USE_TZ = True
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'static'),
+    # we can refer to everything from the template using the prefix 'template'
+    ('template', os.path.join(os.path.dirname(BASE_DIR), 'node_modules', 'gentelella')),
 )
 
 # Static files (CSS, JavaScript, Images)
@@ -177,3 +179,10 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 LOGIN_URL = 'tosp_auth:login'
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = os.environ['SENDGRID_USER']
+EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Instituto San Juan Pablo II <noreply@isjp2.com>'
