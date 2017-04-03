@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
 
 from perfiles_usuario.utils import is_administrador, is_capturista,\
@@ -20,7 +21,7 @@ def home(request):
         return redirect('indicadores:all')
     if is_servicios_escolares(request.user):
         return redirect('becas:services')
-    return render(request, 'base/home.html')
+    raise Http404()
 
 
 def base_files(request, filename):

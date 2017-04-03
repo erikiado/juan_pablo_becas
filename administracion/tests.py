@@ -31,7 +31,7 @@ class TestAdministracionUrls(TestCase):
         test_url_name = 'administracion:main'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'administracion/dashboard_main.html')
+        self.assertTemplateUsed(response, 'administracion/dashboard_administrador.html')
 
     def test_view_users_dashboard(self):
         """Unit Test: administracion.views.admin_users_dashboard.
@@ -40,7 +40,7 @@ class TestAdministracionUrls(TestCase):
         test_url_name = 'administracion:users'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
+        self.assertTemplateUsed(response, 'administracion/crud_users.html')
 
 
 class TestUserForm(TestCase):
