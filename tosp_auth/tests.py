@@ -29,7 +29,7 @@ class ControlerLogoutTest(TestCase):
         self.client.login(username='thelma', password='junipero')
         response = self.client.get(reverse('home'), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Logout')
+        self.assertContains(response, 'cerrar sesion')
         self.client.logout()
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('tosp_auth:login') + '?next=/')

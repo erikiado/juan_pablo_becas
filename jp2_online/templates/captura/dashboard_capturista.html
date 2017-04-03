@@ -3,78 +3,74 @@
 
 {% block content %}
 
-  <div class="container">
-    {% include "captura/estudio_form.html" %}
-  </div>
+<div class="pull-right">
+  {% include "captura/estudio_form.html" %}
+</div>
   
-  <div class="content-box-large">
-    <div class="panel-heading">
-        <div class="panel-title">
-            Mis estudios socioeconómicos
-        </div>
-    </div>
+<div class="row"> 
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Mis estudios socioeconómicos</h2>
+        <div class="clearfix"></div>
+      </div>
 
-    <div class="row">
-        
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="x_panel">
-          <div class="x_content">
-            <table id="datatable" class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>Número</th>
-                  <th>Nombre Familia</th>
-                  <th>Status</th>
-                  <th>Acciones</th>
+      <div class="x_content">
+        <table id="datatable" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Nombre Familia</th>
+              <th>Status</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+
+          <tbody>
+            {% if estudios %}
+              {% for estudio in estudios %}
+                <tr class="odd gradeX {%if estudio.status == status_options.RECHAZADO%} danger {%endif%}">
+                  <td>
+                    {{estudio.id}}
+                  </td>
+
+                  <td>
+                    {{estudio.familia}}
+                  </td>
+
+                  <td>
+                    {{estudio.status}}
+                  </td>
+
+                  <td>
+                    <button class="btn btn-default">
+                      <i class="glyphicon glyphicon-eye-open"></i> Ver
+                    </button>
+
+                    {% if estudio.status == status_options.RECHAZADO %}
+                      <button class="btn btn-info">
+                        <i class="glyphicon glyphicon-inbox"></i> Ver Retroalimentación
+                      </button>
+                    {% endif %}
+
+                    <a href="{% url 'captura:familia' estudio.familia.id %}" class="btn btn-primary">
+                      <i class="glyphicon glyphicon-pencil"></i> Editar
+                    </a>
+                  </td>
                 </tr>
-              </thead>
-
-
-              <tbody>
-                {% if estudios %}
-                  {% for estudio in estudios %}
-                    <tr class="odd gradeX {%if estudio.status == status_options.RECHAZADO%} danger {%endif%}">
-                      <td>
-                        {{estudio.id}}
-                      </td>
-
-                      <td>
-                        {{estudio.familia}}
-                      </td>
-
-                      <td>
-                        {{estudio.status}}
-                      </td>
-
-                      <td>
-                        <button class="btn btn-default">
-                          <i class="glyphicon glyphicon-eye-open"></i> Ver
-                        </button>
-
-                        {% if estudio.status == status_options.RECHAZADO %}
-                          <button class="btn btn-info">
-                            <i class="glyphicon glyphicon-inbox"></i> Ver Retroalimentación
-                          </button>
-                        {% endif %}
-
-                        <button class="btn btn-primary">
-                          <i class="glyphicon glyphicon-pencil"></i> Editar
-                        </button>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                      
-                {% else %}
-                  <h5>No hay registro de estudios socioeconómicos</h5>
-                {% endif %}
-                
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>                
+              {% endfor %}
+                  
+            {% else %}
+              <h5>No hay registro de estudios socioeconómicos</h5>
+            {% endif %}
+            
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div> 
+  </div>                
+</div> 
   
 
 {% endblock %}

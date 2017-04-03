@@ -7,6 +7,7 @@ from rest_framework import status
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
 from estudios_socioeconomicos.models import Respuesta
 from estudios_socioeconomicos.load import load_data
+from administracion.models import Escuela
 from familias.models import Familia, Comentario, Integrante
 from perfiles_usuario.models import Capturista
 
@@ -34,6 +35,7 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.capturista = Capturista.objects.create(user=self.user)
         self.capturista.save()
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
         load_data()
 
@@ -145,6 +147,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         load_data()
 
+        self.escuela = Escuela.objects.create(nombre='El ITESM')
+
         self.study_data = {
             'familia': {
                 'numero_hijos_diferentes_papas': 10,
@@ -170,7 +174,11 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'nivel_estudios': '5_grado',
                         'fecha_de_nacimiento': '2003-03-19',
                         'alumno_integrante': {
-                            'activo': True
+                            'activo': True,
+                            'escuela': {
+                                'id': self.escuela.id,
+                                'nombre': self.escuela.nombre
+                            }
                         },
                         'tutor_integrante': None
                     },
@@ -245,6 +253,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         request = self.factory.post(url, self.study_data)
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
+        # print(response.data)
         self.assertEqual(Estudio.objects.all().count(), self.initial_studies+1)
 
         return response
@@ -349,7 +358,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                 'nivel_estudios': '4_grado',
                 'fecha_de_nacimiento': '2002-03-19',
                 'alumno_integrante': {
-                    'activo': True
+                    'activo': True,
+                    'escuela': str(self.escuela.id)
                 },
                 'tutor_integrante': None
             },
@@ -571,13 +581,12 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         """ Test API send correct feedback and status code if information
             is not sent correctly.
         """
-        del self.study_data['familia']['integrante_familia'][0]['nombres']
+        del self.study_data['familia']['integrante_familia'][0]['alumno_integrante']
 
         url = reverse('{}-list'.format(self.test_url_name))
         request = self.factory.post(url, self.study_data)
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Estudio.objects.all().count(), 0)
 

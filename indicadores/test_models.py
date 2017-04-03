@@ -63,7 +63,9 @@ class TestTransacciones(TestCase):
         will be linked, and mock periods to add to the transactions,
         as well as the transaction itself.
         """
-        familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         self.factor_anual = decimal.Decimal('12')
         periodo_anual = Periodo.objects.create(periodicidad='Anual',
                                                factor=self.factor_anual,
@@ -136,7 +138,9 @@ class TestIngreso(TestCase):
         will be linked, and mock periods to add to the ingreso, a transaction, and
         the ingreso as well.
         """
-        familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         periodo_anual = Periodo.objects.create(periodicidad='Anual',
                                                factor=decimal.Decimal('12'),
                                                multiplica=False)
