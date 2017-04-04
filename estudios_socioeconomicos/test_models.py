@@ -45,9 +45,7 @@ class EstudioTestCase(TestCase):
 
         TODO: fill __str__ method of familia.
         """
-        expected = '{familia} status: {status}'.format(
-                                            familia=str(self.familia),
-                                            status=self.estudio.status)
+        expected = '{familia}'.format(familia=str(self.familia))
         self.assertEqual(str(self.estudio), expected)
 
     def test_anwser_generation_for_study(self):
