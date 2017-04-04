@@ -2,7 +2,8 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
                    create_estudio, edit_familia, integrantes, create_integrante, edit_integrante, \
-                   create_alumno, create_tutor, APIQuestionsInformation, APIUploadRetrieveStudy
+                   create_alumno, create_tutor, APIQuestionsInformation, APIUploadRetrieveStudy, \
+                   APIOficioInformation, APIEscuelaInformation
 
 app_name = 'captura'
 
@@ -31,4 +32,8 @@ urlpatterns = [
     url(r'^integrante/(?P<id_integrante>[0-9]+)', edit_integrante, name='integrante'),
     url(r'^api-obtener-informacion-preguntas/', APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
+    url(r'api-obtener-informacion-escuelas/', APIEscuelaInformation.as_view(),
+        name='api_obtener_informacion_escuelas'),
+    url(r'api-obtener-informacion-oficios/', APIOficioInformation.as_view(),
+        name='api_obtener_informacion_oficios'),
 ]
