@@ -552,7 +552,7 @@ class TestViewsFamilia(TestCase):
                                     {'id_estudio': id_estudio})
         self.assertEqual(302, response.status_code)
 
-    def test_estudio_delete_modal_BadRequests(self):
+    def test_estudio_delete_modal_bad_requests(self):
         """ This test checks that the view 'captura:estudio_delete_modal'
         raises a HttpResponseBadRequest when accessed via a non AJAX method
         """
@@ -563,7 +563,7 @@ class TestViewsFamilia(TestCase):
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
 
-    def test_estudio_delete_BadRequest(self):
+    def test_estudio_delete_bad_request(self):
         """ This test checks that the view 'captura:estudio_delete'
         raises a HttpResponseBadRequest when accessed via a non POST method
         """

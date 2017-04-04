@@ -73,7 +73,7 @@ class Familia(models.Model):
                                  choices=OPCIONES_LOCALIDAD)
 
     def __str__(self):
-        """ Prints the apellido of one of the students of the family, 
+        """ Prints the apellido of one of the students of the family,
         in case the family has no related students the legend
         "Aún no se crean alumnos en el estudio" will appear.
         """
