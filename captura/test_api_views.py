@@ -107,6 +107,12 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         Test Wrong Data For Integrante
         Test Wrong Update Integrante
 
+        @TODO:
+
+        TEST Add Transaction (No Ingreso)
+        TEST Update Transaction (No Ingreso)
+        TEST Remove Transaction (No Ingreso)
+
     """
     def setUp(self):
         """ Creates users for testing study.
@@ -206,7 +212,20 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                             'relacion': 'tutor'
                         }
                     }
-                    ]
+                    ],
+                'transacciones': [
+                    {
+                        'activo': True,
+                        'monto': 500,
+                        'periodicidad': {
+                            'periodicidad': 'Mensual',
+                            'factor': 2.1,
+                            'multiplica': True,
+                        },
+                        'observacion': 'sastres',
+                        'es_ingreso': False
+                    }
+                ]
                 }, 'respuesta_estudio': [
                     {
                         'pregunta': Pregunta.objects.all()[0].id,
@@ -619,3 +638,45 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Estudio.objects.all().count(), 1)
+
+    def test_add_transaction(self):
+        """ Tests that a transaction can be added to study.
+        """
+        response = self.create_base_study()
+        initial_transactions = len(response.data['familia']['transacciones'])
+        change_study = response.data
+        study_id = response.data['id']
+
+        new_transaccion = {
+            'activo': True,
+            'monto': 1000,
+            'periodicidad': {
+                'periodicidad': 'Semanal',
+                'factor': 1.1,
+                'multiplica': False,
+            },
+            'observacion': 'no lo sieastres',
+            'es_ingreso': False
+        }
+
+        change_study['familia']['transacciones'].append(new_transaccion)
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(
+            len(response.data['familia']['transacciones']),
+            initial_transactions + 1)
+
+    def test_update_transaction(self):
+        """ Test that a transaction can be updated inside a study.
+        """
+        response = self.create_base_study()
+        study_id = response.data['id']
+        change_study = response.data
+        change_study['familia']['transacciones'][0]['monto'] = 200
+        change_study['familia']['transacciones'][0]['periodicidad']['factor'] = 1
+
+        response = self.update_existing_study(change_study, study_id)
+
+        transaccion = response.data['familia']['transacciones'][0]
+        self.assertEqual((transaccion['monto']), '200.00')
+        self.assertEqual(int(float(transaccion['periodicidad']['factor'])), 1)

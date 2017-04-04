@@ -3,6 +3,8 @@ from rest_framework import serializers
 from estudios_socioeconomicos.utils import save_foreign_relationship
 from administracion.models import Escuela
 from administracion.serializers import EscuelaSerializer
+from indicadores.serializers import TransaccionSerializer
+from indicadores.models import Transaccion
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
 
@@ -12,6 +14,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+
     class Meta:
         model = Comentario
         fields = ('id', 'fecha', 'texto')
@@ -91,6 +94,7 @@ class TutorSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+
     class Meta:
         model = Tutor
         fields = ('id', 'relacion')
@@ -215,6 +219,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
     """
     integrante_familia = IntegranteSerializer(many=True, allow_null=True)
     comentario_familia = ComentarioSerializer(many=True, allow_null=True)
+    transacciones = TransaccionSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Familia
@@ -225,7 +230,8 @@ class FamiliaSerializer(serializers.ModelSerializer):
             'estado_civil',
             'localidad',
             'comentario_familia',
-            'integrante_familia',)
+            'integrante_familia',
+            'transacciones')
 
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
@@ -246,11 +252,17 @@ class FamiliaSerializer(serializers.ModelSerializer):
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
+        transacciones = self.validated_data.pop('transacciones')
 
         family_instance = Familia.objects.create(**self.validated_data)
 
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, family_instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, family_instance)
+        save_foreign_relationship(
+            transacciones,
+            TransaccionSerializer,
+            Transaccion,
+            family_instance)
 
         return family_instance
 
@@ -278,6 +290,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
+        transacciones = self.validated_data.pop('transacciones')
 
         Comentario.objects.filter(
             familia=self.instance).exclude(
@@ -285,6 +298,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
 
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, self.instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, self.instance)
+        save_foreign_relationship(transacciones, TransaccionSerializer, Transaccion, self.instance)
 
         Familia.objects.filter(pk=self.instance.pk).update(**self.validated_data)
 

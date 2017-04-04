@@ -88,7 +88,7 @@ class Transaccion(models.Model):
         This field indicates whether a certain transaction is an income
         or an expense.
     """
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='transacciones')
     activo = models.BooleanField(default=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
