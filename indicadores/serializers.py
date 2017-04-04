@@ -3,7 +3,9 @@ from .models import Oficio, Periodo, Transaccion, Ingreso
 
 
 class OficioSerializer(serializers.ModelSerializer):
-    """
+    """ Serializer to represent a .models.Oficio instance
+        through a REST endpoint for the offline application
+        to submit information.
     """
     class Meta:
         model = Oficio
@@ -11,7 +13,9 @@ class OficioSerializer(serializers.ModelSerializer):
 
 
 class PeriodoSerializer(serializers.ModelSerializer):
-    """
+    """ Serializer to represent a .models.Periodo instance
+        through a REST endpoint for the offline application
+        to submit information.
     """
     class Meta:
         model = Periodo
@@ -21,7 +25,11 @@ class PeriodoSerializer(serializers.ModelSerializer):
 
 
 class TransaccionSerializer(serializers.ModelSerializer):
-    """
+    """ Serializer to represent a .models.Transaccion instance
+        through a REST endpoint for the offline application
+        to submit information.
+
+        @TODO: Implement creating Ingreso from Transaccion
     """
     periodicidad = PeriodoSerializer()
 
@@ -38,7 +46,17 @@ class TransaccionSerializer(serializers.ModelSerializer):
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, familia):
-        """
+        """ This function overides the default behaviour for creating
+            an object through a serializer.
+
+            This serializer dependes on a .models.Familia
+            object instance. Since we are dealing with
+            nested created objects, the familia must be
+            created first and passed as parameter to the
+            created function.
+
+            Finally a Periodo object os created from the data passed
+            throught the serializer.
         """
         periodicidad = self.validated_data.pop('periodicidad')
         periodo = Periodo.objects.create(**periodicidad)
@@ -48,7 +66,10 @@ class TransaccionSerializer(serializers.ModelSerializer):
         return Transaccion.objects.create(**self.validated_data)
 
     def update(self):
-        """
+        """ This function overides the default behaviour for creating
+            an object through a serializer.
+
+            Updates a Transaccion object and the periodicidad nested object.
         """
         periodicidad = self.validated_data.pop('periodicidad')
         Periodo.objects.filter(pk=periodicidad['id']).update(**periodicidad)
@@ -60,7 +81,9 @@ class TransaccionSerializer(serializers.ModelSerializer):
 
 
 class IngresoSerializer(serializers.ModelSerializer):
-    """
+    """ Serializer to represent a .models.Ingreso instance
+        through a REST endpoint for the offline application
+        to submit information.
     """
     transaccion = TransaccionSerializer()
 
@@ -74,6 +97,6 @@ class IngresoSerializer(serializers.ModelSerializer):
             'tutor')
 
     def create(self, tutor):
-        """
+        """ @TODO: This serializer is created through a Transaccion object.
         """
         return IngresoSerializer.objects.create(**self.validated_data)

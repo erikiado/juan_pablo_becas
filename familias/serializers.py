@@ -246,9 +246,9 @@ class FamiliaSerializer(serializers.ModelSerializer):
             the family that depend upon the creation of a family
             instance first. This are the Integrantes and Comentarios.
 
-            We first remove all Integrante and comentario from the
-            validated data. We create the family and then we create
-            this objects that require the family instance.
+            We first remove all Integrante, Comentario and Transaccion
+            from the validated data. We create the family and then we
+            create this objects that require the family instance.
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
@@ -282,8 +282,8 @@ class FamiliaSerializer(serializers.ModelSerializer):
             looks for the id in the object. If there is no data it will
             create the object.
 
-            Integrantes has a non-destructive way of disactivating. This
-            is donde by changin the is_active field.
+            Integrantes and Transacciones has a non-destructive way of disactivating.
+            This is donde by changing the is_active field.
 
             Comentario does not have this field, so all comentario instances
             that were not sent by the offline application most be removed.
