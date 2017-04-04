@@ -43,9 +43,7 @@ class Estudio(models.Model):
     status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
 
     def __str__(self):
-        return '{familia} status: {status}'.format(
-                                familia=self.familia.__str__(),
-                                status=self.status)
+        return '{familia}'.format(familia=self.familia.__str__())
 
     @staticmethod
     def get_options_status():

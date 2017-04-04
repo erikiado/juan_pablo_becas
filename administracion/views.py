@@ -97,7 +97,6 @@ def admin_users_delete(request):
     if request.method == 'POST':
         form = DeleteUserForm(request.POST)
         if form.is_valid():
-            form.cleaned_data
             form.save()
         return redirect('administracion:users')
 

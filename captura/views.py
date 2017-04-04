@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.forms import HiddenInput
 from django.http import HttpResponse
+from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
 
@@ -278,12 +279,13 @@ def estudio_delete_modal(request, id_estudio):
         form = DeleteEstudioForm(initial={'id_estudio': estudio.pk})
         return render(request, 'estudios_socioeconomicos/estudio_delete_modal.html',
                       {'estudio_to_delete': estudio, 'delete_form': form})
+    return HttpResponseBadRequest()
 
 
 @login_required
 @user_passes_test(is_capturista)
 def estudio_delete(request):
-    """ View to delete users.
+    """ View to delete estudio.
 
     """
     if request.method == 'POST':
@@ -291,6 +293,7 @@ def estudio_delete(request):
         if form.is_valid():
             form.save()
         return redirect('captura:estudios')
+    return HttpResponseBadRequest()
 
 
 @login_required

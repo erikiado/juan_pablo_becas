@@ -32,6 +32,9 @@ class AppFormTests(TestCase):
     """
 
     def setUp(self):
+        """ This sets up the database with the necessary values for the testing of the
+        DeleteEstudioForm
+        """
         test_username = 'erikiano'
         test_password = 'vacalalo'
 
@@ -75,6 +78,9 @@ class AppFormTests(TestCase):
                                              escuela=self.escuela)
 
     def test_form_soft_deletes(self):
+        """ This tests that the save method of the form, changes the status
+        of the estudio, as well as the activo value of all related 'people'.
+        """
         form_data = {'id_estudio': self.estudio1.id}
         form = DeleteEstudioForm(data=form_data)
         self.assertTrue(form.is_valid())

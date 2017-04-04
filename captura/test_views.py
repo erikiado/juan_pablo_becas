@@ -552,6 +552,25 @@ class TestViewsFamilia(TestCase):
                                     {'id_estudio': id_estudio})
         self.assertEqual(302, response.status_code)
 
+    def test_estudio_delete_modal_BadRequests(self):
+        """ This test checks that the view 'captura:estudio_delete_modal'
+        raises a HttpResponseBadRequest when accessed via a non AJAX method
+        """
+        url = reverse('captura:estudio_delete_modal',
+                      kwargs={'id_estudio': self.estudio1.id})
+        response = self.client.post(url, {'prueba': 'dato_cualquiera'})
+        self.assertEqual(400, response.status_code)
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
+    def test_estudio_delete_BadRequest(self):
+        """ This test checks that the view 'captura:estudio_delete'
+        raises a HttpResponseBadRequest when accessed via a non POST method
+        """
+        url = reverse('captura:estudio_delete')
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
     # This test is properly implemented but fails due to a bug in the assertFormError method;
     # following tests that would rely on the assertFormErrorMethod will be tested in the class
     # TestViewsFamiliaLive.
