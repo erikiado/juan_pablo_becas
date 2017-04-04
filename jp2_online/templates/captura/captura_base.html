@@ -12,19 +12,17 @@
       </div>
   </div>
 </div>
+
 {% endblock %}
 
-
-  {% block extra_js %}
-  
-    <script>
-      $( function() {
-        $( "#id_fecha_de_nacimiento" ).datepicker({
-          dateFormat: "yy-mm-dd",
-          changeMonth: true,
-          changeYear: true
-        });
-      } );
-    </script>
-  
-  {% endblock %}
+{% block extra_js %}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#id_fecha_de_nacimiento').datepicker({
+        changeMonth: true,
+        changeYear: true}
+      );
+    });
+  </script>
+{% endblock %}
