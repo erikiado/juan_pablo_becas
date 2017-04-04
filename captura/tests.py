@@ -42,6 +42,7 @@ class TestCapturaEstudio(StaticLiveServerTestCase):
         """ At the end of each test it closes the browser.
 
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def create_group(self, group_name):

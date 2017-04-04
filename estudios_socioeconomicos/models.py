@@ -28,9 +28,9 @@ class Estudio(models.Model):
         id for studies (refer to the sample study provided by the stakeholder).
     """
     APROBADO = 'aprobado'
-    RECHAZADO = 'rechazado'
-    BORRADOR = 'borrador'
-    REVISION = 'revision'
+    RECHAZADO = 'rechazado'  # rejected from the POV of the admin
+    BORRADOR = 'borrador'  # draft of a capturista
+    REVISION = 'revision'  # the admin has to check it
     ELIMINADO = 'eliminado'
     OPCIONES_STATUS = ((APROBADO, 'Aprobado'),
                        (RECHAZADO, 'Rechazado'),

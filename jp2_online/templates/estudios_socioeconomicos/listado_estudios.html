@@ -3,28 +3,21 @@
 
 {% block content %}
   <h2>Estudios Socioeconómicos</h2>
+  <p class="text-muted font-13 m-b-30">
+    {% if estado == status_options.REVISION %}
+      Pendientes
+    {% elif estado == status_options.RECHAZADO %}
+      Revisión            
+    {% elif estado == status_options.BORRADOR %}              
+      Borrador            
+    {% elif estado == status_options.APROBADO %}              
+      Aprobados            
+    {% elif estado == status_options.ELIMINADO %}
+      Eliminados
+    {% endif %}
+  </p>
+
   {% if estudios %}
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="content-box-header panel-heading">
-          <h2>
-            {% if estado == Estudio.REVISION %}
-                Estudios Socioeconómicos Pendientes
-            {% elif estado == Estudio.RECHAZADO %}
-                Estudios Socioeconómicos en revisión            
-            {% elif estado == Estudio.BORRADOR %}              
-                Estudios Socioeconómicos en borrador            
-            {% elif estado == Estudio.APROBADO %}              
-                Estudios Socioeconómicos aprobados            
-            {% elif estado == Estudio.ELIMINADO %}
-                Estudios Socioeconómicos eliminados
-            {% endif %}
-          </h2>
-        </div>
-      </div>
-    </div>
-
     <div class="row">       
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
@@ -52,12 +45,16 @@
 
                       <td>{{estudio.familia.id}}</td>
                       <td>
-                        {% if estudio.status == 'revision' %}
+                        {% if estado == status_options.REVISION %}
                           Pendiente
-                        {% elif estudio.status == 'rechazado' %}
-                            En revisión
-                        {% else %}
-                          {{estudio.status}}
+                        {% elif estado == status_options.RECHAZADO %}
+                          En revisión            
+                        {% elif estado == status_options.BORRADOR %}              
+                          Borrador            
+                        {% elif estado == status_options.APROBADO %}              
+                          Aprobados           
+                        {% elif estado == status_options.ELIMINADO %}
+                          Eliminado
                         {% endif %}
                       </td>
                       <td>

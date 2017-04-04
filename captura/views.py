@@ -191,7 +191,6 @@ def capture_study(request, id_estudio, numero_seccion):
     context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
-    context['status_options'] = Estudio.get_options_status()
 
     return render(request, 'captura/captura_estudio.html', context)
 
