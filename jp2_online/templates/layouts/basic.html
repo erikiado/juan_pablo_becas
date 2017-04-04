@@ -22,6 +22,9 @@
     <!-- NProgress -->
     <link href="{% static 'template/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
 
+    <!-- style for dates -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
     <!-- style for tables -->
     <link href="{% static 'template/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'template/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
@@ -39,7 +42,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="" class="site_title">
+              <a href="{% url 'home' %}" class="site_title">
                 <i class="fa fa-bank"></i> 
                 Instituto Juan Pablo Segundo
               </a>
@@ -125,4 +128,3 @@
     {% endblock %}
   </body>
 </html>
-
