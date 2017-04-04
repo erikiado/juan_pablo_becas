@@ -29,7 +29,7 @@ class ControlerLogoutTest(TestCase):
         self.client.login(username='thelma', password='junipero')
         response = self.client.get(reverse('home'), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'cerrar sesion')
+        self.assertContains(response, 'Cerrar sesión')
         self.client.logout()
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('tosp_auth:login') + '?next=/')
@@ -81,7 +81,7 @@ class WidgetLogoutTest(StaticLiveServerTestCase):
         self.browser.find_by_id('login-submit').click()
         self.browser.visit(self.live_server_url)
         self.browser.find_by_id('my-account-btn').first.click()
-        self.assertTrue(self.browser.is_text_present('cerrar sesion'))
+        self.assertTrue(self.browser.is_text_present('Cerrar sesión'))
 
     def test_option_appear_to_no_logged_client(self):
         """Test: if the option log out appear for not log users
