@@ -71,6 +71,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         self.browser.find_by_id('login-submit').click()
 
     def tearDown(self):
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_displaying_question_and_answers(self):
@@ -672,6 +673,7 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
     def tearDown(self):
         """ At the end of tests, close the browser.
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_edit_integrante_incomplete(self):
@@ -821,6 +823,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
     def tearDown(self):
         """At the end of tests, close the browser.
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_capturista_dashboard_if_this_is_empty(self):

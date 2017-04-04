@@ -14,8 +14,7 @@ def admin_main_dashboard(request):
     """View to render the main control dashboard.
 
     """
-    return render(request, 'administracion/dashboard_administrador.html',
-                  {'status_options': Estudio.get_options_status()})
+    return render(request, 'administracion/dashboard_administrador.html')
 
 
 @login_required
@@ -29,8 +28,7 @@ def admin_users_dashboard(request):
 
     return render(request, 'administracion/crud_users.html',
                   {'all_users': users,
-                   'create_user_form': create_user_form,
-                   'status_options': Estudio.get_options_status()})
+                   'create_user_form': create_user_form})
 
 
 @login_required
@@ -120,7 +118,7 @@ def focus_mode(request, study_id):
 
     TODO: This should be filled with all the info of the study.
     """
-    context = {'status_options': Estudio.get_options_status()}
+    context = {}
     estudio = Estudio.objects.get(pk=study_id)
     if estudio.status == Estudio.REVISION:
         feedback_form = FeedbackForm(initial={'estudio': estudio,
