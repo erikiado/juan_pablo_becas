@@ -296,6 +296,8 @@ class TestViewsFamilia(TestCase):
     escuela : Used in tests that depend on creating an object related to an escuela.
     familia1 : Familia
         Used in tests that depend on creating or editing an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
     integrante1 : Integrante
         Used in tests that depend on creating or editing an object related to an integrante.
     integrante_contructor_dictionary : dictrionary
@@ -333,6 +335,9 @@ class TestViewsFamilia(TestCase):
         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
                                                estado_civil=estado_civil_inicial,
                                                localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
 
         self.integrante1 = Integrante.objects.create(familia=self.familia1,
                                                      nombres='Rick',
@@ -539,6 +544,14 @@ class TestViewsFamilia(TestCase):
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)
 
+    def test_estudio_delete(self):
+        """ Test that submitting a form for delition of a estudio will be handeled correctly.
+        """
+        id_estudio = self.estudio1.id
+        response = self.client.post(reverse('captura:estudio_delete'),
+                                    {'id_estudio': id_estudio})
+        self.assertEqual(302, response.status_code)
+
     # This test is properly implemented but fails due to a bug in the assertFormError method;
     # following tests that would rely on the assertFormErrorMethod will be tested in the class
     # TestViewsFamiliaLive.
@@ -574,6 +587,8 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         related with familia.
     familia1 : Familia
         Used in tests that depend on creating an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
     integrante1 : Integrante
         Used in tests that depend on creating an object related to an integrante.
     integrante2 : Integrante
@@ -623,6 +638,9 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
                                                estado_civil=estado_civil_inicial,
                                                localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
 
         self.integrante1 = Integrante.objects.create(familia=self.familia1,
                                                      nombres='Rick',
@@ -785,6 +803,15 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.browser.find_by_id('create_tutor').first.click()
         tutor = Tutor.objects.get(integrante=self.integrante1)
         self.assertEqual(tutor.relacion, relacion)
+
+    def test_delete_estudio(self):
+        """ Tests that the delete button works for the estudios
+        """
+        url = self.live_server_url + reverse('captura:estudios')
+        self.browser.visit(url)
+        self.browser.find_by_id('delete_estudio_' + str(self.estudio1.id)).first.click()
+        search_query = 'Esta seguro que desea borrar al usuario de correo: ' + str(self.estudio1)
+        self.assertFalse(self.browser.is_text_present(search_query))
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):

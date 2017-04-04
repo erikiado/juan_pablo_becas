@@ -1,6 +1,7 @@
 from django import forms
-
-from .models import Respuesta, OpcionRespuesta
+from django.shortcuts import get_object_or_404
+from familias.models import Integrante, Alumno
+from .models import Estudio, Respuesta, OpcionRespuesta
 
 
 class RespuestaForm(forms.ModelForm):
@@ -41,3 +42,27 @@ class RespuestaForm(forms.ModelForm):
         fields = ('respuesta', 'eleccion')
 
         exclude = ('pregunta', 'integrante')
+
+
+class DeleteEstudioForm(forms.Form):
+    """ Form to delete study from dashboard, it is used to validate the post information.
+
+    """
+    id_estudio = forms.IntegerField(widget=forms.HiddenInput())
+
+    def save(self, *args, **kwargs):
+        """Override save method to soft delete estudio instance, and related models.
+        """
+        data = self.cleaned_data
+        estudio_instance = get_object_or_404(Estudio, pk=data['id_estudio'])
+        estudio_instance.status = Estudio.ELIMINADO
+        integrantes = Integrante.objects.filter(familia=estudio_instance.familia)
+        for integrante in integrantes:
+            integrante.activo = False
+            alumnos = Alumno.objects.filter(integrante=integrante)
+            if alumnos:
+                alumno = alumnos[0]
+                alumno.activo = False
+                alumno.save()
+            integrante.save()
+        estudio_instance.save()
