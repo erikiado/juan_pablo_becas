@@ -24,17 +24,18 @@
           <ul class="nav child_menu">
             <!--<li><a href="">Todos</a></li>-->
             <li>
-              <a href="{% url 'administracion:main_estudios' 'aprobado' %}">Aprobados
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'pendientes' %}">
+              <a href="{% url 'administracion:main_estudios' 'revision' %}">
                 Pendientes
               </a>
             </li>
             <li>
-              <a href="{% url 'administracion:main_estudios' 'revision' %}">
-                En revisión
+              <a href="{% url 'administracion:main_estudios' 'aprobado' %}">
+                Aprobados
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'administracion:main_estudios' 'rechazado' %}">
+                Rechazados
               </a>
             </li>
             <li>
@@ -44,7 +45,7 @@
             </li>
             <li>
               <a href="{% url 'administracion:main_estudios' 'borrador' %}">
-                En borrador
+                Borrador
               </a>
             </li>
         </ul>

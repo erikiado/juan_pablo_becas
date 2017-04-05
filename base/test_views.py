@@ -29,6 +29,7 @@ class TestBaseViews(StaticLiveServerTestCase):
     def tearDown(self):
         """At the end of tests, close the browser
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     # def test_home(self):

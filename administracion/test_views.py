@@ -45,6 +45,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         """At the end of tests, close the browser.
 
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_main_dashboard(self):
@@ -333,6 +334,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
     def tearDown(self):
         """ At the end of tests, close the browser.
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_if_not_exist_any_studies_rejected(self):
@@ -552,7 +554,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
         self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('aprobado'))
+        self.assertTrue(self.browser.is_text_present('Aprobado'))
 
     def test_if_not_exist_any_draft_studies(self):
         """ Test for url 'administracion:main_estudios' with the 'borrador' parameter.
@@ -625,7 +627,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
         self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('borrador'))
+        self.assertTrue(self.browser.is_text_present('Borrador'))
 
     def test_if_not_exist_any_studies_deleted(self):
         """ Test for url 'administracion:main_estudios' with the 'eliminado' parameter.
@@ -698,4 +700,4 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
         self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('eliminado'))
+        self.assertTrue(self.browser.is_text_present('Eliminado'))

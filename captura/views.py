@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.forms import HiddenInput
 from django.http import HttpResponse
+from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
 
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 from administracion.models import Escuela
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
-from estudios_socioeconomicos.forms import RespuestaForm
+from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
@@ -194,7 +195,6 @@ def capture_study(request, id_estudio, numero_seccion):
     context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
-    context['status_options'] = Estudio.get_options_status()
 
     return render(request, 'captura/captura_estudio.html', context)
 
@@ -257,6 +257,46 @@ def create_estudio(request):
     context['form_view'] = 'captura/familia_form.html'
     context['create'] = True
     return render(request, 'captura/captura_base.html', context)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def estudio_delete_modal(request, id_estudio):
+    """ View to send the form to delete users.
+
+    When a user accesses this view, it returns the form required to
+    confirm the soft delition of a study, along with all of its
+    information.
+
+    Returns
+    ----------
+    GET:
+        On succes returns HTTP 200 with estudio_socioeconomicos/estudio_delete_modal.html
+        template rendeered, this template contains a confirmation form for the soft
+        delition of a estudio socioeconomico
+
+        On error returns HTTP 404
+    """
+    if request.is_ajax():
+        estudio = get_object_or_404(Estudio, pk=id_estudio)
+        form = DeleteEstudioForm(initial={'id_estudio': estudio.pk})
+        return render(request, 'estudios_socioeconomicos/estudio_delete_modal.html',
+                      {'estudio_to_delete': estudio, 'delete_form': form})
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def estudio_delete(request):
+    """ View to delete estudio.
+
+    """
+    if request.method == 'POST':
+        form = DeleteEstudioForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:estudios')
+    return HttpResponseBadRequest()
 
 
 @login_required

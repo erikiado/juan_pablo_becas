@@ -28,9 +28,9 @@ class Estudio(models.Model):
         id for studies (refer to the sample study provided by the stakeholder).
     """
     APROBADO = 'aprobado'
-    RECHAZADO = 'rechazado'
-    BORRADOR = 'borrador'
-    REVISION = 'revision'
+    RECHAZADO = 'rechazado'  # rejected from the POV of the admin
+    BORRADOR = 'borrador'  # draft of a capturista
+    REVISION = 'revision'  # the admin has to check it
     ELIMINADO = 'eliminado'
     OPCIONES_STATUS = ((APROBADO, 'Aprobado'),
                        (RECHAZADO, 'Rechazado'),
@@ -43,9 +43,7 @@ class Estudio(models.Model):
     status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
 
     def __str__(self):
-        return '{familia} status: {status}'.format(
-                                familia=self.familia.__str__(),
-                                status=self.status)
+        return '{familia}'.format(familia=self.familia.__str__())
 
     @staticmethod
     def get_options_status():

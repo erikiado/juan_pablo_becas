@@ -39,6 +39,7 @@ class TestAuthViews(StaticLiveServerTestCase):
         """At the end of tests, close the browser
 
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_empty_fields(self):
