@@ -371,7 +371,7 @@ class TestViewsFamilia(TestCase):
                                      'estado_civil': 'soltero',
                                      'localidad': 'salitre'})
         id_familia = Familia.objects.latest('id').id
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': id_familia}))
 
     def test_create_estudio_incomplete(self):
@@ -410,7 +410,7 @@ class TestViewsFamilia(TestCase):
         self.assertEqual(familia.numero_hijos_diferentes_papas, numero_hijos_final)
         self.assertEqual(familia.estado_civil, estado_civil_final)
         self.assertEqual(familia.localidad, localidad_final)
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': familia.id}))
 
     def test_edit_familia_incomplete(self):
@@ -436,7 +436,7 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:create_integrante',
                                             kwargs={'id_familia': self.familia1.id}),
                                     self.integrante_constructor_dictionary)
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': self.familia1.id}))
 
     def test_create_integrante_incomplete(self):
@@ -468,7 +468,7 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:create_alumno',
                                             kwargs={'id_integrante': integrante.id}),
                                     self.alumno_constructor_dictionary)
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': integrante.familia.pk}))
 
     def test_create_integrante_with_rol_alumno_incomplete(self):
@@ -508,7 +508,7 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:create_tutor',
                                             kwargs={'id_integrante': integrante.id}),
                                     self.tutor_constructor_dictionary)
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': integrante.familia.pk}))
 
     def test_create_integrante_with_rol_tutor_incomplete(self):
@@ -540,7 +540,7 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:integrante',
                                             kwargs={'id_integrante': self.integrante1.id}),
                                     self.integrante_constructor_dictionary)
-        self.assertRedirects(response, reverse('captura:integrantes',
+        self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': self.integrante1.familia.pk}))
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)

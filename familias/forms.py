@@ -33,7 +33,7 @@ class IntegranteForm(ModelForm):
                     (OPCION_ROL_TUTOR, 'Tutor'),
                     (OPCION_ROL_ALUMNO, 'Alumno'))
 
-    Rol = ChoiceField(choices=OPCIONES_ROL, required=False)
+    rol = ChoiceField(choices=OPCIONES_ROL, required=False)
 
     class Meta:
         model = Integrante
@@ -62,7 +62,7 @@ class IntegranteModelForm(IntegranteForm):
     Namely, this works to save and update a regular Integrante,
     a student, or a tutor.
     """
-    OPCIONES_RELACION = Tutor.OPCIONES_RELACION + tuple()  # deep copy
+    OPCIONES_RELACION = (('', '---------'),) + Tutor.OPCIONES_RELACION  # deep copy
     escuela = ModelChoiceField(required=False, queryset=Escuela.objects.all())
     numero_sae = CharField(required=False, max_length=30)
     relacion = ChoiceField(required=False, choices=OPCIONES_RELACION)
@@ -78,19 +78,19 @@ class IntegranteModelForm(IntegranteForm):
         """ Override clean data to validate that the corresponding role
         """
         cleaned_data = super(IntegranteModelForm, self).clean()
-        if cleaned_data['Rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
+        if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
             if not cleaned_data['numero_sae'] or not cleaned_data['escuela']:
                 raise ValidationError('El estudiante necesita el número sae y la escuela')
             if cleaned_data['relacion']:
                 raise ValidationError('El estudiante no tiene relación')
             return cleaned_data
-        if cleaned_data['Rol'] == IntegranteForm.OPCION_ROL_TUTOR:
+        if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
             if not cleaned_data['relacion']:
                 raise ValidationError('El tutor necesita un tipo de relación')
             if cleaned_data['numero_sae'] or cleaned_data['escuela']:
                 raise ValidationError('El tutor no tiene número sae ni escuela')
             return cleaned_data
-        if cleaned_data['Rol'] == IntegranteForm.OPCION_ROL_NINGUNO:
+        if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_NINGUNO:
             if cleaned_data['numero_sae'] or cleaned_data['escuela'] or cleaned_data['relacion']:
                 raise ValidationError('El integrante no tiene número sae, escuela o relación')
             return cleaned_data
@@ -105,9 +105,9 @@ class IntegranteModelForm(IntegranteForm):
         if self.instance.pk is None:   # create integrante
             integrante = super(IntegranteModelForm, self).save(*args, **kwargs)
             data = self.cleaned_data
-            if data['Rol'] == IntegranteForm.OPCION_ROL_TUTOR:
+            if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
-            elif data['Rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
+            elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
                 Alumno.objects.create(integrante=integrante, numero_sae=data['numero_sae'],
                                       escuela=data['escuela'])
             return integrante
@@ -117,11 +117,11 @@ class IntegranteModelForm(IntegranteForm):
             for field in filter(lambda x: x in data, Integrante._meta.get_fields()):
                 integrante[field.name] = data[field.name]
             integrante.save()
-            if data['Rol'] == IntegranteForm.OPCION_ROL_TUTOR:
+            if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 tutor = Tutor.objects.get(integrante=integrante)
                 tutor.relacion = data['relacion']
                 tutor.save()
-            elif data['Rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
+            elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
                 alumno = Alumno.objects.get(integrante=integrante)
                 alumno.numero_sae = data['numero_sae']
                 alumno.escuela = data['escuela']

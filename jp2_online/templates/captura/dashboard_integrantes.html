@@ -5,7 +5,11 @@
 
 
 <div class="pull-right">
-  {% include "captura/create_integrante_button.html" %}
+  <a id="btn_modal_create_integrante" class="mouseClick btn btn-primary pull-right" data-toggle="modal" data-target="#modal_create_integrante">
+    <i class="glyphicon glyphicon-plus"></i>
+    <i class="fa fa-user"></i>
+    Agregar Integrante
+  </a>
 </div>
 
 <div class="row">       
@@ -72,14 +76,25 @@
     </div>
   </div>                
 </div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_create_integrante">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      {% include 'captura/create_integrante_form.html' %}
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-      
-      $(document).ready(function() {
-        $('#tablaCapturista').dataTable();
-      });
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src={% static 'js/captura/captura_integrantes.js' %}> </script>
+    
+    
 
-    </script>
+
+
+  </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
-                   create_estudio, edit_familia, integrantes, create_integrante, edit_integrante, \
+                   create_estudio, edit_familia, list_integrantes, create_integrante, edit_integrante, \
                    create_alumno, create_tutor, APIQuestionsInformation, APIUploadRetrieveStudy, \
                    estudio_delete_modal, estudio_delete
 
@@ -23,7 +23,7 @@ urlpatterns = [
         name='estudio_delete_modal'),
     url(r'^borrar-estudio/confirmar/', estudio_delete, name='estudio_delete'),
     url(r'^familia/(?P<id_familia>[0-9]+)', edit_familia, name='familia'),
-    url(r'^familia/integrantes/(?P<id_familia>[0-9]+)', integrantes, name='integrantes'),
+    url(r'^familia/integrantes/(?P<id_familia>[0-9]+)', list_integrantes, name='list_integrantes'),
     url(r'^familia/create-integrante/(?P<id_familia>[0-9]+)',
         create_integrante,
         name='create_integrante'),

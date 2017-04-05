@@ -195,6 +195,7 @@
   });
 
   $('.edit_form').on('submit', '#btn_send_edit_user',function() {
+      console.log("AASSS");
       $.ajax({ 
           type: $(this).attr('method'), 
           url: this.action, 

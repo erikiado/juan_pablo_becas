@@ -29,7 +29,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'ninguno'
+        data_form['rol'] = 'ninguno'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
 
@@ -47,7 +47,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'tutor'
+        data_form['rol'] = 'tutor'
         data_form['numero_sae'] = '1234'
         form = IntegranteModelForm(data_form)
         self.assertFalse(form.is_valid())
@@ -57,7 +57,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'tutor'
+        data_form['rol'] = 'tutor'
         data_form['relacion'] = 'padre'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
@@ -67,7 +67,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'tutor'
+        data_form['rol'] = 'tutor'
         form = IntegranteModelForm(data_form)
         self.assertFalse(form.is_valid())
 
@@ -76,7 +76,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'alumno'
+        data_form['rol'] = 'alumno'
         data_form['numero_sae'] = '123456'
         data_form['escuela'] = self.escuela.id
         form = IntegranteModelForm(data_form)
@@ -87,7 +87,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'alumno'
+        data_form['rol'] = 'alumno'
         data_form['escuela'] = self.escuela.id
         form = IntegranteModelForm(data_form)
         self.assertFalse(form.is_valid())
@@ -97,7 +97,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'alumno'
+        data_form['rol'] = 'alumno'
         data_form['escuela'] = self.escuela.id
         data_form['numero_sae'] = '123456'
         data_form['relacion'] = 'padre'
@@ -109,7 +109,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'ninguno'
+        data_form['rol'] = 'ninguno'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
         integrante = form.save()
@@ -125,7 +125,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'tutor'
+        data_form['rol'] = 'tutor'
         data_form['relacion'] = 'padre'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
@@ -144,7 +144,7 @@ class TestIntegranteForm(TestCase):
 
         """
         data_form = self.valid_data.copy()
-        data_form['Rol'] = 'alumno'
+        data_form['rol'] = 'alumno'
         data_form['numero_sae'] = '123456'
         data_form['escuela'] = self.escuela.id
         form = IntegranteModelForm(data_form)

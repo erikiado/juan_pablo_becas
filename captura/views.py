@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.forms import HiddenInput
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
@@ -14,7 +15,7 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
-from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
+from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm, IntegranteModelForm
 from familias.models import Familia, Integrante, Alumno, Tutor
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
@@ -243,7 +244,7 @@ def create_estudio(request):
         if form.is_valid():
             form.save()
             Estudio.objects.create(capturista=request.user.capturista, familia=form.instance)
-            return redirect(reverse('captura:integrantes',
+            return redirect(reverse('captura:list_integrantes',
                                     kwargs={'id_familia': form.instance.pk}))
     context = {}
     if form:
@@ -320,7 +321,7 @@ def edit_familia(request, id_familia):
         form = FamiliaForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            return redirect(reverse('captura:integrantes',
+            return redirect(reverse('captura:list_integrantes',
                                     kwargs={'id_familia': form.instance.pk}))
     context = {}
     context['familia'] = Familia.objects.get(pk=id_familia)
@@ -334,7 +335,7 @@ def edit_familia(request, id_familia):
 
 @login_required
 @user_passes_test(is_capturista)
-def integrantes(request, id_familia):
+def list_integrantes(request, id_familia):
     """ This view allows a capturista to see all the information about the
     integrantes of a specific family, they are displayed inside a table,
     and the capturista can select each of them individually.
@@ -345,58 +346,85 @@ def integrantes(request, id_familia):
     familia = Familia.objects.get(pk=id_familia)
     context['integrantes'] = integrantes
     context['familia'] = familia
+    context['create_integrante_form'] = IntegranteModelForm()
+    context['id_familia'] = id_familia
     return render(request, 'captura/dashboard_integrantes.html', context)
 
 
 @login_required
 @user_passes_test(is_capturista)
 def create_integrante(request, id_familia):
-    """ This view creates a new integrante with default values, and redirects the user
-    to the view for editing the newly created integrante.
+    """ View to create integrantes.
 
-    Returns
-    ----------
-    GET:
-        On succes returns HTTP 200 with captura/captura_base.html
-        template rendeered, this template contains an empty form
-        for integrante.
-
-        On error returns HTTP 404
-
-    POST:
-        On succes returns HTTP 301 redirect to the integrante table
-        or to either the create_alumno or create_integrante in case
-        it associates a new role to an user.
-
-        On error returns to the same form but with errors.
+    TODO: Add message flash to templates.
     """
-    form = None
-    if request.method == 'POST':
-        form = IntegranteForm(request.POST)
+    if request.is_ajax() and request.method == 'POST':
+        request.POST = request.POST.copy()
+        request.POST['familia'] = id_familia
+        form = IntegranteModelForm(request.POST)
         if form.is_valid():
-            form.save()
-            rol = form.cleaned_data['Rol']
-            if rol == form.OPCION_ROL_ALUMNO:
-                return redirect(reverse('captura:create_alumno',
-                                        kwargs={'id_integrante': form.instance.pk}))
+            integrante = form.save(request=request)
+            data = {
+                'result': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            data = {
+                'result': 'error',
+            }
+            return JsonResponse(data, status_code=400)
 
-            elif rol == form.OPCION_ROL_TUTOR:
-                return redirect(reverse('captura:create_tutor',
-                                        kwargs={'id_integrante': form.instance.pk}))
-            return redirect(reverse('captura:integrantes',
-                                    kwargs={'id_familia': form.instance.familia.pk}))
-    context = {}
-    if form:
-        context['form'] = form
-    else:
-        familia = get_object_or_404(Familia, pk=id_familia)
-        context['form'] = IntegranteForm(initial={'familia': familia})
 
-    context['form_view'] = 'captura/create_integrante_form.html'
-    context['create'] = True
-    context['id_familia'] = id_familia
 
-    return render(request, 'captura/captura_base.html', context)
+# @login_required
+# @user_passes_test(is_capturista)
+# def create_integrante(request, id_familia):
+#     """ This view creates a new integrante with default values, and redirects the user
+#     to the view for editing the newly created integrante.
+
+#     Returns
+#     ----------
+#     GET:
+#         On succes returns HTTP 200 with captura/captura_base.html
+#         template rendeered, this template contains an empty form
+#         for integrante.
+
+#         On error returns HTTP 404
+
+#     POST:
+#         On succes returns HTTP 301 redirect to the integrante table
+#         or to either the create_alumno or create_integrante in case
+#         it associates a new role to an user.
+
+#         On error returns to the same form but with errors.
+#     """
+#     form = None
+#     if request.method == 'POST':
+#         form = IntegranteForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             rol = form.cleaned_data['Rol']
+#             if rol == form.OPCION_ROL_ALUMNO:
+#                 return redirect(reverse('captura:create_alumno',
+#                                         kwargs={'id_integrante': form.instance.pk}))
+
+#             elif rol == form.OPCION_ROL_TUTOR:
+#                 return redirect(reverse('captura:create_tutor',
+#                                         kwargs={'id_integrante': form.instance.pk}))
+#             return redirect(reverse('captura:list_integrantes',
+#                                     kwargs={'id_familia': form.instance.familia.pk}))
+#     context = {}
+#     if form:
+#         context['form'] = form
+#     else:
+#         familia = get_object_or_404(Familia, pk=id_familia)
+#         context['form'] = IntegranteForm(initial={'familia': familia})
+
+#     context['form_view'] = 'captura/create_integrante_form.html'
+#     context['create'] = True
+#     context['id_familia'] = id_familia
+
+#     return render(request, 'captura/captura_base.html', context)
 
 
 @login_required
@@ -459,7 +487,7 @@ def edit_integrante(request, id_integrante):
                     return redirect(reverse('captura:create_tutor',
                                             kwargs={'id_integrante': id_integrante}))
 
-            return redirect(reverse('captura:integrantes',
+            return redirect(reverse('captura:list_integrantes',
                                     kwargs={'id_familia': integrante_form.instance.familia.pk}))
     forms = {}
     integrante = Integrante.objects.get(pk=id_integrante)
@@ -501,7 +529,7 @@ def create_alumno(request, id_integrante):
         form = AlumnoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(reverse('captura:integrantes',
+            return redirect(reverse('captura:list_integrantes',
                                     kwargs={'id_familia': form.instance.integrante.familia.pk}))
     context = {}
     if form:
@@ -525,7 +553,7 @@ def create_tutor(request, id_integrante):
         form = TutorForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(reverse('captura:integrantes',
+            return redirect(reverse('captura:list_integrantes',
                                     kwargs={'id_familia': form.instance.integrante.familia.pk}))
     context = {}
     if form:
