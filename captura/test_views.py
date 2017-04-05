@@ -697,34 +697,12 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
 
-        self.integrante3 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Raul',
-                                                     apellidos='Mar',
-                                                     nivel_estudios='doctorado',
-                                                     fecha_de_nacimiento='1996-02-26')
-
-        self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
+        self.alumno1 = Alumno.objects.create(integrante=self.integrante1,
                                              numero_sae='5876',
                                              escuela=self.escuela)
 
-        self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante2,
                                            relacion='padre')
-
-        self.integrante_constructor_dictionary = {'familia': self.familia1.id,
-                                                  'nombres': 'Arturo',
-                                                  'apellidos': 'Herrera Rosas',
-                                                  'telefono': '',
-                                                  'correo': '',
-                                                  'nivel_estudios': 'ninguno',
-                                                  'fecha_de_nacimiento': '2017-03-22',
-                                                  'Rol': 'ninguno'}
-
-        self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
-                                              'numero_sae': 5876,
-                                              'escuela': self.escuela.id}
-        self.tutor_constructor_dictionary = {'integrante': self.integrante1.id,
-                                             'relacion': 'madre'}
-
         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
         self.browser.fill('username', test_username)
         self.browser.fill('password', test_password)
@@ -736,116 +714,96 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.browser.driver.close()
         self.browser.quit()
 
+    def test_edit_integrantes(self):
+        """ Test that we can edit multiple integrantes.
 
-    def test_edit_alumno(self):
-        """ Test that we can edit multiple users.
+        TODO: can't select an option inside the modal right now.
         """
-        new_name = 'Peter'
+        new_name = 'Alejandro'
+        numero_sae = '666'
         url = self.live_server_url + reverse('captura:list_integrantes',
                                              kwargs={'id_familia': self.familia1.id})
         self.browser.visit(url)
         self.browser.find_by_css('.edit-integrante-link').first.click()
         time.sleep(.3)
+        #  sin sae
+        self.browser.find_by_css('#modal_edit_integrante #id_numero_sae').first.fill('')
+        self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
+        self.assertTrue(
+            self.browser.is_text_present('El estudiante necesita el número sae y la escuela'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        #  con sae
         self.browser.find_by_css('#modal_edit_integrante #id_nombres').first.fill(new_name)
-        # self.browser.find_by_css('#modal_edit_integrante #id_numero_sae').first.fill(numero_sae)
+        self.browser.find_by_css('#modal_edit_integrante #id_numero_sae').first.fill(numero_sae)
         self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
         self.assertTrue(self.browser.is_text_present('Integrante Editado'))
         self.browser.find_by_css('.swal2-confirm').first.click()
         integrante = Integrante.objects.get(pk=self.integrante1.pk)
         self.assertEqual(new_name, integrante.nombres)
+        alumno = Alumno.objects.get(integrante=self.integrante1.pk)
+        self.assertEqual(numero_sae, alumno.numero_sae)
+        self.assertTrue(self.browser.is_text_present(new_name))
 
-#     def test_edit_alumno_incomplete(self):
-#         """ Test that the view and form for edit_integrante fail gracefully when provided
-#         with invalid data for an alumno.
-#         """
-#         numero_sae = ''
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante2.id})
-#         self.browser.visit(url)
-#         self.browser.fill('numero_sae', numero_sae)
-#         self.browser.find_by_id('update_integrante').first.click()
-#         self.assertEqual(self.browser.url, url)
+        # otro usuario
+        new_name = 'Peter'
+        new_relation = 'tutor'
+        self.browser.find_by_css('.edit-integrante-link')[1].click()
+        time.sleep(.3)
+        self.assertTrue(self.browser.is_text_present('Relacion'))
+        self.browser.find_by_css('#modal_edit_integrante #id_nombres').first.fill(new_name)
+        search_xpath = '//DIV[@id="modal_edit_integrante"]\
+                        //SELECT[@id="id_relacion"]\
+                        //OPTION[@value="' + new_relation + '"]'
+        self.browser.find_by_xpath(search_xpath).click()
 
-#     def test_edit_tutor(self):
-#         """ Test that an already exisiting tutor can be edited, through the
-#         edit_integrante view and form.
-#         """
-#         relacion = 'padre'
+        self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
+        self.assertTrue(self.browser.is_text_present('Integrante Editado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        integrante = Integrante.objects.get(pk=self.integrante2.pk)
+        self.assertEqual(new_name, integrante.nombres)
+        self.assertEqual(integrante.tutor_integrante.relacion, new_relation)
+        self.assertTrue(self.browser.is_text_present(new_name))
 
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante3.id})
-#         self.browser.visit(url)
+    def send_create_integrante_form(self, nombres, apellidos, telefono, correo):
+        """Function which fills the user creation form and tries to send it.
 
-#         self.browser.select('relacion', relacion)
+        """
+        self.browser.find_by_id('btn_modal_create_integrante').click()
+        time.sleep(0.3)
+        self.browser.find_by_id('id_nombres').first.fill(nombres)
+        self.browser.find_by_id('id_apellidos').first.fill(apellidos)
+        self.browser.find_by_id('id_telefono').first.fill(telefono)
+        self.browser.find_by_id('id_correo').first.fill(correo)
+        self.browser.select('nivel_estudios', '1_grado')
+        self.browser.find_by_id('id_fecha_de_nacimiento').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.find_by_id('btn_send_create_user').click()
 
-#         self.browser.find_by_id('update_integrante').first.click()
-#         tutor = Tutor.objects.get(integrante=self.integrante3)
-#         self.assertEqual(relacion, tutor.relacion)
+    def test_create_integrantes(self):
+        """ Create two integrantes, checking errors and that they appear on the table.
 
-#     def test_edit_tutor_incomplete(self):
-#         """ Test that the view and form for edit_integrante fail gracefully when provided
-#         with invalid data for an alumno.
-#         """
-#         relacion = ''
+        """
+        url = self.live_server_url + reverse('captura:list_integrantes',
+                                             kwargs={'id_familia': self.familia1.id})
+        self.browser.visit(url)
+        self.send_create_integrante_form(nombres='Elver', apellidos='Ga', telefono='4424567899',
+                                         correo='abc@abc.com')
+        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        time.sleep(.2)
+        self.assertTrue(self.browser.is_text_present('Elver'))
 
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante3.id})
-#         self.browser.visit(url)
-#         self.browser.select('relacion', relacion)
-#         self.browser.find_by_id('update_integrante').first.click()
-#         self.assertEqual(self.browser.url, url)
-
-#     def test_create_alumno_from_existing_integrante(self):
-#         """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
-#         'alumno' redirects you to the create page for a new alumno and saves the object.
-#         """
-#         rol = 'alumno'
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante1.id})
-#         self.browser.visit(url)
-#         self.browser.select('Rol', rol)
-#         self.browser.find_by_id('update_integrante').first.click()
-#         url = self.live_server_url + reverse('captura:create_alumno',
-#                                              kwargs={'id_integrante': self.integrante1.id})
-#         self.assertEqual(self.browser.url, url)
-
-#         # Fill information
-#         numero_sae = '9999'
-#         self.browser.fill('numero_sae', numero_sae)
-#         self.browser.select('escuela', self.escuela.id)
-#         self.browser.find_by_id('create_alumno').first.click()
-#         alumno = Alumno.objects.get(integrante=self.integrante1)
-#         self.assertEqual(alumno.numero_sae, numero_sae)
-
-#     def test_create_tutor_from_existing_integrante(self):
-#         """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
-#         'tutor' redirects you to the create page for a new tutor and saves the object.
-#         """
-#         rol = 'tutor'
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante1.id})
-#         self.browser.visit(url)
-#         self.browser.select('Rol', rol)
-#         self.browser.find_by_id('update_integrante').first.click()
-#         url = self.live_server_url + reverse('captura:create_tutor',
-#                                              kwargs={'id_integrante': self.integrante1.id})
-#         self.assertEqual(self.browser.url, url)
-
-#         # Fill information
-#         relacion = 'padre'
-#         self.browser.select('relacion', relacion)
-#         self.browser.find_by_id('create_tutor').first.click()
-#         tutor = Tutor.objects.get(integrante=self.integrante1)
-#         self.assertEqual(tutor.relacion, relacion)
-
-#     def test_delete_estudio(self):
-#         """ Tests that the delete button works for the estudios
-#         """
-#         url = self.live_server_url + reverse('captura:estudios')
-#         self.browser.visit(url)
-#         self.browser.find_by_id('delete_estudio_' + str(self.estudio1.id)).first.click()
-#         search_query = 'Esta seguro que desea borrar al usuario de correo: ' + str(self.estudio1)
-#         self.assertFalse(self.browser.is_text_present(search_query))
+        self.send_create_integrante_form(nombres='Eugenio', apellidos='Ga', telefono='-1',
+                                         correo='abc@abc.com')
+        self.assertTrue(self.browser.is_text_present('El número de telefono'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        self.browser.find_by_id('id_telefono').first.fill('123456789')
+        self.browser.find_by_id('btn_send_create_user').click()
+        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        time.sleep(.2)
+        self.assertTrue(self.browser.is_text_present('Eugenio'))
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):
