@@ -60,7 +60,7 @@
                       <i class="glyphicon glyphicon-eye-open"></i> Ver
                     </button>
 
-                    <a href="{% url 'captura:integrante' integrante.id %}" class="btn btn-primary">
+                    <a class="btn btn-primary edit-integrante-link" data-form="{% url 'captura:form_edit_integrante' integrante.id %}">
                       <i class="glyphicon glyphicon-pencil"></i> Editar
                     </a>
                   </td>
@@ -86,15 +86,17 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_edit_integrante">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_edit_integrante_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% endblock %}
 
 {% block extra_js %}
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src={% static 'js/captura/captura_integrantes.js' %}> </script>
-    
-    
-
-
-
-  </script>
 {% endblock %}

@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.forms import HiddenInput
 from django.http import HttpResponse, JsonResponse
@@ -353,21 +352,48 @@ def list_integrantes(request, id_familia):
 
 @login_required
 @user_passes_test(is_capturista)
-def create_integrante(request, id_familia):
-    """ View to create integrantes.
+def create_edit_integrante(request, id_familia):
+    """ View to create and edit integrantes.
 
-    TODO: Add message flash to templates.
+    This receives an ajax request made submitting the form.
+    If we want to create a user, the field 'id_integrante' will be empty.
+    Otherwise, it will have the it of the Integrante.
     """
     if request.is_ajax() and request.method == 'POST':
         request.POST = request.POST.copy()
         request.POST['familia'] = id_familia
-        form = IntegranteModelForm(request.POST)
+        form = None
+        response_data = {}
+        if request.POST['id_integrante']:  # to edit integrantes
+            integrante = Integrante.objects.get(pk=request.POST['id_integrante'])
+            form = IntegranteForm(request.POST, instance=integrante)
+            response_data['msg'] = 'Integrante Editado'
+        else:  # to create an integrante
+            form = IntegranteModelForm(request.POST)
+            response_data['msg'] = 'Integrante Creado'
         if form.is_valid():
-            integrante = form.save(request=request)
-            return JsonResponse({'name': integrante.nombres})
+            integrante = form.save()
+            return JsonResponse(response_data)
         else:
             return HttpResponse(form.errors.as_json(), status=400, content_type='application/json')
 
+
+@login_required
+@user_passes_test(is_capturista)
+def get_form_edit_integrante(request, id_integrante):
+    """ View that is called via ajax to render the partially
+    loaded form to edit an integrante.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        integrante = Integrante.objects.get(pk=id_integrante)
+        form = IntegranteModelForm(instance=integrante)
+        context = {
+            'create_integrante_form': form,
+            'id_familia': integrante.familia.pk,
+            'id_integrante': id_integrante
+        }
+        return render(request, 'captura/create_integrante_form.html', context)
 
 
 # @login_required

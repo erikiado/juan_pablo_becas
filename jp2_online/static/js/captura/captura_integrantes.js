@@ -4,9 +4,10 @@ $(document).ready(function() {
     changeMonth: true,
     changeYear: true}
   );
-  $("#_id_escuela").hide();
-  $("#_id_numero_sae").hide();
-  $("#_id_relacion").hide();
+  // hide inputs from creation form
+  $('#modal_create_integrante #_id_escuela').hide();
+  $('#modal_create_integrante #_id_numero_sae').hide();
+  $('#modal_create_integrante #_id_relacion').hide();
 });
 
 // using jQuery
@@ -17,15 +18,15 @@ function csrfSafeMethod(method) {
 function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-          var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]);
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
       }
+    }
   }
   return cookieValue;
 }
@@ -33,35 +34,37 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 $.ajaxSetup({
   beforeSend: function(xhr, settings) {
-      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-          xhr.setRequestHeader("X-CSRFToken", csrftoken);
-      }
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+      xhr.setRequestHeader('X-CSRFToken', csrftoken);
+    }
   }
 });
 
 
-// hide or show certain fields based on the rol
-$('#id_rol').change(function(e) {
+// hide or show certain fields based on the rol for the creation form
+$('#modal_create_integrante #id_rol').change(function(e) {
   if (e.target.value == 'tutor') {
-    $("#_id_escuela").hide();
-    $("#_id_numero_sae").hide();
-    $("#_id_relacion").show();
+    $('#modal_create_integrante #_id_escuela').hide();
+    $('#modal_create_integrante #_id_numero_sae').hide();
+    $('#modal_create_integrante #_id_relacion').show();
   }
   else if (e.target.value == 'alumno') {
-    $("#_id_escuela").show();
-    $("#_id_numero_sae").show();
-    $("#_id_relacion").hide();
+    $('#modal_create_integrante #_id_escuela').show();
+    $('#modal_create_integrante #_id_numero_sae').show();
+    $('#modal_create_integrante #_id_relacion').hide();
   }
   else if (e.target.value == 'ninguno') {
-    $("#_id_escuela").hide();
-    $("#_id_numero_sae").hide();
-    $("#_id_relacion").hide();
+    $('#modal_create_integrante #_id_escuela').hide();
+    $('#modal_create_integrante #_id_numero_sae').hide();
+    $('#modal_create_integrante #_id_relacion').hide();
   }
-})
+});
+
+
 
 $(document).ready(function() {
   // send form via ajax
-  $("#form-create-integrante").submit(function(e){
+  $('.form-create-integrante').submit(function(e){
     e.preventDefault();
     $.ajax({ 
       type: $(this).attr('method'), 
@@ -71,7 +74,7 @@ $(document).ready(function() {
       success: function(data, status_code) {
         $('#modal_create_integrante').modal('toggle'); // close modal
         swal({
-          title: 'Integrante Creado',
+          title: data.msg,
           type: 'success',
           confirmButtonText: 'OK',
         }).then(function (isConfirm) {
@@ -90,4 +93,60 @@ $(document).ready(function() {
       }
     });
   });
-})
+});
+
+
+/*
+this is called when the edit modal is loaded.
+
+its purpose is to hide the elements of the form related to the role,
+since we can't edit the role of a created integrante.
+*/
+function hideEdit() {
+  $('#modal_edit_integrante #_id_rol').hide();
+  $('#modal_edit_integrante #_id_escuela').hide();
+  $('#modal_edit_integrante #_id_numero_sae').hide();
+  $('#modal_edit_integrante #_id_relacion').hide();
+
+  // bind the ajax call when submitting.
+  $('.form-create-integrante').submit(function(e){
+    e.preventDefault();
+    $.ajax({ 
+      type: $(this).attr('method'), 
+      url: this.action, 
+      data: $(this).serialize(),
+      context: this,
+      success: function(data, status_code) {
+        $('#modal_edit_integrante').modal('toggle'); // close modal
+        swal({
+          title: data.msg,
+          type: 'success',
+          confirmButtonText: 'OK',
+        }).then(function (isConfirm) {
+          if (isConfirm) {
+            location.reload(); // reload page after closing
+          }
+        });
+      },
+      error: function(data, status_code) {
+        swal({
+          title: 'Error!',
+          text: data.responseJSON[Object.keys(data.responseJSON)[0]][0].message, // obtain first error msg
+          type: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+  });
+}
+
+$('.edit-integrante-link').click(function(ev) { // for each edit contact url
+  ev.preventDefault(); // prevent navigation
+  var url = $(this).data('form'); // get the contact form url
+  $('#modal_edit_integrante_content').load(url, function() { // load the url into the modal
+    $('#modal_edit_integrante').modal('show'); // display the modal on url load
+    hideEdit();
+  });
+  return false; // prevent the click propagation
+});
+
