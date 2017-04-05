@@ -72,6 +72,19 @@ class Familia(models.Model):
     localidad = models.CharField(max_length=100,
                                  choices=OPCIONES_LOCALIDAD)
 
+    def __str__(self):
+        """ Prints the apellido of one of the students of the family,
+        in case the family has no related students the legend
+        "Aún no se crean alumnos en el estudio" will appear.
+        """
+        integrantes = Integrante.objects.filter(familia=self).values_list('id', flat=True)
+        alumnos = Alumno.objects.filter(integrante__in=integrantes)
+        if alumnos:
+            alumno = alumnos[0]
+            return alumno.integrante.apellidos
+        else:
+            return 'Aún no se crean alumnos en el estudio'
+
 
 class Comentario(models.Model):
     """ Comment regarding the economical situation of a family.

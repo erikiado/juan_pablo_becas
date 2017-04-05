@@ -44,9 +44,9 @@
                   </td>
 
                   <td>
-                    <button class="btn btn-default">
-                      <i class="glyphicon glyphicon-eye-open"></i> Ver
-                    </button>
+                    <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
+                      <i class="glyphicon glyphicon-trash"></i> Borrar
+                    </a>
 
                     {% if estudio.status == status_options.RECHAZADO %}
                       <button class="btn btn-info">
@@ -72,5 +72,54 @@
   </div>                
 </div> 
   
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_estudio">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_estudio_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}
 
+{% block extra_page_js %}
+  <script type="text/javascript">
+    // using jQuery
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+    });
+
+  $(".delete_estudio_link").click(function(ev) { // for each edit contact url
+      ev.preventDefault(); // prevent navigation
+      var url = $(this).data("form"); // get the contact form url
+      $("#modal_delete_estudio_content").load(url, function() { // load the url into the modal
+          $("#modal_delete_estudio").modal('show'); // display the modal on url load
+      });
+      return false; // prevent the click propagation
+  });
+
+  </script>
 {% endblock %}
