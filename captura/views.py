@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.forms import HiddenInput
 from django.http import HttpResponse, JsonResponse
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
@@ -14,8 +13,8 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
-from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm, IntegranteModelForm
-from familias.models import Familia, Integrante, Alumno, Tutor
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm
+from familias.models import Familia, Integrante
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 

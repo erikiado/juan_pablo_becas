@@ -64,7 +64,8 @@ class IntegranteModelForm(IntegranteForm):
     It inherits from the regular model form IntegranteForm and adds
     the extra fields needed for alumnos and tutors.
     """
-    OPCIONES_RELACION = (('', '---------'),) + Tutor.OPCIONES_RELACION  # deep copy adding the no relation option.
+    # deep copy adding the no relation option.
+    OPCIONES_RELACION = (('', '---------'),) + Tutor.OPCIONES_RELACION
     escuela = ModelChoiceField(required=False, queryset=Escuela.objects.all())
     numero_sae = CharField(required=False, max_length=30)
     relacion = ChoiceField(required=False, choices=OPCIONES_RELACION)

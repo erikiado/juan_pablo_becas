@@ -13,7 +13,7 @@ from splinter import Browser
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
-from familias.models import Familia, Integrante, Alumno, Tutor
+from familias.models import Familia, Integrante
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
 from perfiles_usuario.utils import CAPTURISTA_GROUP
@@ -486,8 +486,8 @@ class TestViewsFamilia(TestCase):
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
-        self.assertEqual(content['__all__'][0]['message'], 
-            'El estudiante necesita el número sae y la escuela')
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El estudiante necesita el número sae y la escuela')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete2(self):
@@ -502,8 +502,8 @@ class TestViewsFamilia(TestCase):
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
-        self.assertEqual(content['__all__'][0]['message'], 
-            'El estudiante necesita el número sae y la escuela')
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El estudiante necesita el número sae y la escuela')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete3(self):
@@ -520,8 +520,8 @@ class TestViewsFamilia(TestCase):
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
-        self.assertEqual(content['__all__'][0]['message'], 
-            'El estudiante no tiene relación')
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El estudiante no tiene relación')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_tutor(self):
@@ -534,7 +534,7 @@ class TestViewsFamilia(TestCase):
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
-                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['msg'], 'Integrante Creado')
         self.assertEqual(r.status_code, 200)
@@ -548,10 +548,10 @@ class TestViewsFamilia(TestCase):
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
-                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         content = json.loads(r.content.decode('utf-8'))
-        self.assertEqual(content['__all__'][0]['message'], 
-            'El tutor necesita un tipo de relación')
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El tutor necesita un tipo de relación')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_tutor_incomplete2(self):
@@ -565,10 +565,10 @@ class TestViewsFamilia(TestCase):
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
-                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         content = json.loads(r.content.decode('utf-8'))
-        self.assertEqual(content['__all__'][0]['message'], 
-            'El tutor no tiene número sae ni escuela')
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El tutor no tiene número sae ni escuela')
         self.assertEqual(r.status_code, 400)
 
     def test_edit_integrante(self):
@@ -581,7 +581,7 @@ class TestViewsFamilia(TestCase):
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
-                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['msg'], 'Integrante Editado')
         self.assertEqual(r.status_code, 200)
@@ -677,9 +677,10 @@ class TestViewsFamilia(TestCase):
 #         numero_hijos_inicial = 3
 #         estado_civil_inicial = 'soltero'
 #         localidad_inicial = 'salitre'
-#         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
-#                                                estado_civil=estado_civil_inicial,
-#                                                localidad=localidad_inicial)
+# #         self.familia1 = Familia.objects.create(
+#                                   numero_hijos_diferentes_papas=numero_hijos_inicial,
+#                                   estado_civil=estado_civil_inicial,
+#                                   localidad=localidad_inicial)
 
 #         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
 #                                                familia=self.familia1)
