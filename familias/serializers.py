@@ -3,8 +3,8 @@ from rest_framework import serializers
 from estudios_socioeconomicos.utils import save_foreign_relationship
 from administracion.models import Escuela
 from administracion.serializers import EscuelaSerializer
-from indicadores.serializers import TransaccionSerializer
-from indicadores.models import Transaccion
+from indicadores.serializers import TransaccionSerializer, IngresoSerializer
+from indicadores.models import Transaccion, Ingreso
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
 
@@ -94,10 +94,11 @@ class TutorSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+    tutor_ingresos = IngresoSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Tutor
-        fields = ('id', 'relacion')
+        fields = ('id', 'relacion', 'tutor_ingresos')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
@@ -110,8 +111,14 @@ class TutorSerializer(serializers.ModelSerializer):
             created first and passed as parameter to the
             created function.
         """
+        ingresos = self.validated_data.pop('tutor_ingresos', None)
+
         self.validated_data['integrante'] = integrante
-        return Tutor.objects.create(**self.validated_data)
+        tutor = Tutor.objects.create(**self.validated_data)
+
+        save_foreign_relationship(ingresos, IngresoSerializer, Ingreso, tutor)
+
+        return tutor
 
     def update(self):
         """ This function overides the default behaviour for creating
@@ -122,6 +129,8 @@ class TutorSerializer(serializers.ModelSerializer):
             -------
             Updated Instance of Tutor model.
         """
+        ingresos = self.validated_data.pop('tutor_ingresos', None)
+        save_foreign_relationship(ingresos, IngresoSerializer, Ingreso, self.instance)
         Tutor.objects.filter(pk=self.instance.pk).update(**self.validated_data)
         return Tutor.objects.get(pk=self.instance.pk)
 
