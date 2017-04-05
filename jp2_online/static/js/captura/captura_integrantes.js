@@ -103,10 +103,23 @@ its purpose is to hide the elements of the form related to the role,
 since we can't edit the role of a created integrante.
 */
 function hideEdit() {
+  
+  // hide everything
   $('#modal_edit_integrante #_id_rol').hide();
   $('#modal_edit_integrante #_id_escuela').hide();
   $('#modal_edit_integrante #_id_numero_sae').hide();
   $('#modal_edit_integrante #_id_relacion').hide();
+
+
+  // show sae, escuela, or relacion depending on the role.
+  if ($('#modal_edit_integrante #id_rol').val() == 'alumno') {
+    $('#modal_edit_integrante #_id_escuela').show();
+    $('#modal_edit_integrante #_id_numero_sae').show()
+  }
+  else if ($('#modal_edit_integrante #id_rol').val()  == 'tutor') {
+    $('#modal_edit_integrante #_id_relacion').show();
+  }
+
 
   // bind the ajax call when submitting.
   $('.form-create-integrante').submit(function(e){

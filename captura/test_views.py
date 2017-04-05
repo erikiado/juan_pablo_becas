@@ -13,7 +13,7 @@ from splinter import Browser
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
-from familias.models import Familia, Integrante
+from familias.models import Familia, Integrante, Alumno, Tutor
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
 from perfiles_usuario.utils import CAPTURISTA_GROUP
@@ -616,153 +616,143 @@ class TestViewsFamilia(TestCase):
         self.assertEqual(400, response.status_code)
 
 
-# class TestViewsFamiliaLive(StaticLiveServerTestCase):
-#     """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
-#     cannot be ran via de django client.
+class TestViewsFamiliaLive(StaticLiveServerTestCase):
+    """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
+    cannot be ran via de django client.
 
-#     Attributes
-#     ----------
-#     browser : Browser
-#         Driver to navigate through websites and to run integration tests.
-#     elerik : User
-#         User that will be used as a capturista in order to fill all everything
-#         related with familia.
-#     familia1 : Familia
-#         Used in tests that depend on creating an object related to a familia.
-#     estudio1 : Estudio
-#         Used in tests that depend on creating or editing an existent estudio.
-#     integrante1 : Integrante
-#         Used in tests that depend on creating an object related to an integrante.
-#     integrante2 : Integrante
-#         Used in tests that depend on editing an alumno object.
-#     integrante3 : Integrante
-#         Used in tests that depend on editing a tutor object.
-#     alumno1 : Alumno
-#         Used in the tests that depend on creating or editing an object related to an alumno.
-#     tutor1: Tutor
-#         Used in the tests that depend on creating or editing an object related to a tutor.
-#     escuela : Used in tests that depend on creating an object related to an escuela
-#     capturista : Capturista
-#         Asociated with the User, as this object is required for permissions and
-#         creation.
-#     integrante_contructor_dictionary : dictrionary
-#         Used in order to prevent repetitive code, when creating very similar integrantes
-#         in different tests.
-#     alumno_contructor_dictionary : dictionary
-#         Used in order to prevent repetitive code, when creating very similar alumnos in
-#         different tests.
-#     tutor_constructor_dictionary : dictionary
-#         Used in order to prevent repetivie code, when creating very similar tutores in
-#         different tests.
-#     """
+    Attributes
+    ----------
+    browser : Browser
+        Driver to navigate through websites and to run integration tests.
+    elerik : User
+        User that will be used as a capturista in order to fill all everything
+        related with familia.
+    familia1 : Familia
+        Used in tests that depend on creating an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating an object related to an integrante.
+    integrante2 : Integrante
+        Used in tests that depend on editing an alumno object.
+    integrante3 : Integrante
+        Used in tests that depend on editing a tutor object.
+    alumno1 : Alumno
+        Used in the tests that depend on creating or editing an object related to an alumno.
+    tutor1: Tutor
+        Used in the tests that depend on creating or editing an object related to a tutor.
+    escuela : Used in tests that depend on creating an object related to an escuela
+    capturista : Capturista
+        Asociated with the User, as this object is required for permissions and
+        creation.
+    integrante_contructor_dictionary : dictrionary
+        Used in order to prevent repetitive code, when creating very similar integrantes
+        in different tests.
+    alumno_contructor_dictionary : dictionary
+        Used in order to prevent repetitive code, when creating very similar alumnos in
+        different tests.
+    tutor_constructor_dictionary : dictionary
+        Used in order to prevent repetivie code, when creating very similar tutores in
+        different tests.
+    """
 
-#     def setUp(self):
-#         """ Creates all the initial necessary objects for the tests
-#         """
-#         self.browser = Browser('chrome')
-#         test_username = 'erikiano'
-#         test_password = 'vacalalo'
+    def setUp(self):
+        """ Creates all the initial necessary objects for the tests
+        """
+        self.browser = Browser('chrome')
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
 
-#         elerik = User.objects.create_user(
-#             username=test_username,
-#             email='latelma@junipero.sas',
-#             password=test_password,
-#             first_name='telma',
-#             last_name='suapellido')
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
 
-#         self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
-#         self.capturista = Capturista.objects.create(user=elerik)
+        self.capturista = Capturista.objects.create(user=elerik)
 
-#         numero_hijos_inicial = 3
-#         estado_civil_inicial = 'soltero'
-#         localidad_inicial = 'salitre'
-# #         self.familia1 = Familia.objects.create(
-#                                   numero_hijos_diferentes_papas=numero_hijos_inicial,
-#                                   estado_civil=estado_civil_inicial,
-#                                   localidad=localidad_inicial)
+        numero_hijos_inicial = 3
+        estado_civil_inicial = 'soltero'
+        localidad_inicial = 'salitre'
+        self.familia1 = Familia.objects.create(
+                                  numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                  estado_civil=estado_civil_inicial,
+                                  localidad=localidad_inicial)
 
-#         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
-#                                                familia=self.familia1)
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
 
-#         self.integrante1 = Integrante.objects.create(familia=self.familia1,
-#                                                      nombres='Rick',
-#                                                      apellidos='Astley',
-#                                                      nivel_estudios='doctorado',
-#                                                      fecha_de_nacimiento='1996-02-26')
+        self.integrante1 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Alberto',
+                                                     apellidos='Lopez',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
 
-#         self.integrante2 = Integrante.objects.create(familia=self.familia1,
-#                                                      nombres='Rick',
-#                                                      apellidos='Astley',
-#                                                      nivel_estudios='doctorado',
-#                                                      fecha_de_nacimiento='1996-02-26')
+        self.integrante2 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Pedro',
+                                                     apellidos='Perez',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
 
-#         self.integrante3 = Integrante.objects.create(familia=self.familia1,
-#                                                      nombres='Rick',
-#                                                      apellidos='Astley',
-#                                                      nivel_estudios='doctorado',
-#                                                      fecha_de_nacimiento='1996-02-26')
+        self.integrante3 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Raul',
+                                                     apellidos='Mar',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
 
-#         self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
-#                                              numero_sae='5876',
-#                                              escuela=self.escuela)
+        self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
+                                             numero_sae='5876',
+                                             escuela=self.escuela)
 
-#         self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
-#                                            relacion='padre')
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
+                                           relacion='padre')
 
-#         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
-#                                                   'nombres': 'Arturo',
-#                                                   'apellidos': 'Herrera Rosas',
-#                                                   'telefono': '',
-#                                                   'correo': '',
-#                                                   'nivel_estudios': 'ninguno',
-#                                                   'fecha_de_nacimiento': '2017-03-22',
-#                                                   'Rol': 'ninguno'}
+        self.integrante_constructor_dictionary = {'familia': self.familia1.id,
+                                                  'nombres': 'Arturo',
+                                                  'apellidos': 'Herrera Rosas',
+                                                  'telefono': '',
+                                                  'correo': '',
+                                                  'nivel_estudios': 'ninguno',
+                                                  'fecha_de_nacimiento': '2017-03-22',
+                                                  'Rol': 'ninguno'}
 
-#         self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
-#                                               'numero_sae': 5876,
-#                                               'escuela': self.escuela.id}
-#         self.tutor_constructor_dictionary = {'integrante': self.integrante1.id,
-#                                              'relacion': 'madre'}
+        self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
+                                              'numero_sae': 5876,
+                                              'escuela': self.escuela.id}
+        self.tutor_constructor_dictionary = {'integrante': self.integrante1.id,
+                                             'relacion': 'madre'}
 
-#         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
-#         self.browser.fill('username', test_username)
-#         self.browser.fill('password', test_password)
-#         self.browser.find_by_id('login-submit').click()
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
 
-#     def tearDown(self):
-#         """ At the end of tests, close the browser.
-#         """
-#         self.browser.driver.close()
-#         self.browser.quit()
+    def tearDown(self):
+        """ At the end of tests, close the browser.
+        """
+        self.browser.driver.close()
+        self.browser.quit()
 
-#     def test_edit_integrante_incomplete(self):
-#         """ Test that the view and form for edit_integrante fail gracefully when provided
-#         with invalid data.
-#         """
-#         nombres = ''
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante1.id})
-#         self.browser.visit(url)
-#         self.browser.fill('nombres', nombres)
-#         self.browser.find_by_id('update_integrante').first.click()
-#         self.assertEqual(self.browser.url, url)
 
-#     def test_edit_alumno(self):
-#         """ Test that an already exisiting alumno can be edited, through the
-#         edit_integrante view and form.
-#         """
-#         numero_sae = '42'
-
-#         url = self.live_server_url + reverse('captura:integrante',
-#                                              kwargs={'id_integrante': self.integrante2.id})
-#         self.browser.visit(url)
-
-#         self.browser.fill('numero_sae', numero_sae)
-
-#         self.browser.find_by_id('update_integrante').first.click()
-#         alumno = Alumno.objects.get(integrante=self.integrante2)
-#         self.assertEqual(numero_sae, alumno.numero_sae)
+    def test_edit_alumno(self):
+        """ Test that we can edit multiple users.
+        """
+        new_name = 'Peter'
+        url = self.live_server_url + reverse('captura:list_integrantes',
+                                             kwargs={'id_familia': self.familia1.id})
+        self.browser.visit(url)
+        self.browser.find_by_css('.edit-integrante-link').first.click()
+        time.sleep(.3)
+        self.browser.find_by_css('#modal_edit_integrante #id_nombres').first.fill(new_name)
+        # self.browser.find_by_css('#modal_edit_integrante #id_numero_sae').first.fill(numero_sae)
+        self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
+        self.assertTrue(self.browser.is_text_present('Integrante Editado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        integrante = Integrante.objects.get(pk=self.integrante1.pk)
+        self.assertEqual(new_name, integrante.nombres)
 
 #     def test_edit_alumno_incomplete(self):
 #         """ Test that the view and form for edit_integrante fail gracefully when provided

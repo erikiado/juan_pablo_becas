@@ -365,7 +365,7 @@ def create_edit_integrante(request, id_familia):
         response_data = {}
         if request.POST['id_integrante']:  # to edit integrantes
             integrante = Integrante.objects.get(pk=request.POST['id_integrante'])
-            form = IntegranteForm(request.POST, instance=integrante)
+            form = IntegranteModelForm(request.POST, instance=integrante)
             response_data['msg'] = 'Integrante Editado'
         else:  # to create an integrante
             form = IntegranteModelForm(request.POST)
@@ -387,7 +387,17 @@ def get_form_edit_integrante(request, id_integrante):
     """
     if request.is_ajax() and request.method == 'GET':
         integrante = Integrante.objects.get(pk=id_integrante)
-        form = IntegranteModelForm(instance=integrante)
+        initial_data = {}
+        rol = IntegranteForm.OPCION_ROL_NINGUNO
+        if hasattr(integrante, 'alumno_integrante'):
+            rol = IntegranteForm.OPCION_ROL_ALUMNO
+            initial_data['numero_sae'] = integrante.alumno_integrante.numero_sae
+            initial_data['escuela'] = integrante.alumno_integrante.escuela
+        elif hasattr(integrante, 'tutor_integrante'):
+            rol = IntegranteForm.OPCION_ROL_TUTOR
+            initial_data['relacion'] = integrante.tutor_integrante.relacion
+        initial_data['rol'] = rol
+        form = IntegranteModelForm(instance=integrante, initial=initial_data)
         context = {
             'create_integrante_form': form,
             'id_familia': integrante.familia.pk,
