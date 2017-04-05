@@ -10,6 +10,7 @@ from estudios_socioeconomicos.load import load_data
 from administracion.models import Escuela
 from familias.models import Familia, Comentario, Integrante
 from perfiles_usuario.models import Capturista
+from indicadores.models import Ingreso
 
 
 from .views import APIQuestionsInformation, APIUploadRetrieveStudy
@@ -107,6 +108,14 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         Test Wrong Data For Integrante
         Test Wrong Update Integrante
 
+        TEST Add Transaction (No Ingreso)
+        TEST Update Transaction (No Ingreso)
+            Same as Delete
+
+        TEST Add Transaction (Ingreso)
+        TEST Update Transaction (Ingreso)
+            Same as Delete
+
     """
     def setUp(self):
         """ Creates users for testing study.
@@ -191,7 +200,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'fecha_de_nacimiento': '2017-03-19',
                         'alumno_integrante': None,
                         'tutor_integrante': {
-                            'relacion': 'madre'
+                            'relacion': 'madre',
+                            'tutor_ingresos': None
                         }
                     },
                     {
@@ -203,10 +213,40 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'fecha_de_nacimiento': '2017-03-19',
                         'alumno_integrante': None,
                         'tutor_integrante': {
-                            'relacion': 'tutor'
+                            'relacion': 'tutor',
+                            'tutor_ingresos': [
+                                {
+                                    'fecha': '2017-12-12',
+                                    'tipo': Ingreso.OPCION_NO_COMPROBABLE,
+                                    'transaccion': {
+                                        'activo': True,
+                                        'monto': 12500,
+                                        'periodicidad': {
+                                            'periodicidad': 'Mensual',
+                                            'factor': 2.1,
+                                            'multiplica': True,
+                                        },
+                                        'observacion': 'sastres',
+                                        'es_ingreso': True
+                                    }
+                                }
+                            ]
                         }
                     }
-                    ]
+                    ],
+                'transacciones': [
+                    {
+                        'activo': True,
+                        'monto': 500,
+                        'periodicidad': {
+                            'periodicidad': 'Mensual',
+                            'factor': 2.1,
+                            'multiplica': True,
+                        },
+                        'observacion': 'sastres',
+                        'es_ingreso': False
+                    }
+                ]
                 }, 'respuesta_estudio': [
                     {
                         'pregunta': Pregunta.objects.all()[0].id,
@@ -372,7 +412,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                 'fecha_de_nacimiento': '1950-03-19',
                 'alumno_integrante': None,
                 'tutor_integrante': {
-                    'relacion': 'tutor'
+                    'relacion': 'tutor',
+                    'tutor_ingresos': None,
                 }
             }
         ]
@@ -406,7 +447,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             'fecha_de_nacimiento': '1930-03-19',
             'alumno_integrante': None,
             'tutor_integrante': {
-                'relacion': 'tutor'
+                'relacion': 'tutor',
+                'tutor_ingresos': None,
             }
         }
 
@@ -619,3 +661,106 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Estudio.objects.all().count(), 1)
+
+    def test_add_transaction(self):
+        """ Tests that a transaction can be added to study.
+        """
+        response = self.create_base_study()
+        initial_transactions = len(response.data['familia']['transacciones'])
+        change_study = response.data
+        study_id = response.data['id']
+
+        new_transaccion = {
+            'activo': True,
+            'monto': 1000,
+            'periodicidad': {
+                'periodicidad': 'Semanal',
+                'factor': 1.1,
+                'multiplica': False,
+            },
+            'observacion': 'no lo sieastres',
+            'es_ingreso': False
+        }
+
+        change_study['familia']['transacciones'].append(new_transaccion)
+        response = self.update_existing_study(change_study, study_id)
+
+        self.assertEqual(
+            len(response.data['familia']['transacciones']),
+            initial_transactions + 1)
+
+    def test_update_transaction(self):
+        """ Test that a transaction can be updated inside a study.
+        """
+        response = self.create_base_study()
+        study_id = response.data['id']
+        change_study = response.data
+        change_study['familia']['transacciones'][0]['monto'] = 200
+        change_study['familia']['transacciones'][0]['periodicidad']['factor'] = 1
+
+        response = self.update_existing_study(change_study, study_id)
+
+        transaccion = response.data['familia']['transacciones'][0]
+        self.assertEqual((transaccion['monto']), '200.00')
+        self.assertEqual(int(float(transaccion['periodicidad']['factor'])), 1)
+
+    def test_add_transacion_ingreso(self):
+        """ Test adding a transaction that has ingreso to an integrante.
+        """
+        response = self.create_base_study()
+        study_id = response.data['id']
+        change_study = response.data
+        initial_transactions = len(response.data['familia']['transacciones'])
+
+        ingreso = {
+            'fecha': '2017-12-12',
+            'tipo': Ingreso.OPCION_NO_COMPROBABLE,
+            'transaccion': {
+                'activo': True,
+                'monto': 55000,
+                'periodicidad': {
+                    'periodicidad': 'Mensual',
+                    'factor': 2.1,
+                    'multiplica': True,
+                },
+                'observacion': 'sastres el desastres',
+                'es_ingreso': True
+            }
+        }
+
+        integrante = change_study['familia']['integrante_familia'][1]
+        integrante_id = integrante['id']
+        self.assertEqual(len(integrante['tutor_integrante']['tutor_ingresos']), 0)
+        integrante['tutor_integrante']['tutor_ingresos'].append(ingreso)
+
+        response = self.update_existing_study(change_study, study_id)
+
+        for integrante in response.data['familia']['integrante_familia']:
+            if integrante['id'] == integrante_id:
+                ingreso = integrante['tutor_integrante']['tutor_ingresos'][0]
+                self.assertEqual(int(float(ingreso['transaccion']['monto'])), 55000)
+                self.assertEqual(ingreso['fecha'], '2017-12-12')
+
+        self.assertEqual(
+            len(response.data['familia']['transacciones']),
+            initial_transactions + 1)
+
+    def test_update_transaccion_ingreso(self):
+        response = self.create_base_study()
+        study_id = response.data['id']
+        change_study = response.data
+        id_integrante = -1
+
+        for integrante in change_study['familia']['integrante_familia']:
+            if integrante['tutor_integrante']:
+                if integrante['tutor_integrante']['tutor_ingresos']:
+                    ingresos = integrante['tutor_integrante']['tutor_ingresos'][0]
+                    ingresos['fecha'] = '1917-10-17'
+                    id_integrante = integrante['id']
+
+        response = self.update_existing_study(change_study, study_id)
+
+        for integrante in response.data['familia']['integrante_familia']:
+            if integrante['id'] == id_integrante:
+                ingresos = integrante['tutor_integrante']['tutor_ingresos'][0]
+                self.assertEqual(ingresos['fecha'], '1917-10-17')

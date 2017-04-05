@@ -3,6 +3,8 @@ from rest_framework import serializers
 from estudios_socioeconomicos.utils import save_foreign_relationship
 from administracion.models import Escuela
 from administracion.serializers import EscuelaSerializer
+from indicadores.serializers import TransaccionSerializer, IngresoSerializer
+from indicadores.models import Transaccion, Ingreso
 
 from .models import Familia, Comentario, Integrante, Alumno, Tutor
 
@@ -12,6 +14,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+
     class Meta:
         model = Comentario
         fields = ('id', 'fecha', 'texto')
@@ -91,9 +94,11 @@ class TutorSerializer(serializers.ModelSerializer):
         through a REST endpoint for the offline application
         to submit information.
     """
+    tutor_ingresos = IngresoSerializer(many=True, allow_null=True)
+
     class Meta:
         model = Tutor
-        fields = ('id', 'relacion')
+        fields = ('id', 'relacion', 'tutor_ingresos')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
@@ -105,9 +110,18 @@ class TutorSerializer(serializers.ModelSerializer):
             nested created objects, the integrante must be
             created first and passed as parameter to the
             created function.
+
+            After creating the tutor object we use save_foreign_relationship
+            to save ingreso objects that depend on tutor.
         """
+        ingresos = self.validated_data.pop('tutor_ingresos', None)
+
         self.validated_data['integrante'] = integrante
-        return Tutor.objects.create(**self.validated_data)
+        tutor = Tutor.objects.create(**self.validated_data)
+
+        save_foreign_relationship(ingresos, IngresoSerializer, Ingreso, tutor)
+
+        return tutor
 
     def update(self):
         """ This function overides the default behaviour for creating
@@ -118,6 +132,8 @@ class TutorSerializer(serializers.ModelSerializer):
             -------
             Updated Instance of Tutor model.
         """
+        ingresos = self.validated_data.pop('tutor_ingresos', None)
+        save_foreign_relationship(ingresos, IngresoSerializer, Ingreso, self.instance)
         Tutor.objects.filter(pk=self.instance.pk).update(**self.validated_data)
         return Tutor.objects.get(pk=self.instance.pk)
 
@@ -215,6 +231,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
     """
     integrante_familia = IntegranteSerializer(many=True, allow_null=True)
     comentario_familia = ComentarioSerializer(many=True, allow_null=True)
+    transacciones = TransaccionSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Familia
@@ -225,7 +242,8 @@ class FamiliaSerializer(serializers.ModelSerializer):
             'estado_civil',
             'localidad',
             'comentario_familia',
-            'integrante_familia',)
+            'integrante_familia',
+            'transacciones')
 
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
@@ -240,17 +258,23 @@ class FamiliaSerializer(serializers.ModelSerializer):
             the family that depend upon the creation of a family
             instance first. This are the Integrantes and Comentarios.
 
-            We first remove all Integrante and comentario from the
-            validated data. We create the family and then we create
-            this objects that require the family instance.
+            We first remove all Integrante, Comentario and Transaccion
+            from the validated data. We create the family and then we
+            create this objects that require the family instance.
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
+        transacciones = self.validated_data.pop('transacciones')
 
         family_instance = Familia.objects.create(**self.validated_data)
 
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, family_instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, family_instance)
+        save_foreign_relationship(
+            transacciones,
+            TransaccionSerializer,
+            Transaccion,
+            family_instance)
 
         return family_instance
 
@@ -270,14 +294,15 @@ class FamiliaSerializer(serializers.ModelSerializer):
             looks for the id in the object. If there is no data it will
             create the object.
 
-            Integrantes has a non-destructive way of disactivating. This
-            is donde by changin the is_active field.
+            Integrantes and Transacciones has a non-destructive way of disactivating.
+            This is donde by changing the is_active field.
 
             Comentario does not have this field, so all comentario instances
             that were not sent by the offline application most be removed.
         """
         integrantes = self.validated_data.pop('integrante_familia')
         comentarios = self.validated_data.pop('comentario_familia')
+        transacciones = self.validated_data.pop('transacciones')
 
         Comentario.objects.filter(
             familia=self.instance).exclude(
@@ -285,6 +310,7 @@ class FamiliaSerializer(serializers.ModelSerializer):
 
         save_foreign_relationship(integrantes, IntegranteSerializer, Integrante, self.instance)
         save_foreign_relationship(comentarios, ComentarioSerializer, Comentario, self.instance)
+        save_foreign_relationship(transacciones, TransaccionSerializer, Transaccion, self.instance)
 
         Familia.objects.filter(pk=self.instance.pk).update(**self.validated_data)
 

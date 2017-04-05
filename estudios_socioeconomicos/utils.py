@@ -24,6 +24,9 @@ def save_foreign_relationship(objects, serializer_class, model_class, foreign_in
         --------
         List of created and updated objects.
     """
+    if not objects:
+        return
+
     updated_objects = []
 
     for obj in objects:
