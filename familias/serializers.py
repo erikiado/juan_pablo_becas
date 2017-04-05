@@ -110,6 +110,9 @@ class TutorSerializer(serializers.ModelSerializer):
             nested created objects, the integrante must be
             created first and passed as parameter to the
             created function.
+
+            After creating the tutor object we use save_foreign_relationship
+            to save ingreso objects that depend on tutor.
         """
         ingresos = self.validated_data.pop('tutor_ingresos', None)
 
