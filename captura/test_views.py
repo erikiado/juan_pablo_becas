@@ -1,6 +1,7 @@
 import time
 import string
 import random
+import json
 
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -353,7 +354,7 @@ class TestViewsFamilia(TestCase):
                                                   'correo': '',
                                                   'nivel_estudios': 'ninguno',
                                                   'fecha_de_nacimiento': '2017-03-22',
-                                                  'Rol': 'ninguno'}
+                                                  'rol': 'ninguno'}
 
         self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
                                               'numero_sae': 5876,
@@ -429,410 +430,431 @@ class TestViewsFamilia(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'captura/captura_base.html')
 
-    # def test_create_integrante(self):
-    #     """ Tests that an integrante can be created through the combination of the
-    #     create_integrante view, form, and template.
-    #     """
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     self.assertRedirects(response, reverse('captura:list_integrantes',
-    #                                            kwargs={'id_familia': self.familia1.id}))
-
-    # def test_create_integrante_incomplete(self):
-    #     """ Tests that the form and view for create_integrante fail gracefully when provided
-    #     with invalid data.
-    #     """
-    #     self.integrante_constructor_dictionary['apellidos'] = ''
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     self.assertFormError(response, 'form', 'apellidos', 'This field is required.')
-    #     self.assertEqual(200, response.status_code)
-    #     self.assertTemplateUsed(response, 'captura/captura_base.html')
-
-    # def test_create_integrante_with_rol_alumno(self):
-    #     """ Tests that an alumno can be created through the creation flow, i.e. when
-    #     a capturista creates an integrante, if he decides to add the alumno role to
-    #     it, the capturista will then be redirected to the creation view of the alumno
-    #     """
-    #     self.integrante_constructor_dictionary['Rol'] = 'alumno'
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     integrante = Integrante.objects.latest('id')
-    #     self.assertRedirects(response, reverse('captura:create_alumno',
-    #                                            kwargs={'id_integrante': integrante.id}))
-
-    #     self.alumno_constructor_dictionary['integrante'] = integrante.id
-    #     response = self.client.post(reverse('captura:create_alumno',
-    #                                         kwargs={'id_integrante': integrante.id}),
-    #                                 self.alumno_constructor_dictionary)
-    #     self.assertRedirects(response, reverse('captura:list_integrantes',
-    #                                            kwargs={'id_familia': integrante.familia.pk}))
-
-    # def test_create_integrante_with_rol_alumno_incomplete(self):
-    #     """ Tests that the view and form for create alumno fail gracefully if provided
-    #     with invalid information.
-    #     """
-    #     self.integrante_constructor_dictionary['Rol'] = 'alumno'
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     integrante = Integrante.objects.latest('id')
-    #     self.assertRedirects(response, reverse('captura:create_alumno',
-    #                                            kwargs={'id_integrante': integrante.id}))
-
-    #     self.alumno_constructor_dictionary['numero_sae'] = ''
-    #     response = self.client.post(reverse('captura:create_alumno',
-    #                                         kwargs={'id_integrante': integrante.id}),
-    #                                 self.alumno_constructor_dictionary)
-    #     self.assertFormError(response, 'form', 'numero_sae', 'This field is required.')
-    #     self.assertEqual(200, response.status_code)
-    #     self.assertTemplateUsed(response, 'captura/captura_base.html')
-
-    # def test_create_integrante_with_rol_tutor(self):
-    #     """ Tests that a tutor can be created through the creation flow, i.e. when
-    #     a capturista creates an integrante, if he decides to add the tutor role to
-    #     it, the capturista will then be redirected to the creation view of the tutor.
-    #     """
-    #     self.integrante_constructor_dictionary['Rol'] = 'tutor'
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     integrante = Integrante.objects.latest('id')
-    #     self.assertRedirects(response, reverse('captura:create_tutor',
-    #                                            kwargs={'id_integrante': integrante.id}))
-    #     response = self.client
-    #     self.tutor_constructor_dictionary['integrante'] = integrante.id
-    #     response = self.client.post(reverse('captura:create_tutor',
-    #                                         kwargs={'id_integrante': integrante.id}),
-    #                                 self.tutor_constructor_dictionary)
-    #     self.assertRedirects(response, reverse('captura:list_integrantes',
-    #                                            kwargs={'id_familia': integrante.familia.pk}))
-
-    # def test_create_integrante_with_rol_tutor_incomplete(self):
-    #     """ Test that that the view and form for create tutor fail gracefully when
-    #     provided wih invalid information
-    #     """
-    #     self.integrante_constructor_dictionary['Rol'] = 'tutor'
-    #     response = self.client.post(reverse('captura:create_integrante',
-    #                                         kwargs={'id_familia': self.familia1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     integrante = Integrante.objects.latest('id')
-    #     self.assertRedirects(response, reverse('captura:create_tutor',
-    #                                            kwargs={'id_integrante': integrante.id}))
-    #     response = self.client
-    #     self.tutor_constructor_dictionary['relacion'] = ''
-    #     response = self.client.post(reverse('captura:create_tutor',
-    #                                         kwargs={'id_integrante': integrante.id}),
-    #                                 self.tutor_constructor_dictionary)
-    #     self.assertFormError(response, 'form', 'relacion', 'This field is required.')
-    #     self.assertEqual(200, response.status_code)
-    #     self.assertTemplateUsed(response, 'captura/captura_base.html')
-
-    # def test_edit_integrante(self):
-    #     """ Test that an already existing integrante can be edited, through the
-    #     edit_integrante view and form.
-    #     """
-    #     new_name = 'Never'
-    #     self.integrante_constructor_dictionary['nombres'] = new_name
-    #     response = self.client.post(reverse('captura:integrante',
-    #                                         kwargs={'id_integrante': self.integrante1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     self.assertRedirects(response, reverse('captura:list_integrantes',
-    #                                            kwargs={'id_familia': self.integrante1.familia.pk}))
-    #     integrante = Integrante.objects.get(id=self.integrante1.id)
-    #     self.assertEqual(new_name, integrante.nombres)
-
-    # def test_estudio_delete(self):
-    #     """ Test that submitting a form for delition of a estudio will be handeled correctly.
-    #     """
-    #     id_estudio = self.estudio1.id
-    #     response = self.client.post(reverse('captura:estudio_delete'),
-    #                                 {'id_estudio': id_estudio})
-    #     self.assertEqual(302, response.status_code)
-
-    # def test_estudio_delete_modal_bad_requests(self):
-    #     """ This test checks that the view 'captura:estudio_delete_modal'
-    #     raises a HttpResponseBadRequest when accessed via a non AJAX method
-    #     """
-    #     url = reverse('captura:estudio_delete_modal',
-    #                   kwargs={'id_estudio': self.estudio1.id})
-    #     response = self.client.post(url, {'prueba': 'dato_cualquiera'})
-    #     self.assertEqual(400, response.status_code)
-    #     response = self.client.get(url)
-    #     self.assertEqual(400, response.status_code)
-
-    # def test_estudio_delete_bad_request(self):
-    #     """ This test checks that the view 'captura:estudio_delete'
-    #     raises a HttpResponseBadRequest when accessed via a non POST method
-    #     """
-    #     url = reverse('captura:estudio_delete')
-    #     response = self.client.get(url)
-    #     self.assertEqual(400, response.status_code)
-
-    # This test is properly implemented but fails due to a bug in the assertFormError method;
-    # following tests that would rely on the assertFormErrorMethod will be tested in the class
-    # TestViewsFamiliaLive.
-    # def test_edit_integrante_incompleto(self):
-    #     """ Test that the view and form for edit_integrante fail gracefully when provided
-    #     with invalid data
-    #     """
-    #     new_name = ''
-    #     self.integrante_constructor_dictionary['nombres'] = new_name
-    #     response = self.client.post(reverse('captura:integrante',
-    #                                         kwargs={'id_integrante': self.integrante1.id}),
-    #                                 self.integrante_constructor_dictionary)
-    #     print('No pasa con integrante_form')
-    #     contexts = to_list(response.context)
-    #     print(contexts)
-    #     self.assertFormError(response, 'integrante_form', 'nombres', 'This field is required.')
-    #     self.assertEqual(200, response.status_code)
-    #     self.assertTemplateUsed(response, 'captura/captura_base.html')
-    #     integrante = Integrante.objects.get(id=self.integrante1.id)
-    #     self.assertNotEqual(new_name, integrante.nombres)
-
-
-class TestViewsFamiliaLive(StaticLiveServerTestCase):
-    """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
-    cannot be ran via de django client.
-
-    Attributes
-    ----------
-    browser : Browser
-        Driver to navigate through websites and to run integration tests.
-    elerik : User
-        User that will be used as a capturista in order to fill all everything
-        related with familia.
-    familia1 : Familia
-        Used in tests that depend on creating an object related to a familia.
-    estudio1 : Estudio
-        Used in tests that depend on creating or editing an existent estudio.
-    integrante1 : Integrante
-        Used in tests that depend on creating an object related to an integrante.
-    integrante2 : Integrante
-        Used in tests that depend on editing an alumno object.
-    integrante3 : Integrante
-        Used in tests that depend on editing a tutor object.
-    alumno1 : Alumno
-        Used in the tests that depend on creating or editing an object related to an alumno.
-    tutor1: Tutor
-        Used in the tests that depend on creating or editing an object related to a tutor.
-    escuela : Used in tests that depend on creating an object related to an escuela
-    capturista : Capturista
-        Asociated with the User, as this object is required for permissions and
-        creation.
-    integrante_contructor_dictionary : dictrionary
-        Used in order to prevent repetitive code, when creating very similar integrantes
-        in different tests.
-    alumno_contructor_dictionary : dictionary
-        Used in order to prevent repetitive code, when creating very similar alumnos in
-        different tests.
-    tutor_constructor_dictionary : dictionary
-        Used in order to prevent repetivie code, when creating very similar tutores in
-        different tests.
-    """
-
-    def setUp(self):
-        """ Creates all the initial necessary objects for the tests
+    def test_create_integrante(self):
+        """ Tests that an integrante can be created if the data
+        is valid.
         """
-        self.browser = Browser('chrome')
-        test_username = 'erikiano'
-        test_password = 'vacalalo'
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Creado')
+        self.assertEqual(r.status_code, 200)
 
-        elerik = User.objects.create_user(
-            username=test_username,
-            email='latelma@junipero.sas',
-            password=test_password,
-            first_name='telma',
-            last_name='suapellido')
-
-        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
-
-        self.capturista = Capturista.objects.create(user=elerik)
-
-        numero_hijos_inicial = 3
-        estado_civil_inicial = 'soltero'
-        localidad_inicial = 'salitre'
-        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
-                                               estado_civil=estado_civil_inicial,
-                                               localidad=localidad_inicial)
-
-        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
-                                               familia=self.familia1)
-
-        self.integrante1 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Rick',
-                                                     apellidos='Astley',
-                                                     nivel_estudios='doctorado',
-                                                     fecha_de_nacimiento='1996-02-26')
-
-        self.integrante2 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Rick',
-                                                     apellidos='Astley',
-                                                     nivel_estudios='doctorado',
-                                                     fecha_de_nacimiento='1996-02-26')
-
-        self.integrante3 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Rick',
-                                                     apellidos='Astley',
-                                                     nivel_estudios='doctorado',
-                                                     fecha_de_nacimiento='1996-02-26')
-
-        self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
-                                             numero_sae='5876',
-                                             escuela=self.escuela)
-
-        self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
-                                           relacion='padre')
-
-        self.integrante_constructor_dictionary = {'familia': self.familia1.id,
-                                                  'nombres': 'Arturo',
-                                                  'apellidos': 'Herrera Rosas',
-                                                  'telefono': '',
-                                                  'correo': '',
-                                                  'nivel_estudios': 'ninguno',
-                                                  'fecha_de_nacimiento': '2017-03-22',
-                                                  'Rol': 'ninguno'}
-
-        self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
-                                              'numero_sae': 5876,
-                                              'escuela': self.escuela.id}
-        self.tutor_constructor_dictionary = {'integrante': self.integrante1.id,
-                                             'relacion': 'madre'}
-
-        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
-        self.browser.fill('username', test_username)
-        self.browser.fill('password', test_password)
-        self.browser.find_by_id('login-submit').click()
-
-    def tearDown(self):
-        """ At the end of tests, close the browser.
-        """
-        self.browser.driver.close()
-        self.browser.quit()
-
-    def test_edit_integrante_incomplete(self):
-        """ Test that the view and form for edit_integrante fail gracefully when provided
+    def test_create_integrante_incomplete(self):
+        """ Tests that the form and view for create_integrante fail gracefully when provided
         with invalid data.
         """
-        nombres = ''
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante1.id})
-        self.browser.visit(url)
-        self.browser.fill('nombres', nombres)
-        self.browser.find_by_id('update_integrante').first.click()
-        self.assertEqual(self.browser.url, url)
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['apellidos'] = ''
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['apellidos'][0]['message'], 'This field is required.')
 
-    def test_edit_alumno(self):
-        """ Test that an already exisiting alumno can be edited, through the
+    def test_create_integrante_with_rol_alumno(self):
+        """ Test that an alumno can be created if we provide
+        the correct data: numero_sae and escuela.
+        """
+
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Creado')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_integrante_with_rol_alumno_incomplete(self):
+        """ Test that an alumno can't be created if we don't provide
+        numero_sae.
+        """
+
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'], 
+            'El estudiante necesita el número sae y la escuela')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_alumno_incomplete2(self):
+        """ Test that an alumno can't be created if we don't provide
+        escuela.
+        """
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'], 
+            'El estudiante necesita el número sae y la escuela')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_alumno_incomplete3(self):
+        """ Test that an alumno can't be created if we provide
+        a relation.
+        """
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['relacion'] = 'padre'
+        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'], 
+            'El estudiante no tiene relación')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_tutor(self):
+        """ Test that an integrante can be created if we provide
+        the correct relation.
+        """
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'tutor'
+        self.integrante_constructor_dictionary['relacion'] = 'padre'
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Creado')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_integrante_with_rol_tutor_incomplete(self):
+        """ Test that an integrante can't be created if we don't provide
+        the relation.
+        """
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'tutor'
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'], 
+            'El tutor necesita un tipo de relación')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_tutor_incomplete2(self):
+        """ Test that an integrante can't be created if we provide
+        número sae.
+        """
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'tutor'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['relacion'] = 'padre'
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest') 
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'], 
+            'El tutor no tiene número sae ni escuela')
+        self.assertEqual(r.status_code, 400)
+
+    def test_edit_integrante(self):
+        """ Test that an already existing integrante can be edited, through the
         edit_integrante view and form.
         """
-        numero_sae = '42'
+        new_name = 'Never'
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante1.pk
+        self.integrante_constructor_dictionary['nombres'] = new_name
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante1.id)
+        self.assertEqual(new_name, integrante.nombres)
 
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante2.id})
-        self.browser.visit(url)
-
-        self.browser.fill('numero_sae', numero_sae)
-
-        self.browser.find_by_id('update_integrante').first.click()
-        alumno = Alumno.objects.get(integrante=self.integrante2)
-        self.assertEqual(numero_sae, alumno.numero_sae)
-
-    def test_edit_alumno_incomplete(self):
-        """ Test that the view and form for edit_integrante fail gracefully when provided
-        with invalid data for an alumno.
+    def test_estudio_delete(self):
+        """ Test that submitting a form for delition of a estudio will be handeled correctly.
         """
-        numero_sae = ''
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante2.id})
-        self.browser.visit(url)
-        self.browser.fill('numero_sae', numero_sae)
-        self.browser.find_by_id('update_integrante').first.click()
-        self.assertEqual(self.browser.url, url)
+        id_estudio = self.estudio1.id
+        response = self.client.post(reverse('captura:estudio_delete'),
+                                    {'id_estudio': id_estudio})
+        self.assertEqual(302, response.status_code)
 
-    def test_edit_tutor(self):
-        """ Test that an already exisiting tutor can be edited, through the
-        edit_integrante view and form.
+    def test_estudio_delete_modal_bad_requests(self):
+        """ This test checks that the view 'captura:estudio_delete_modal'
+        raises a HttpResponseBadRequest when accessed via a non AJAX method
         """
-        relacion = 'padre'
+        url = reverse('captura:estudio_delete_modal',
+                      kwargs={'id_estudio': self.estudio1.id})
+        response = self.client.post(url, {'prueba': 'dato_cualquiera'})
+        self.assertEqual(400, response.status_code)
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
 
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante3.id})
-        self.browser.visit(url)
-
-        self.browser.select('relacion', relacion)
-
-        self.browser.find_by_id('update_integrante').first.click()
-        tutor = Tutor.objects.get(integrante=self.integrante3)
-        self.assertEqual(relacion, tutor.relacion)
-
-    def test_edit_tutor_incomplete(self):
-        """ Test that the view and form for edit_integrante fail gracefully when provided
-        with invalid data for an alumno.
+    def test_estudio_delete_bad_request(self):
+        """ This test checks that the view 'captura:estudio_delete'
+        raises a HttpResponseBadRequest when accessed via a non POST method
         """
-        relacion = ''
+        url = reverse('captura:estudio_delete')
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
 
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante3.id})
-        self.browser.visit(url)
-        self.browser.select('relacion', relacion)
-        self.browser.find_by_id('update_integrante').first.click()
-        self.assertEqual(self.browser.url, url)
 
-    def test_create_alumno_from_existing_integrante(self):
-        """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
-        'alumno' redirects you to the create page for a new alumno and saves the object.
-        """
-        rol = 'alumno'
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante1.id})
-        self.browser.visit(url)
-        self.browser.select('Rol', rol)
-        self.browser.find_by_id('update_integrante').first.click()
-        url = self.live_server_url + reverse('captura:create_alumno',
-                                             kwargs={'id_integrante': self.integrante1.id})
-        self.assertEqual(self.browser.url, url)
+# class TestViewsFamiliaLive(StaticLiveServerTestCase):
+#     """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
+#     cannot be ran via de django client.
 
-        # Fill information
-        numero_sae = '9999'
-        self.browser.fill('numero_sae', numero_sae)
-        self.browser.select('escuela', self.escuela.id)
-        self.browser.find_by_id('create_alumno').first.click()
-        alumno = Alumno.objects.get(integrante=self.integrante1)
-        self.assertEqual(alumno.numero_sae, numero_sae)
+#     Attributes
+#     ----------
+#     browser : Browser
+#         Driver to navigate through websites and to run integration tests.
+#     elerik : User
+#         User that will be used as a capturista in order to fill all everything
+#         related with familia.
+#     familia1 : Familia
+#         Used in tests that depend on creating an object related to a familia.
+#     estudio1 : Estudio
+#         Used in tests that depend on creating or editing an existent estudio.
+#     integrante1 : Integrante
+#         Used in tests that depend on creating an object related to an integrante.
+#     integrante2 : Integrante
+#         Used in tests that depend on editing an alumno object.
+#     integrante3 : Integrante
+#         Used in tests that depend on editing a tutor object.
+#     alumno1 : Alumno
+#         Used in the tests that depend on creating or editing an object related to an alumno.
+#     tutor1: Tutor
+#         Used in the tests that depend on creating or editing an object related to a tutor.
+#     escuela : Used in tests that depend on creating an object related to an escuela
+#     capturista : Capturista
+#         Asociated with the User, as this object is required for permissions and
+#         creation.
+#     integrante_contructor_dictionary : dictrionary
+#         Used in order to prevent repetitive code, when creating very similar integrantes
+#         in different tests.
+#     alumno_contructor_dictionary : dictionary
+#         Used in order to prevent repetitive code, when creating very similar alumnos in
+#         different tests.
+#     tutor_constructor_dictionary : dictionary
+#         Used in order to prevent repetivie code, when creating very similar tutores in
+#         different tests.
+#     """
 
-    def test_create_tutor_from_existing_integrante(self):
-        """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
-        'tutor' redirects you to the create page for a new tutor and saves the object.
-        """
-        rol = 'tutor'
-        url = self.live_server_url + reverse('captura:integrante',
-                                             kwargs={'id_integrante': self.integrante1.id})
-        self.browser.visit(url)
-        self.browser.select('Rol', rol)
-        self.browser.find_by_id('update_integrante').first.click()
-        url = self.live_server_url + reverse('captura:create_tutor',
-                                             kwargs={'id_integrante': self.integrante1.id})
-        self.assertEqual(self.browser.url, url)
+#     def setUp(self):
+#         """ Creates all the initial necessary objects for the tests
+#         """
+#         self.browser = Browser('chrome')
+#         test_username = 'erikiano'
+#         test_password = 'vacalalo'
 
-        # Fill information
-        relacion = 'padre'
-        self.browser.select('relacion', relacion)
-        self.browser.find_by_id('create_tutor').first.click()
-        tutor = Tutor.objects.get(integrante=self.integrante1)
-        self.assertEqual(tutor.relacion, relacion)
+#         elerik = User.objects.create_user(
+#             username=test_username,
+#             email='latelma@junipero.sas',
+#             password=test_password,
+#             first_name='telma',
+#             last_name='suapellido')
 
-    def test_delete_estudio(self):
-        """ Tests that the delete button works for the estudios
-        """
-        url = self.live_server_url + reverse('captura:estudios')
-        self.browser.visit(url)
-        self.browser.find_by_id('delete_estudio_' + str(self.estudio1.id)).first.click()
-        search_query = 'Esta seguro que desea borrar al usuario de correo: ' + str(self.estudio1)
-        self.assertFalse(self.browser.is_text_present(search_query))
+#         self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+#         self.capturista = Capturista.objects.create(user=elerik)
+
+#         numero_hijos_inicial = 3
+#         estado_civil_inicial = 'soltero'
+#         localidad_inicial = 'salitre'
+#         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+#                                                estado_civil=estado_civil_inicial,
+#                                                localidad=localidad_inicial)
+
+#         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+#                                                familia=self.familia1)
+
+#         self.integrante1 = Integrante.objects.create(familia=self.familia1,
+#                                                      nombres='Rick',
+#                                                      apellidos='Astley',
+#                                                      nivel_estudios='doctorado',
+#                                                      fecha_de_nacimiento='1996-02-26')
+
+#         self.integrante2 = Integrante.objects.create(familia=self.familia1,
+#                                                      nombres='Rick',
+#                                                      apellidos='Astley',
+#                                                      nivel_estudios='doctorado',
+#                                                      fecha_de_nacimiento='1996-02-26')
+
+#         self.integrante3 = Integrante.objects.create(familia=self.familia1,
+#                                                      nombres='Rick',
+#                                                      apellidos='Astley',
+#                                                      nivel_estudios='doctorado',
+#                                                      fecha_de_nacimiento='1996-02-26')
+
+#         self.alumno1 = Alumno.objects.create(integrante=self.integrante2,
+#                                              numero_sae='5876',
+#                                              escuela=self.escuela)
+
+#         self.tutor1 = Tutor.objects.create(integrante=self.integrante3,
+#                                            relacion='padre')
+
+#         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
+#                                                   'nombres': 'Arturo',
+#                                                   'apellidos': 'Herrera Rosas',
+#                                                   'telefono': '',
+#                                                   'correo': '',
+#                                                   'nivel_estudios': 'ninguno',
+#                                                   'fecha_de_nacimiento': '2017-03-22',
+#                                                   'Rol': 'ninguno'}
+
+#         self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
+#                                               'numero_sae': 5876,
+#                                               'escuela': self.escuela.id}
+#         self.tutor_constructor_dictionary = {'integrante': self.integrante1.id,
+#                                              'relacion': 'madre'}
+
+#         self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+#         self.browser.fill('username', test_username)
+#         self.browser.fill('password', test_password)
+#         self.browser.find_by_id('login-submit').click()
+
+#     def tearDown(self):
+#         """ At the end of tests, close the browser.
+#         """
+#         self.browser.driver.close()
+#         self.browser.quit()
+
+#     def test_edit_integrante_incomplete(self):
+#         """ Test that the view and form for edit_integrante fail gracefully when provided
+#         with invalid data.
+#         """
+#         nombres = ''
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante1.id})
+#         self.browser.visit(url)
+#         self.browser.fill('nombres', nombres)
+#         self.browser.find_by_id('update_integrante').first.click()
+#         self.assertEqual(self.browser.url, url)
+
+#     def test_edit_alumno(self):
+#         """ Test that an already exisiting alumno can be edited, through the
+#         edit_integrante view and form.
+#         """
+#         numero_sae = '42'
+
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante2.id})
+#         self.browser.visit(url)
+
+#         self.browser.fill('numero_sae', numero_sae)
+
+#         self.browser.find_by_id('update_integrante').first.click()
+#         alumno = Alumno.objects.get(integrante=self.integrante2)
+#         self.assertEqual(numero_sae, alumno.numero_sae)
+
+#     def test_edit_alumno_incomplete(self):
+#         """ Test that the view and form for edit_integrante fail gracefully when provided
+#         with invalid data for an alumno.
+#         """
+#         numero_sae = ''
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante2.id})
+#         self.browser.visit(url)
+#         self.browser.fill('numero_sae', numero_sae)
+#         self.browser.find_by_id('update_integrante').first.click()
+#         self.assertEqual(self.browser.url, url)
+
+#     def test_edit_tutor(self):
+#         """ Test that an already exisiting tutor can be edited, through the
+#         edit_integrante view and form.
+#         """
+#         relacion = 'padre'
+
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante3.id})
+#         self.browser.visit(url)
+
+#         self.browser.select('relacion', relacion)
+
+#         self.browser.find_by_id('update_integrante').first.click()
+#         tutor = Tutor.objects.get(integrante=self.integrante3)
+#         self.assertEqual(relacion, tutor.relacion)
+
+#     def test_edit_tutor_incomplete(self):
+#         """ Test that the view and form for edit_integrante fail gracefully when provided
+#         with invalid data for an alumno.
+#         """
+#         relacion = ''
+
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante3.id})
+#         self.browser.visit(url)
+#         self.browser.select('relacion', relacion)
+#         self.browser.find_by_id('update_integrante').first.click()
+#         self.assertEqual(self.browser.url, url)
+
+#     def test_create_alumno_from_existing_integrante(self):
+#         """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
+#         'alumno' redirects you to the create page for a new alumno and saves the object.
+#         """
+#         rol = 'alumno'
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante1.id})
+#         self.browser.visit(url)
+#         self.browser.select('Rol', rol)
+#         self.browser.find_by_id('update_integrante').first.click()
+#         url = self.live_server_url + reverse('captura:create_alumno',
+#                                              kwargs={'id_integrante': self.integrante1.id})
+#         self.assertEqual(self.browser.url, url)
+
+#         # Fill information
+#         numero_sae = '9999'
+#         self.browser.fill('numero_sae', numero_sae)
+#         self.browser.select('escuela', self.escuela.id)
+#         self.browser.find_by_id('create_alumno').first.click()
+#         alumno = Alumno.objects.get(integrante=self.integrante1)
+#         self.assertEqual(alumno.numero_sae, numero_sae)
+
+#     def test_create_tutor_from_existing_integrante(self):
+#         """ Tests that modifying the Rol for an existing integrante, from 'ninguno' to
+#         'tutor' redirects you to the create page for a new tutor and saves the object.
+#         """
+#         rol = 'tutor'
+#         url = self.live_server_url + reverse('captura:integrante',
+#                                              kwargs={'id_integrante': self.integrante1.id})
+#         self.browser.visit(url)
+#         self.browser.select('Rol', rol)
+#         self.browser.find_by_id('update_integrante').first.click()
+#         url = self.live_server_url + reverse('captura:create_tutor',
+#                                              kwargs={'id_integrante': self.integrante1.id})
+#         self.assertEqual(self.browser.url, url)
+
+#         # Fill information
+#         relacion = 'padre'
+#         self.browser.select('relacion', relacion)
+#         self.browser.find_by_id('create_tutor').first.click()
+#         tutor = Tutor.objects.get(integrante=self.integrante1)
+#         self.assertEqual(tutor.relacion, relacion)
+
+#     def test_delete_estudio(self):
+#         """ Tests that the delete button works for the estudios
+#         """
+#         url = self.live_server_url + reverse('captura:estudios')
+#         self.browser.visit(url)
+#         self.browser.find_by_id('delete_estudio_' + str(self.estudio1.id)).first.click()
+#         search_query = 'Esta seguro que desea borrar al usuario de correo: ' + str(self.estudio1)
+#         self.assertFalse(self.browser.is_text_present(search_query))
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):
