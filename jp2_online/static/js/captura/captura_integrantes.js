@@ -73,10 +73,13 @@ $(document).ready(function() {
         location.reload(); // reload page
       },
       error: function(data, status_code) {
-        console.log(data);
+        swal({
+          title: 'Error!',
+          text: data.responseJSON[Object.keys(data.responseJSON)[0]][0].message,
+          type: 'error',
+          confirmButtonText: 'OK'
+        });
       }
     });
   });
-});
-
-
+})

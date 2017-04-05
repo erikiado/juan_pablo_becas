@@ -364,15 +364,9 @@ def create_integrante(request, id_familia):
         form = IntegranteModelForm(request.POST)
         if form.is_valid():
             integrante = form.save(request=request)
-            data = {
-                'result': 'success',
-            }
-            return JsonResponse(data)
+            return HttpResponse(status=200)
         else:
-            data = {
-                'result': 'error',
-            }
-            return JsonResponse(data, status_code=400)
+            return HttpResponse(form.errors.as_json(), status=400, content_type='application/json')
 
 
 
