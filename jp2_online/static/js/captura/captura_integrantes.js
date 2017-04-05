@@ -70,12 +70,20 @@ $(document).ready(function() {
       context: this,
       success: function(data, status_code) {
         $('#modal_create_integrante').modal('toggle'); // close modal
-        location.reload(); // reload page
+        swal({
+          title: 'Integrante Creado',
+          type: 'success',
+          confirmButtonText: 'OK',
+        }).then(function (isConfirm) {
+          if (isConfirm) {
+            location.reload(); // reload page after closing
+          }
+        });
       },
       error: function(data, status_code) {
         swal({
           title: 'Error!',
-          text: data.responseJSON[Object.keys(data.responseJSON)[0]][0].message,
+          text: data.responseJSON[Object.keys(data.responseJSON)[0]][0].message, // obtain first error msg
           type: 'error',
           confirmButtonText: 'OK'
         });
