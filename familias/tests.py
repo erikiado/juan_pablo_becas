@@ -103,3 +103,57 @@ class TestIntegranteForm(TestCase):
         data_form['relacion'] = 'padre'
         form = IntegranteModelForm(data_form)
         self.assertFalse(form.is_valid())
+
+    def test_edit_integrante(self):
+        """ Test that the form works correctly to edit a user.
+
+        """
+        data_form = self.valid_data.copy()
+        data_form['Rol'] = 'ninguno'
+        form = IntegranteModelForm(data_form)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.nombres, 'Elver')
+        data_form['nombres'] = 'Ja'  # change nombres
+        form = IntegranteModelForm(data_form, instance=integrante)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.nombres, 'Ja')
+
+    def test_edit_tutor(self):
+        """ Test that the form works correctly to edit a tutor.
+
+        """
+        data_form = self.valid_data.copy()
+        data_form['Rol'] = 'tutor'
+        data_form['relacion'] = 'padre'
+        form = IntegranteModelForm(data_form)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.tutor_integrante.relacion, 'padre')
+        data_form['relacion'] = 'madre'  # change relacion
+        data_form['nombres'] = 'Fernando'
+        form = IntegranteModelForm(data_form, instance=integrante)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.nombres, 'Fernando')
+        self.assertEqual(integrante.tutor_integrante.relacion, 'madre')
+
+    def test_edit_student(self):
+        """ Test that the form works correctly when editing a student.
+
+        """
+        data_form = self.valid_data.copy()
+        data_form['Rol'] = 'alumno'
+        data_form['numero_sae'] = '123456'
+        data_form['escuela'] = self.escuela.id
+        form = IntegranteModelForm(data_form)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.alumno_integrante.numero_sae, '123456')
+        self.assertEqual(integrante.alumno_integrante.escuela, self.escuela)
+        data_form['numero_sae'] = '987'
+        form = IntegranteModelForm(data_form, instance=integrante)
+        self.assertTrue(form.is_valid())
+        integrante = form.save()
+        self.assertEqual(integrante.alumno_integrante.numero_sae, '987')

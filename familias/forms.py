@@ -97,7 +97,12 @@ class IntegranteModelForm(IntegranteForm):
         raise ValidationError('Rol inválido')
 
     def save(self, request=None, *args, **kwargs):
-        if self.instance.pk is None:
+        """ Override save to create/edit the Integrante, Alumno, and Tutor.
+
+        BEWARE: This currently does not work if when editing, we change the role of a
+        integrante.
+        """
+        if self.instance.pk is None:   # create integrante
             integrante = super(IntegranteModelForm, self).save(*args, **kwargs)
             data = self.cleaned_data
             if data['Rol'] == IntegranteForm.OPCION_ROL_TUTOR:
@@ -106,6 +111,22 @@ class IntegranteModelForm(IntegranteForm):
                 Alumno.objects.create(integrante=integrante, numero_sae=data['numero_sae'],
                                       escuela=data['escuela'])
             return integrante
+        else:  # edit integrante
+            integrante = self.instance
+            data = self.cleaned_data
+            for field in filter(lambda x: x in data, Integrante._meta.get_fields()):
+                integrante[field.name] = data[field.name]
+            integrante.save()
+            if data['Rol'] == IntegranteForm.OPCION_ROL_TUTOR:
+                tutor = Tutor.objects.get(integrante=integrante)
+                tutor.relacion = data['relacion']
+                tutor.save()
+            elif data['Rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
+                alumno = Alumno.objects.get(integrante=integrante)
+                alumno.numero_sae = data['numero_sae']
+                alumno.escuela = data['escuela']
+                alumno.save()
+            return Integrante.objects.get(pk=self.instance.pk)
 
 
 class AlumnoForm(ModelForm):
