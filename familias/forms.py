@@ -82,18 +82,21 @@ class IntegranteModelForm(IntegranteForm):
         has the necessary fields in the cleaned_data.
         """
         cleaned_data = super(IntegranteModelForm, self).clean()
+
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
             if not cleaned_data['numero_sae'] or not cleaned_data['escuela']:
                 raise ValidationError('El estudiante necesita el número sae y la escuela')
             if cleaned_data['relacion']:
                 raise ValidationError('El estudiante no tiene relación')
             return cleaned_data
+
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
             if not cleaned_data['relacion']:
                 raise ValidationError('El tutor necesita un tipo de relación')
             if cleaned_data['numero_sae'] or cleaned_data['escuela']:
                 raise ValidationError('El tutor no tiene número sae ni escuela')
             return cleaned_data
+
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_NINGUNO:
             if cleaned_data['numero_sae'] or cleaned_data['escuela'] or cleaned_data['relacion']:
                 raise ValidationError('El integrante no tiene número sae, escuela o relación')
@@ -118,9 +121,11 @@ class IntegranteModelForm(IntegranteForm):
         else:  # edit integrante
             integrante = self.instance
             data = self.cleaned_data
+            # filter fields which belong to integrante and are in cleaned_data.
             for field in filter(lambda x: x in data, Integrante._meta.get_fields()):
                 integrante[field.name] = data[field.name]
             integrante.save()
+
             if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 tutor = Tutor.objects.get(integrante=integrante)
                 tutor.relacion = data['relacion']
