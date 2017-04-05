@@ -61,8 +61,10 @@ class IntegranteModelForm(IntegranteForm):
 
     Namely, this works to save and update a regular Integrante,
     a student, or a tutor.
+    It inherits from the regular model form IntegranteForm and adds
+    the extra fields needed for alumnos and tutors.
     """
-    OPCIONES_RELACION = (('', '---------'),) + Tutor.OPCIONES_RELACION  # deep copy
+    OPCIONES_RELACION = (('', '---------'),) + Tutor.OPCIONES_RELACION  # deep copy adding the no relation option.
     escuela = ModelChoiceField(required=False, queryset=Escuela.objects.all())
     numero_sae = CharField(required=False, max_length=30)
     relacion = ChoiceField(required=False, choices=OPCIONES_RELACION)
@@ -76,6 +78,7 @@ class IntegranteModelForm(IntegranteForm):
 
     def clean(self):
         """ Override clean data to validate that the corresponding role
+        has the necessary fields in the cleaned_data.
         """
         cleaned_data = super(IntegranteModelForm, self).clean()
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
@@ -127,45 +130,3 @@ class IntegranteModelForm(IntegranteForm):
                 alumno.escuela = data['escuela']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
-
-
-class AlumnoForm(ModelForm):
-    """ Model form for Alumno
-
-        This is the general form for updating a Alumno.
-    """
-    class Meta:
-        model = Alumno
-        fields = ('integrante',
-                  'numero_sae',
-                  'escuela')
-        widgets = {
-            'integrante': HiddenInput()
-        }
-
-    def __init__(self, *args, **kwargs):
-        # This adds the class form control to every single input field.
-        # Implemented for bootstrap purposes.
-        super(AlumnoForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
-
-
-class TutorForm(ModelForm):
-    """ Model form for Tutor
-
-        This is the general form for updating a Tutor.
-    """
-    class Meta:
-        model = Tutor
-        fields = ('integrante', 'relacion')
-        widgets = {
-            'integrante': HiddenInput()
-        }
-
-    def __init__(self, *args, **kwargs):
-        # This adds the class form control to every single input field.
-        # Implemented for bootstrap purposes.
-        super(TutorForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
