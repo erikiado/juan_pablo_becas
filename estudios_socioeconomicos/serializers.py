@@ -5,9 +5,16 @@ from familias.serializers import FamiliaSerializer
 from familias.models import Familia
 
 from .models import Pregunta, Subseccion, Seccion, OpcionRespuesta
-from .models import Estudio, Respuesta
+from .models import Estudio, Respuesta, Foto
 from .utils import save_foreign_relationship
 
+
+class FotoSerializer(self.ModelSerializer):
+    """
+    """
+    class Meta:
+        model = Foto
+        fields = ('id', 'estudio', 'upload')
 
 class OpcionRespuestaSerializer(serializers.ModelSerializer):
     """ Serializer for using .models.OpcionRespuesta objects

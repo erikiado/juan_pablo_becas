@@ -13,6 +13,7 @@ from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
+from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
 from familias.models import Familia, Integrante, Alumno, Tutor
@@ -692,3 +693,26 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             return Response(EstudioSerializer(update).data)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+class APIUploadRetrieveImages(viewsets.ViewSet):
+    """
+    """
+    def list(self, request):
+        """
+        """
+        pass
+
+    def retrieve(self, request):
+        """
+        """
+        pass
+
+    def update(self, request):
+        """
+        """
+        pass
+
+    def delete(self, request):
+        """
+        """
+        pass

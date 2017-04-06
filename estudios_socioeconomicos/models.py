@@ -58,6 +58,14 @@ class Estudio(models.Model):
             'RECHAZADO': Estudio.RECHAZADO
         }
 
+class Foto(models.Model):
+    """
+    """
+    estudio = models.ForeignKey(Estudio, on_delete=models.CASCADE)
+
+    file_name = models.CharField(max_length=100)
+    upload = models.FileField(upload_to='')
+    is_active = models.BooleanField(default=True)
 
 @receiver(post_save, sender=Estudio)
 def create_answers_for_study(sender, instance=None, created=False, **kwargs):
