@@ -171,6 +171,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
     # we can refer to everything from the template using the prefix 'template'
     ('template', os.path.join(os.path.dirname(BASE_DIR), 'node_modules', 'gentelella')),
+    ('node_modules', os.path.join(os.path.dirname(BASE_DIR), 'node_modules')),
 )
 
 # Static files (CSS, JavaScript, Images)
