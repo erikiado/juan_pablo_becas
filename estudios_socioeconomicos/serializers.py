@@ -9,12 +9,16 @@ from .models import Estudio, Respuesta, Foto
 from .utils import save_foreign_relationship
 
 
-class FotoSerializer(self.ModelSerializer):
-    """
+class FotoSerializer(serializers.ModelSerializer):
+    """ Serializer for using .models.Foto objects
+        in REST endpoint
+
+        Saves and image to media/ folder
     """
     class Meta:
         model = Foto
-        fields = ('id', 'estudio', 'upload')
+        fields = ('id', 'estudio', 'upload', 'file_name')
+
 
 class OpcionRespuestaSerializer(serializers.ModelSerializer):
     """ Serializer for using .models.OpcionRespuesta objects

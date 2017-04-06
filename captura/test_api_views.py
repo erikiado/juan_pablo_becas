@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework import status
@@ -17,6 +18,7 @@ from indicadores.models import Ingreso
 
 from .views import APIQuestionsInformation, APIUploadRetrieveStudy
 from .views import APIOficioInformation, APIEscuelaInformation
+from .views import APIUploadRetrieveImages
 
 
 class TestAPIStudyMetaInformationRetrieval(APITestCase):
@@ -793,3 +795,32 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             if integrante['id'] == id_integrante:
                 ingresos = integrante['tutor_integrante']['tutor_ingresos'][0]
                 self.assertEqual(ingresos['fecha'], '1917-10-17')
+
+    def test_upload_images_for_estudio(self):
+        """
+        """
+        request = self.create_base_study()
+        id_study = request.data['id']
+
+        image = SimpleUploadedFile('prueba.png', b'file_content')
+
+        data = {
+            'estudio': id_study,
+            'file_name': 'imagen1',
+            'upload': image
+        }
+
+        view = APIUploadRetrieveImages.as_view({
+                'get': 'list',
+                'post': 'create',
+                'put': 'update',
+            })
+
+        url = reverse('captura:imagenes-list')
+        request = self.factory.post(url, data, format='multipart')
+        force_authenticate(request, user=self.user, token=self.token)
+        response = view(request)
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(response.data)
+

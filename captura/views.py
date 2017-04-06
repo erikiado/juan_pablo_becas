@@ -14,7 +14,7 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
 from familias.models import Familia, Integrante, Alumno, Tutor
 from familias.serializers import EscuelaSerializer
@@ -639,7 +639,7 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
 
         if serializer.is_valid():
             instance = serializer.create(request.user.capturista)
-            return Response(EstudioSerializer(instance).data)
+            return Response(EstudioSerializer(instance).data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -700,7 +700,21 @@ class APIUploadRetrieveImages(viewsets.ViewSet):
     def list(self, request):
         """
         """
-        pass
+        queryset = Foto.objects.all()
+        serializer = FotoSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def create(self, request):
+        """
+        """
+        serializer = FotoSerializer(data=request.data)
+
+        if serializer.is_valid():
+            instance = serializer.create(serializer.validated_data)
+            return Response(FotoSerializer(instance).data, status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request):
         """

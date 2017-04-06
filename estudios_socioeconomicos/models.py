@@ -63,7 +63,7 @@ class Foto(models.Model):
     """
     estudio = models.ForeignKey(Estudio, on_delete=models.CASCADE)
 
-    file_name = models.CharField(max_length=100)
+    file_name = models.CharField(max_length=300)
     upload = models.FileField(upload_to='')
     is_active = models.BooleanField(default=True)
 
