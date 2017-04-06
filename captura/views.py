@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 
-
+from administracion.models import Escuela
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
@@ -16,6 +16,10 @@ from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSeria
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
 from familias.forms import FamiliaForm, IntegranteForm, AlumnoForm, TutorForm
 from familias.models import Familia, Integrante, Alumno, Tutor
+from familias.serializers import EscuelaSerializer
+from indicadores.serializers import OficioSerializer
+from indicadores.models import Oficio
+
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -557,6 +561,34 @@ class APIQuestionsInformation(generics.ListAPIView):
     serializer_class = SeccionSerializer
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Seccion.objects.all()
+
+
+class APIOficioInformation(generics.ListAPIView):
+    """ API to get all available oficios.
+
+        Retrieves all objects from database.
+
+        Returns
+        --------
+        JSON object with Oficio objects.
+    """
+    serializer_class = OficioSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Oficio.objects.all()
+
+
+class APIEscuelaInformation(generics.ListAPIView):
+    """ API to get all available escuelas.
+
+        Retrieves all objects from database.
+
+        Returns
+        --------
+        JSON object with Escuela objects.
+    """
+    serializer_class = EscuelaSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Escuela.objects.all()
 
 
 class APIUploadRetrieveStudy(viewsets.ViewSet):

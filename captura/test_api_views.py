@@ -4,16 +4,19 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework import status
 
+
+from administracion.models import Escuela
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
 from estudios_socioeconomicos.models import Respuesta
 from estudios_socioeconomicos.load import load_data
-from administracion.models import Escuela
 from familias.models import Familia, Comentario, Integrante
+from indicadores.models import Oficio
 from perfiles_usuario.models import Capturista
 from indicadores.models import Ingreso
 
 
 from .views import APIQuestionsInformation, APIUploadRetrieveStudy
+from .views import APIOficioInformation, APIEscuelaInformation
 
 
 class TestAPIStudyMetaInformationRetrieval(APITestCase):
@@ -38,14 +41,13 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
         self.capturista.save()
         self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
+        self.oficio = Oficio.objects.create(nombre='Maistro')
+
         load_data()
 
         self.test_url_name = 'captura:api_obtener_informacion_preguntas'
 
-    def test_retrieval_study_meta_information(self):
-        """ Test that an authenticated user can retrieve information
-            through the API.
-        """
+    def authenticate_request(self, api_view):
         data = {'username': 'erikiano', 'password': 'vacalalo'}
 
         response = self.client.post(
@@ -54,12 +56,18 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
         token = response.data['token']
         factory = APIRequestFactory()
 
-        view = APIQuestionsInformation.as_view()
+        view = api_view.as_view()
 
         request = factory.get(reverse(self.test_url_name))
         force_authenticate(request, user=self.user, token=token)
 
-        response = view(request)
+        return view(request)
+
+    def test_retrieval_study_meta_information(self):
+        """ Test that an authenticated user can retrieve information
+            through the API.
+        """
+        response = self.authenticate_request(APIQuestionsInformation)
 
         num_preguntas = 0
         num_subsecciones = 0
@@ -72,9 +80,30 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
                 num_subsecciones += 1
             num_secciones += 1
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(num_preguntas, Pregunta.objects.all().count())
         self.assertEqual(num_subsecciones, Subseccion.objects.all().count())
         self.assertEqual(num_secciones, Seccion.objects.all().count())
+
+    def test_escuelas_retrieval(self):
+        """ Test that an authenticated user can recieve information
+            about escuelas through an API endpoint.
+        """
+        response = self.authenticate_request(APIEscuelaInformation)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), Escuela.objects.all().count())
+        self.assertEqual(response.data[0]['nombre'], 'Juan Pablo')
+
+    def test_oficio_retrieval(self):
+        """ Test that an authenticated user can recieve information
+            about oficios through an API endpoint.
+        """
+        response = self.authenticate_request(APIOficioInformation)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), Oficio.objects.all().count())
+        self.assertEqual(response.data[0]['nombre'], 'Maistro')
 
 
 class TestAPIUploadRetrieveStudy(APITestCase):
