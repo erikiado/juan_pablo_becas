@@ -3,7 +3,8 @@ from rest_framework import routers
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
                    create_estudio, edit_familia, list_integrantes, create_edit_integrante, \
                    APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
-                   estudio_delete, get_form_edit_integrante
+                   estudio_delete, get_form_edit_integrante, APIOficioInformation, \
+                   APIEscuelaInformation
 
 app_name = 'captura'
 
@@ -34,4 +35,8 @@ urlpatterns = [
     url(r'^api-obtener-informacion-preguntas/',
         APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
+    url(r'api-obtener-informacion-escuelas/', APIEscuelaInformation.as_view(),
+        name='api_obtener_informacion_escuelas'),
+    url(r'api-obtener-informacion-oficios/', APIOficioInformation.as_view(),
+        name='api_obtener_informacion_oficios'),
 ]
