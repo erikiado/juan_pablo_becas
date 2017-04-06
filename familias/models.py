@@ -1,6 +1,7 @@
 from django.db import models
 from core.validators import PHONE_REGEX
 from administracion.models import Escuela
+from indicadores.models import Transaccion
 
 
 class Familia(models.Model):
@@ -71,6 +72,16 @@ class Familia(models.Model):
                                     choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
                                  choices=OPCIONES_LOCALIDAD)
+
+    def total_neto(self):
+        """ Returns the net monthly income of the family.
+        """
+        total = 0
+        transacciones = Transaccion.objects.filter(familia=self)
+        for transaccion in transacciones:
+            total += transaccion.obtener_valor_mensual()
+        return total
+
 
     def __str__(self):
         """ Prints the apellido of one of the students of the family,

@@ -13,12 +13,18 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+<<<<<<< HEAD
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm
 from familias.models import Familia, Integrante
 from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
-from indicadores.models import Oficio
+from indicadores.models import Transaccion, Ingreso, Oficio
 
+=======
+from familias.models import Familia, Integrante
+from indicadores.models import Transaccion, Ingreso
+from indicadores.forms import TransaccionForm, IngresoForm
+>>>>>>> Partial progress
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -408,6 +414,75 @@ def get_form_edit_integrante(request, id_integrante):
             'id_integrante': id_integrante
         }
         return render(request, 'captura/create_integrante_form.html', context)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def create_transaccion(request, id_familia):
+    if request.method == 'POST':
+        transaccion_form = TransaccionForm(request.POST)
+        if transaccion_form.is_valid():
+            transaccion_form.save()
+            print("transaccion_salvada")
+            if transaccion_form.cleaned_data['es_ingreso']:
+                ingreso_form = IngresoForm(id_familia, request.POST)
+                print(ingreso_form)
+                if ingreso_form.is_valid():
+                    ingreso = ingreso_form.save(commit=False)
+                    ingreso.transaccion = transaccion_form.instance
+                    ingreso.save()
+                    print("ingreso_salvado")
+                print(ingreso_form.errors)
+    return redirect('captura:transacciones', id_familia=id_familia)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def update_transaccion_modal(request):
+    pass
+
+@login_required
+@user_passes_test(is_capturista)
+def update_transaccion(request):
+    if request.method == 'POST':
+        transaccion_form = TransaccionForm(request.POST)
+        if transaccion_form.is_valid():
+            transaccion_form.save()
+            if transaccion_form.cleaned_data['es_ingreso']:
+                ingreso_form = IngresoForm(request.POST)
+                print("Salvando Ingreso")
+                if ingreso_form.is_valid():
+                    ingreso = ingreso_form.save(commit=False)
+                    ingreso.transa
+                print(ingreso_form.errors)
+        print(transaccion_form.error)
+    return redirect('captura:transacciones', id_familia=id_familia)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def delete_transaccion(request):
+    pass
+
+
+@login_required
+@user_passes_test(is_capturista)
+def transacciones(request, id_familia):
+    """ This view allows a capturista to see all the financial information
+    of a specific family, they are displayed inside a table, and this view is
+    also the interface for the CRUD of transactions.
+    """
+    context = {}
+    context['familia'] = get_object_or_404(Familia, pk=id_familia)
+    transacciones = Transaccion.objects.filter(es_ingreso=True, familia=context['familia'])
+    context['ingresos'] = Ingreso.objects.filter(transaccion__in=transacciones)
+    context['egresos'] = Transaccion.objects.filter(es_ingreso=False, familia=context['familia'])
+    context['create_egreso_form'] = TransaccionForm(initial={'es_ingreso': False,
+                                                             'familia': context['familia']})
+    context['create_transaccion_form'] = TransaccionForm(initial={'es_ingreso': True,
+                                                                  'familia': context['familia']})
+    context['create_ingreso_form'] = IngresoForm(id_familia)
+    return render(request, 'captura/dashboard_transacciones.html', context)
 
 
 class APIQuestionsInformation(generics.ListAPIView):

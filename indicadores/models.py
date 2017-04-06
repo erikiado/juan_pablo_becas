@@ -1,7 +1,5 @@
-import decimal
 from django.db import models
-from familias.models import Familia, Tutor
-
+from familias.models import Familia
 
 class Oficio(models.Model):
     """ This model stores the list of all possible jobs.
@@ -118,6 +116,7 @@ class Transaccion(models.Model):
         else:
             return self.obtener_valor_de_transaccion() / self.periodicidad.factor
 
+
     def __str__(self):
         """ Returns the calculated mensual transaction, formatted as money.
 
@@ -156,8 +155,8 @@ class Ingreso(models.Model):
                      (OPCION_COMPROBABLE, 'Comprobable'))
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
-    tipo = models.TextField(choices=OPCIONES_TIPO)
-    tutor = models.ForeignKey(Tutor, null=True, related_name='tutor_ingresos')
+    tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
+    tutor = models.ForeignKey(Tutor, null=True)
 
     def __str__(self):
         """ This function returns the __str__ method of the parent transaction.

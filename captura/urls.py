@@ -1,10 +1,17 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
+<<<<<<< HEAD
                    create_estudio, edit_familia, list_integrantes, create_edit_integrante, \
                    APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
                    estudio_delete, get_form_edit_integrante, APIOficioInformation, \
                    APIEscuelaInformation
+=======
+                   create_estudio, edit_familia, integrantes, create_integrante, edit_integrante, \
+                   create_alumno, create_tutor, APIQuestionsInformation, APIUploadRetrieveStudy, \
+                   estudio_delete_modal, estudio_delete, create_transaccion, update_transaccion, \
+                   delete_transaccion, transacciones
+>>>>>>> Partial progress
 
 app_name = 'captura'
 
@@ -32,6 +39,10 @@ urlpatterns = [
         create_edit_integrante, name='create_integrante'),
     url(r'^familia/edit-integrante/(?P<id_integrante>[0-9]+)',
         get_form_edit_integrante, name='form_edit_integrante'),
+    url(r'^create-transaccion/(?P<id_familia>[0-9]+)', create_transaccion, name='create_transaccion'),
+    url(r'^editar-transaccion/(?P<id_transaccion>[0-9]+)', update_transaccion, name='update_transaccion'),
+    url(r'^borrar-transaccion/(?P<id_transaccion>[0-9]+)', delete_transaccion, name='delete_transaccion'),
+    url(r'^familia/transacciones/(?P<id_familia>[0-9]+)', transacciones, name='transacciones'),
     url(r'^api-obtener-informacion-preguntas/',
         APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
