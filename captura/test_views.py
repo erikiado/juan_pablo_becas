@@ -717,7 +717,6 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
     def test_edit_integrantes(self):
         """ Test that we can edit multiple integrantes.
 
-        TODO: can't select an option inside the modal right now.
         """
         new_name = 'Alejandro'
         numero_sae = '666'
