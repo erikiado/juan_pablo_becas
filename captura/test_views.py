@@ -635,8 +635,6 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         Used in tests that depend on creating an object related to an integrante.
     integrante2 : Integrante
         Used in tests that depend on editing an alumno object.
-    integrante3 : Integrante
-        Used in tests that depend on editing a tutor object.
     alumno1 : Alumno
         Used in the tests that depend on creating or editing an object related to an alumno.
     tutor1: Tutor
@@ -645,15 +643,6 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
     capturista : Capturista
         Asociated with the User, as this object is required for permissions and
         creation.
-    integrante_contructor_dictionary : dictrionary
-        Used in order to prevent repetitive code, when creating very similar integrantes
-        in different tests.
-    alumno_contructor_dictionary : dictionary
-        Used in order to prevent repetitive code, when creating very similar alumnos in
-        different tests.
-    tutor_constructor_dictionary : dictionary
-        Used in order to prevent repetivie code, when creating very similar tutores in
-        different tests.
     """
 
     def setUp(self):
