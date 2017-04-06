@@ -1,0 +1,46 @@
+
+<form class="form-horizontal" method="POST" action="{% url 'captura:update_transaccion' transaccion_form.instance.pk %}">
+{% csrf_token %}
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Edición de Ingresos y Egresos</h4>
+</div>
+<div class="modal-body">
+  {{ transaccion_form.errors }}
+  {% for field in transaccion_form.visible_fields %}
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-3">
+      {{ field.errors }}
+      <strong>{{field.label}}:</strong>
+    </div>
+    <div class="col-sm-offset-1 col-sm-7">
+      {{field}}
+    </div>
+  </div>
+  {% endfor %}
+  {% for field in transaccion_form.hidden_fields %}
+    {{ field }}
+  {% endfor %}
+  {% if ingreso_form %}
+    {{ ingreso_form.errors }}
+    {% for field in ingreso_form.visible_fields %}
+    <div class="form-group">
+      <div class="col-sm-offset-1 col-sm-3">
+        {{ field.errors }}
+        <strong>{{field.label}}:</strong>
+      </div>
+      <div class="col-sm-offset-1 col-sm-7">
+        {{field}}
+      </div>
+    </div>
+    {% endfor %}
+    {% for field in ingreso_form.hidden_fields %}
+      {{ field }}
+    {% endfor %}
+  {% endif %}
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+  <button type="submit" class="btn btn-primary" id="btn_send_create_user">Guardar Cambios</button>
+</div>
+</form>

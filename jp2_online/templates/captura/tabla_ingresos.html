@@ -6,6 +6,7 @@
       <th>Periodicidad</th>
       <th>Observación</th>
       <th>Recibido Desde</th>
+      <th>Tutor</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -18,10 +19,11 @@
       <td>${{ ingreso.transaccion.obtener_valor_de_transaccion }}</td>
       <td>{{ ingreso.transaccion.periodicidad }}</td>
       <td>{{ ingreso.transaccion.observacion }}</td>
+      <td>{{ ingreso.fecha }}</td>
       <td>{{ ingreso.tutor }}</td>
 
       <td>
-        <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick btn btn-default" data-form="{% url 'administracion:users_edit_form' user.id %}">
+        <a id="update_transaccion_{{ ingreso.transaccion.id }}" class="update_transaccion_link mouseClick btn btn-default" data-form="{% url 'captura:update_transaccion_modal' ingreso.transaccion.id %}">
           <i class="glyphicon glyphicon-pencil"></i> 
           Editar
         </a>

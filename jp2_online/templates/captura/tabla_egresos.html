@@ -19,7 +19,7 @@
       <td>{{ egreso.observacion }}</td>
 
       <td>
-        <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick btn btn-default" data-form="{% url 'administracion:users_edit_form' user.id %}">
+        <a id="update_transaccion_{{ egreso.id }}" class="update_transaccion_link mouseClick btn btn-default" data-form="{% url 'captura:update_transaccion_modal' egreso.id %}">
           <i class="glyphicon glyphicon-pencil"></i> 
           Editar
         </a>

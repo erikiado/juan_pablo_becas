@@ -44,10 +44,9 @@
 {% include "captura/create_egreso_modal.html" %}
 {% include "captura/create_ingreso_modal.html" %}
 
-
-<div class="modal fade" tabindex="-1" role="dialog" id="modal_edit_user">
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_update_transaccion">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" id="modal_edit_user_content">
+    <div class="modal-content" id="modal_update_transaccion_content">
       
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -117,11 +116,11 @@
 
   }
 
-  $(".edit_user_link").click(function(ev) { // for each edit contact url
+  $(".update_transaccion_link").click(function(ev) { // for each edit contact url
       ev.preventDefault(); // prevent navigation
       var url = $(this).data("form"); // get the contact form url
-      $("#modal_edit_user_content").load(url, function() { // load the url into the modal
-          $("#modal_edit_user").modal('show'); // display the modal on url load
+      $("#modal_update_transaccion_content").load(url, function() { // load the url into the modal
+          $("#modal_update_transaccion").modal('show'); // display the modal on url load
       });
       return false; // prevent the click propagation
   });

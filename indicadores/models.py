@@ -1,5 +1,6 @@
+import decimal
 from django.db import models
-from familias.models import Familia
+from familias.models import Familia, Tutor
 
 class Oficio(models.Model):
     """ This model stores the list of all possible jobs.

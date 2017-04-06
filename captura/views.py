@@ -419,43 +419,54 @@ def get_form_edit_integrante(request, id_integrante):
 @login_required
 @user_passes_test(is_capturista)
 def create_transaccion(request, id_familia):
+    """ This view allows any user to create a new transaccion
+    regardless of it's type either ingreso or egreso.
+
+    """
     if request.method == 'POST':
         transaccion_form = TransaccionForm(request.POST)
         if transaccion_form.is_valid():
             transaccion_form.save()
-            print("transaccion_salvada")
             if transaccion_form.cleaned_data['es_ingreso']:
                 ingreso_form = IngresoForm(id_familia, request.POST)
-                print(ingreso_form)
                 if ingreso_form.is_valid():
                     ingreso = ingreso_form.save(commit=False)
                     ingreso.transaccion = transaccion_form.instance
                     ingreso.save()
-                    print("ingreso_salvado")
-                print(ingreso_form.errors)
     return redirect('captura:transacciones', id_familia=id_familia)
 
 
 @login_required
 @user_passes_test(is_capturista)
-def update_transaccion_modal(request):
-    pass
+def update_transaccion_modal(request, id_transaccion):
+    """ Returns a form that can be used to edit an existing
+    transaccion.
+    """
+    if request.is_ajax():
+        context = {}
+        transaccion = get_object_or_404(Transaccion, pk=id_transaccion)
+        id_familia = transaccion.familia.pk
+        context['transaccion_form'] = TransaccionForm(instance=transaccion)
+        if hasattr(transaccion, 'ingreso'):
+            context['ingreso_form'] = IngresoForm(id_familia, instance=transaccion.ingreso)
+        return render(request, 'captura/edit_ingreso_egreso_form.html', context)
+    return HttpResponseBadRequest()
 
 @login_required
 @user_passes_test(is_capturista)
-def update_transaccion(request):
+def update_transaccion(request, id_transaccion):
     if request.method == 'POST':
-        transaccion_form = TransaccionForm(request.POST)
+        transaccion = get_object_or_404(Transaccion, pk=id_transaccion)
+        id_familia = transaccion.familia.pk
+        transaccion_form = TransaccionForm(request.POST, instance=transaccion)
         if transaccion_form.is_valid():
             transaccion_form.save()
             if transaccion_form.cleaned_data['es_ingreso']:
-                ingreso_form = IngresoForm(request.POST)
-                print("Salvando Ingreso")
+                ingreso_form = IngresoForm(id_familia, request.POST, instance=transaccion.ingreso)
                 if ingreso_form.is_valid():
-                    ingreso = ingreso_form.save(commit=False)
-                    ingreso.transa
-                print(ingreso_form.errors)
-        print(transaccion_form.error)
+                    # ingreso = ingreso_form.save(commit=False)
+                    # ingreso.transaccion = transaccion_form.instance
+                    ingreso_form.save()
     return redirect('captura:transacciones', id_familia=id_familia)
 
 
