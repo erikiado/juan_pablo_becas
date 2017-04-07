@@ -179,6 +179,9 @@ STATICFILES_DIRS = (
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media/')
+
 LOGIN_URL = 'tosp_auth:login'
 
 EMAIL_HOST = 'smtp.sendgrid.net'

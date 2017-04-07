@@ -12,7 +12,8 @@ from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from estudios_socioeconomicos.serializers import FotoSerializer
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm
 from familias.models import Familia, Integrante
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
@@ -598,7 +599,7 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
 
         if serializer.is_valid():
             instance = serializer.create(request.user.capturista)
-            return Response(EstudioSerializer(instance).data)
+            return Response(EstudioSerializer(instance).data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -652,3 +653,59 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             return Response(EstudioSerializer(update).data)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class APIUploadRetrieveImages(viewsets.ViewSet):
+    """ API ViewSet for offline client to submit images to a study.
+
+        This view handles all REST operations for an offline client
+        to upload questions for a study.
+    """
+    def list(self, request, id_estudio):
+        """ Retrieves all Photos in a given study that belong to
+            the Capturista making the Query.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If there are no photos for the study or the capturista
+            does not have access to a specific study being queried.
+
+            Returns
+            -------
+            Response
+                Response object containing the serializer data
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        estudio = get_object_or_404(queryset, pk=id_estudio)
+
+        queryset = Foto.objects.filter(estudio=estudio)
+        serializer = FotoSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def create(self, request, id_estudio):
+        """ Creates and saves a new Foto object for an estudio.
+
+            If the object is not properly serializer, a JSON
+            object is returned indicating format errors.
+
+            Returns
+            -------
+            On Success
+                Response
+                    Response object containing the serializer data
+            On Error
+                Response
+                    Response object containing the serializer errors
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        get_object_or_404(queryset, pk=request.POST['estudio'])
+
+        serializer = FotoSerializer(data=request.data)
+
+        if serializer.is_valid():
+            instance = serializer.create(serializer.validated_data)
+            return Response(FotoSerializer(instance).data, status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 from familias.models import Alumno
+from becas.models import Beca
 
 
 @login_required
@@ -148,3 +149,18 @@ def search_students(request):
     """
     students = Alumno.objects.filter(activo=True)
     return render(request, 'administracion/search_students.html', {'students': students})
+
+
+@login_required
+@user_passes_test(is_administrador)
+def detail_student(request, id_alumno):
+    """ View to show the complete information of a student.
+
+    """
+    student = get_object_or_404(Alumno, pk=id_alumno)
+    becas = Beca.objects.filter(alumno=student).order_by('-fecha_de_asignacion')
+    context = {
+        'student': student,
+        'becas': becas
+    }
+    return render(request, 'administracion/detail_student.html', context)
