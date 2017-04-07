@@ -33,7 +33,7 @@
                   <td>{{student.integrante.get_nivel_estudios_display}}</td>
                   <td>{{student.numero_sae}}</td>
                   <td>
-                    <a class="btn btn-success btn-circle-sm" href="#">
+                    <a class="btn btn-success btn-circle-sm" href="{% url 'administracion:detail_student' student.pk %}">
                       <span class="glyphicon glyphicon-circle-arrow-right"></span>
                     </a>
                   </td>

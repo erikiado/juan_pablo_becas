@@ -4,8 +4,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Group
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
-from familias.models import Familia
+from familias.models import Familia, Integrante, Alumno
 from estudios_socioeconomicos.models import Estudio
+from .models import Escuela
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
@@ -50,6 +51,39 @@ class TestAdministracionUrls(TestCase):
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, 'administracion/search_students.html')
+
+    def test_view_detail_student(self):
+        """ Test we can access the view for details of a student.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        test_url_name = 'administracion:detail_student'
+        response = self.client.get(reverse(test_url_name,
+                                           kwargs={'id_alumno': alumno.pk}))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'administracion/detail_student.html')
+
+    def test_view_invalid_detail_student(self):
+        """ Test we can't access to the details of an inexistent student.
+
+        """
+        test_url_name = 'administracion:detail_student'
+        response = self.client.get(reverse(test_url_name,
+                                           kwargs={'id_alumno': 33}))
+        self.assertEqual(404, response.status_code)
 
 
 class TestUserForm(TestCase):
