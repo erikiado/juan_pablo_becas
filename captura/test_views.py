@@ -881,42 +881,6 @@ class TestViewsTransaccionesLive(StaticLiveServerTestCase):
         self.browser.driver.close()
         self.browser.quit()
 
-    def test_create_egreso(self):
-        """ Create a new egreso.
-
-        """
-        url = self.live_server_url + reverse('captura:transacciones',
-                                             kwargs={'id_familia': self.familia1.id})
-        self.browser.visit(url)
-        time.sleep(10)
-        self.send_create_integrante_form(nombres='Elver', apellidos='Ga', telefono='4424567899',
-                                         correo='abc@abc.com')
-        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
-        self.browser.find_by_css('.swal2-confirm').first.click()
-        time.sleep(.2)
-        self.assertTrue(self.browser.is_text_present('Elver'))
-
-        self.send_create_integrante_form(nombres='Eugenio', apellidos='Ga', telefono='-1',
-                                         correo='abc@abc.com')
-        self.assertTrue(self.browser.is_text_present('El número de telefono'))
-        self.browser.find_by_css('.swal2-confirm').first.click()
-        self.browser.find_by_id('id_telefono').first.fill('123456789')
-        self.browser.find_by_id('btn_send_create_user').click()
-        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
-        self.browser.find_by_css('.swal2-confirm').first.click()
-        time.sleep(.2)
-        self.assertTrue(self.browser.is_text_present('Eugenio'))
-
-    def test_create_ingreso(self):
-        url = self.live_server_url + reverse('captura:transacciones',
-                                             kwargs={'id_familia': self.familia1.id})
-        self.browser.visit(url)
-        
-        
-    def test_update_egreso(self):
-        pass
-    def test_update_ingreso(self):
-        pass
 
 class TestViewsAdministracion(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: captura.
