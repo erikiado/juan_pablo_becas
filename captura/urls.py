@@ -4,12 +4,13 @@ from .views import capturista_dashboard, capture_study, add_answer_study, remove
                    create_estudio, edit_familia, list_integrantes, create_edit_integrante, \
                    APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
                    estudio_delete, get_form_edit_integrante, APIOficioInformation, \
-                   APIEscuelaInformation
+                   APIEscuelaInformation, APIUploadRetrieveImages
 
 app_name = 'captura'
 
 router = routers.DefaultRouter()
 router.register(r'estudio', APIUploadRetrieveStudy, base_name='estudio')
+router.register(r'imagenes/(?P<id_estudio>[0-9]+)/', APIUploadRetrieveImages, base_name='imagenes')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
