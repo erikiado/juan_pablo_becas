@@ -2,6 +2,7 @@ import decimal
 from django.db import models
 from familias.models import Familia, Tutor
 
+
 class Oficio(models.Model):
     """ This model stores the list of all possible jobs.
 
@@ -116,7 +117,6 @@ class Transaccion(models.Model):
             return self.obtener_valor_de_transaccion() * self.periodicidad.factor
         else:
             return self.obtener_valor_de_transaccion() / self.periodicidad.factor
-
 
     def __str__(self):
         """ Returns the calculated mensual transaction, formatted as money.

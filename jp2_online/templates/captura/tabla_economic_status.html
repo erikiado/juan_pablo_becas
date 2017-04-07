@@ -9,33 +9,10 @@
 
 
   <tbody>
-    {% for egreso in all_users %}
     <tr class="">
-      <td>{{ egreso }}</td>
-      <td>{{ egreso }}</td>
-      <td>{{ egreso }}</td>
-      <td>{{ egreso }}</td>
-      
-      <td>
-        {% for group in user.groups.all %}
-        {{group}}
-        {% endfor %}
-      </td>
-
-      <td>
-        <a id="update_user_{{ user.id }}" class="edit_user_link mouseClick btn btn-default" data-form="{% url 'administracion:users_edit_form' user.id %}">
-          <i class="glyphicon glyphicon-pencil"></i> 
-          Editar
-        </a>
-        &nbsp;&nbsp;
-        
-        <a id="delete_user_{{ user.id }}" class="delete_user_link mouseClick btn btn-danger" data-form="{% url 'administracion:users_delete_modal' user.id %}">
-          <i class="glyphicon glyphicon-trash"></i> 
-          Borrar
-        </a>
-      </td>
+      <td>{{ total_ingresos_familia }}</td>
+      <td>{{ total_ingresos_familia }}</td>
+      <td>{{ total_neto_familia }}</td>
     </tr>
-    {% endfor %}
-    
   </tbody>
 </table>

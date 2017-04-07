@@ -1,7 +1,7 @@
-from django.forms import ModelForm, BooleanField, HiddenInput
-from django.shortcuts import get_object_or_404
-from familias.models import Familia, Integrante, Tutor
+from django.forms import ModelForm, HiddenInput, IntegerField
+from familias.models import Integrante, Tutor
 from .models import Transaccion, Ingreso
+
 
 class TransaccionForm(ModelForm):
     """ Model form for Transaccion
@@ -9,6 +9,8 @@ class TransaccionForm(ModelForm):
     This is the general form for updating and creating a
     transaccion.
     """
+
+    id_transaccion = IntegerField(required=False, widget=HiddenInput())
 
     class Meta:
         model = Transaccion
@@ -21,6 +23,7 @@ class TransaccionForm(ModelForm):
             'es_ingreso': HiddenInput(),
             'familia': HiddenInput()
         }
+
     def __init__(self, *args, **kwargs):
         # Add the class form-control to all of the fields
         super(TransaccionForm, self).__init__(*args, **kwargs)
@@ -34,15 +37,17 @@ class IngresoForm(ModelForm):
     This is the general form for creating and updating an
     ingreso.
     """
+
     class Meta:
         model = Ingreso
         fields = ('fecha',
                   'tipo',
                   'tutor')
+
     def __init__(self, id_familia, *args, **kwargs):
         # Add the class form-control to all of the fields
         super(IngresoForm, self).__init__(*args, **kwargs)
-        familia = get_object_or_404(Familia, pk=id_familia)
+        # Get only the tutores that are part of the family.
         integrantes = Integrante.objects.filter(familia=id_familia).values_list('id', flat=True)
         tutores = Tutor.objects.filter(integrante__in=integrantes)
         self.fields['tutor'].queryset = tutores

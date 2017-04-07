@@ -794,6 +794,130 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Eugenio'))
 
 
+class TestViewsTransaccionesLive(StaticLiveServerTestCase):
+    """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
+    cannot be ran via de django client.
+
+    Attributes
+    ----------
+    browser : Browser
+        Driver to navigate through websites and to run integration tests.
+    elerik : User
+        User that will be used as a capturista in order to fill all everything
+        related with familia.
+    familia1 : Familia
+        Used in tests that depend on creating an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating an object related to an integrante.
+    integrante2 : Integrante
+        Used in tests that depend on editing an alumno object.
+    alumno1 : Alumno
+        Used in the tests that depend on creating or editing an object related to an alumno.
+    tutor1: Tutor
+        Used in the tests that depend on creating or editing an object related to a tutor.
+    escuela : Used in tests that depend on creating an object related to an escuela
+    capturista : Capturista
+        Asociated with the User, as this object is required for permissions and
+        creation.
+    """
+
+    def setUp(self):
+        """ Creates all the initial necessary objects for the tests
+        """
+        self.browser = Browser('chrome')
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        numero_hijos_inicial = 3
+        estado_civil_inicial = 'soltero'
+        localidad_inicial = 'salitre'
+        self.familia1 = Familia.objects.create(
+                                  numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                  estado_civil=estado_civil_inicial,
+                                  localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
+
+        self.integrante1 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Alberto',
+                                                     apellidos='Lopez',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
+
+        self.integrante2 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Pedro',
+                                                     apellidos='Perez',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
+
+        self.alumno1 = Alumno.objects.create(integrante=self.integrante1,
+                                             numero_sae='5876',
+                                             escuela=self.escuela)
+
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante2,
+                                           relacion='padre')
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+
+    def tearDown(self):
+        """ At the end of tests, close the browser.
+        """
+        self.browser.driver.close()
+        self.browser.quit()
+
+    def test_create_egreso(self):
+        """ Create a new egreso.
+
+        """
+        url = self.live_server_url + reverse('captura:transacciones',
+                                             kwargs={'id_familia': self.familia1.id})
+        self.browser.visit(url)
+        time.sleep(10)
+        self.send_create_integrante_form(nombres='Elver', apellidos='Ga', telefono='4424567899',
+                                         correo='abc@abc.com')
+        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        time.sleep(.2)
+        self.assertTrue(self.browser.is_text_present('Elver'))
+
+        self.send_create_integrante_form(nombres='Eugenio', apellidos='Ga', telefono='-1',
+                                         correo='abc@abc.com')
+        self.assertTrue(self.browser.is_text_present('El número de telefono'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        self.browser.find_by_id('id_telefono').first.fill('123456789')
+        self.browser.find_by_id('btn_send_create_user').click()
+        self.assertTrue(self.browser.is_text_present('Integrante Creado'))
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        time.sleep(.2)
+        self.assertTrue(self.browser.is_text_present('Eugenio'))
+
+    def test_create_ingreso(self):
+        url = self.live_server_url + reverse('captura:transacciones',
+                                             kwargs={'id_familia': self.familia1.id})
+        self.browser.visit(url)
+        
+        
+    def test_update_egreso(self):
+        pass
+    def test_update_ingreso(self):
+        pass
+
 class TestViewsAdministracion(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: captura.
 

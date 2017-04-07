@@ -1,5 +1,5 @@
 
-<form class="form-horizontal" method="POST" action="{% url 'captura:update_transaccion' transaccion_form.instance.pk %}">
+<form id="form-edit-transaccion" class="form-horizontal form-create-transaccion" method="POST" action="{% url 'captura:create_transaccion' id_familia %}">
 {% csrf_token %}
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
