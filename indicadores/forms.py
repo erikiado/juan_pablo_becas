@@ -44,7 +44,7 @@ class IngresoForm(ModelForm):
                   'tipo',
                   'tutor')
         labels = {
-            'fecha': 'Desde cuando recive el ingreso?'
+            'fecha': '¿Desde cuándo recibe el ingreso?'
         }
 
     def __init__(self, id_familia, *args, **kwargs):

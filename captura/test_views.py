@@ -895,8 +895,8 @@ class TestViewsTransacciones(TestCase):
         self.client.login(username=test_username, password=test_password)
 
     def test_create_egreso(self):
-        """ Test that an integrante can be created if we provide
-        the correct information.
+        """ Test that an egreso can be created if the correct information
+        if provided to the create_transaccion url.
         """
 
         r = self.client.post(reverse('captura:create_transaccion',
@@ -908,6 +908,10 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_create_egreso_incomplete(self):
+        """ Test that an egreso won't be created if required information is
+        incomplete.
+
+        """
         self.transaccion_constructor_dictionary['monto'] = ''
         r = self.client.post(reverse('captura:create_transaccion',
                                      kwargs={'id_familia': self.familia1.id}),
@@ -919,6 +923,10 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_create_ingreso(self):
+        """ Test that an ingreso can be created if we provide all the required information
+        to the create_transaccion url. Checks for the confirmation message.
+
+        """
         self.transaccion_constructor_dictionary['es_ingreso'] = True
         self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
         r = self.client.post(reverse('captura:create_transaccion',
@@ -930,6 +938,10 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_create_ingreso_incomplete(self):
+        """ Test that an ingreso won't be created if the required information is
+        incomplete. Checks that an error status is returned, as well as an error
+        message.
+        """
         self.transaccion_constructor_dictionary['es_ingreso'] = True
         self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
         self.ingreso_constructor_dictionary['fecha'] = ''
@@ -943,6 +955,12 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_update_egreso(self):
+        """ Test that an egreso can be updated if it's id is passed in the form for
+        creating a transaccion, as long of all the required information.
+
+        Checks for the acutal change in the egreso, the confirmation message, and the
+        success code.
+        """
         self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
         r = self.client.post(reverse('captura:create_transaccion',
                                      kwargs={'id_familia': self.familia1.id}),
@@ -955,6 +973,11 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual('-$160.00 mensuales', str(transaccion))
 
     def test_update_egreso_incomplete(self):
+        """ This tests that a form won't be updated in case the complete information
+        is passed to the create transaccion view.
+
+        Checks for the error message, as well as the error code.
+        """
         self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
         self.transaccion_constructor_dictionary['monto'] = ''
         r = self.client.post(reverse('captura:create_transaccion',
@@ -967,6 +990,11 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_update_ingreso(self):
+        """ Check that an ingreso can be updated if the id of the transaccion is passed
+        to the update_create_transaccion view.
+
+        This checks for the success code and message.
+        """
         self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
         self.transaccion_constructor_dictionary['es_ingreso'] = True
         self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
@@ -979,6 +1007,10 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_update_ingreso_incomplete(self):
+        """ Test that an ingrewo can't be updated if the required information is incomplete.
+
+        Checks for the error code, as well as the error message.
+        """
         self.transaccion_constructor_dictionary['es_ingreso'] = True
         self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
         self.ingreso_constructor_dictionary['fecha'] = ''
