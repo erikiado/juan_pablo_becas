@@ -43,6 +43,9 @@ class IngresoForm(ModelForm):
         fields = ('fecha',
                   'tipo',
                   'tutor')
+        labels = {
+            'fecha': 'Desde cuando recive el ingreso?'
+        }
 
     def __init__(self, id_familia, *args, **kwargs):
         # Add the class form-control to all of the fields

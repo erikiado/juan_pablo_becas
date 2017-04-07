@@ -13,6 +13,7 @@ from splinter import Browser
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
+from indicadores.models import Periodo, Transaccion, Ingreso
 from familias.models import Familia, Integrante, Alumno, Tutor
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
@@ -794,39 +795,44 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Eugenio'))
 
 
-class TestViewsTransaccionesLive(StaticLiveServerTestCase):
-    """ The purpose of this class is to suplement TestViewsFamilia, as some of the required tests
-    cannot be ran via de django client.
+class TestViewsTransacciones(TestCase):
+    """ Integration test suite for testing the views in the app: captura.
+
+    Test the urls for 'captura' that make up the CRUD of transactions
 
     Attributes
     ----------
-    browser : Browser
-        Driver to navigate through websites and to run integration tests.
+    client : Client
+        Django Client for the testing of all the views related to the creation
+        and edition of a family.
     elerik : User
         User that will be used as a capturista in order to fill all everything
         related with familia.
-    familia1 : Familia
-        Used in tests that depend on creating an object related to a familia.
-    estudio1 : Estudio
-        Used in tests that depend on creating or editing an existent estudio.
-    integrante1 : Integrante
-        Used in tests that depend on creating an object related to an integrante.
-    integrante2 : Integrante
-        Used in tests that depend on editing an alumno object.
-    alumno1 : Alumno
-        Used in the tests that depend on creating or editing an object related to an alumno.
-    tutor1: Tutor
-        Used in the tests that depend on creating or editing an object related to a tutor.
-    escuela : Used in tests that depend on creating an object related to an escuela
     capturista : Capturista
         Asociated with the User, as this object is required for permissions and
         creation.
+    escuela : Used in tests that depend on creating an object related to an escuela.
+    familia1 : Familia
+        Used in tests that depend on creating or editing an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating or editing an object related to an integrante.
+    integrante_contructor_dictionary : dictrionary
+        Used in order to prevent repetitive code, when creating very similar integrantes
+        in different tests.
+    alumno_contructor_dictionary : dictionary
+        Used in order to prevent repetitive code, when creating very similar alumnos in
+        different tests.
+    tutor_constructor_dictionary : dictionary
+        Used in order to prevent repetivie code, when creating very similar tutores in
+        different tests.
     """
-
     def setUp(self):
         """ Creates all the initial necessary objects for the tests
+
         """
-        self.browser = Browser('chrome')
+        self.client = Client()
         test_username = 'erikiano'
         test_password = 'vacalalo'
 
@@ -837,49 +843,153 @@ class TestViewsTransaccionesLive(StaticLiveServerTestCase):
             first_name='telma',
             last_name='suapellido')
 
-        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
-
         self.capturista = Capturista.objects.create(user=elerik)
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
         numero_hijos_inicial = 3
         estado_civil_inicial = 'soltero'
         localidad_inicial = 'salitre'
-        self.familia1 = Familia.objects.create(
-                                  numero_hijos_diferentes_papas=numero_hijos_inicial,
-                                  estado_civil=estado_civil_inicial,
-                                  localidad=localidad_inicial)
+        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                               estado_civil=estado_civil_inicial,
+                                               localidad=localidad_inicial)
 
         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
                                                familia=self.familia1)
 
         self.integrante1 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Alberto',
-                                                     apellidos='Lopez',
+                                                     nombres='Rick',
+                                                     apellidos='Astley',
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
-
-        self.integrante2 = Integrante.objects.create(familia=self.familia1,
-                                                     nombres='Pedro',
-                                                     apellidos='Perez',
-                                                     nivel_estudios='doctorado',
-                                                     fecha_de_nacimiento='1996-02-26')
-
-        self.alumno1 = Alumno.objects.create(integrante=self.integrante1,
-                                             numero_sae='5876',
-                                             escuela=self.escuela)
-
-        self.tutor1 = Tutor.objects.create(integrante=self.integrante2,
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante1,
                                            relacion='padre')
-        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
-        self.browser.fill('username', test_username)
-        self.browser.fill('password', test_password)
-        self.browser.find_by_id('login-submit').click()
 
-    def tearDown(self):
-        """ At the end of tests, close the browser.
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+        self.transaccion1 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=False)
+        self.transaccion2 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=True)
+
+        self.ingreso1 = Ingreso.objects.create(transaccion=self.transaccion2,
+                                               fecha='2016-02-02',
+                                               tipo='comprobable',
+                                               tutor=self.tutor1)
+
+        self.transaccion_constructor_dictionary = {'monto': 40,
+                                                   'periodicidad': self.periodicidad1.id,
+                                                   'observacion': 'Distribucion',
+                                                   'es_ingreso': False,
+                                                   'familia': self.familia1.id}
+        self.ingreso_constructor_dictionary = {'fecha': '2016-02-02',
+                                               'tipo': 'comprobable'}
+
+        self.client.login(username=test_username, password=test_password)
+
+    def test_create_egreso(self):
+        """ Test that an integrante can be created if we provide
+        the correct information.
         """
-        self.browser.driver.close()
-        self.browser.quit()
+
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Egreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_egreso_incomplete(self):
+        self.transaccion_constructor_dictionary['monto'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['monto'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_ingreso(self):
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_ingreso_incomplete(self):
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        self.ingreso_constructor_dictionary['fecha'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['fecha'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_update_egreso(self):
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Egreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+        transaccion = Transaccion.objects.get(pk=self.transaccion1.id)
+        self.assertEqual('-$160.00 mensuales', str(transaccion))
+
+    def test_update_egreso_incomplete(self):
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        self.transaccion_constructor_dictionary['monto'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['monto'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_update_ingreso(self):
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_update_ingreso_incomplete(self):
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        self.ingreso_constructor_dictionary['fecha'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['fecha'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
 
 
 class TestViewsAdministracion(StaticLiveServerTestCase):
@@ -895,7 +1005,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
     """
 
     def setUp(self):
-        """Initialize the browser and create a user, before running the tests.
+        """ Initialize the browser and create a user, before running the tests.
         """
         self.browser = Browser('chrome')
         test_username = 'estebes'

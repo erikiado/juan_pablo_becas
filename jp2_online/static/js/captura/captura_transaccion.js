@@ -1,6 +1,4 @@
-console.log('saludos')
 function changeSubmitToAjax(id_modal, id_form) {
-  console.log(id_form)
   $(id_form).submit(function(e){
     e.preventDefault();
     $.ajax({ 
@@ -34,8 +32,11 @@ function changeSubmitToAjax(id_modal, id_form) {
 
 
 $(document).ready(function() {
-  // hide inputs from creation form
   // change to ajax
+  $('#id_fecha').datepicker({
+    changeMonth: true,
+    changeYear: true}
+  );
   changeSubmitToAjax('#modal_create_egreso', '#form-create-egreso');
   changeSubmitToAjax('#modal_create_ingreso', '#form-create-ingreso');
 });
@@ -71,6 +72,7 @@ $.ajaxSetup({
 });
 
 function initEditForm() {
+  // Overwrite the submit method of a newly loaded form; the from is loaded for updating transactions 
   changeSubmitToAjax('#modal_update_transaccion', '#form-edit-transaccion');
 }
 

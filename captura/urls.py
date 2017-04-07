@@ -5,7 +5,7 @@ from .views import capturista_dashboard, capture_study, add_answer_study, remove
                    APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
                    estudio_delete, get_form_edit_integrante, APIOficioInformation, \
                    APIEscuelaInformation, update_create_transaccion, delete_transaccion, \
-                   transacciones, update_transaccion_modal
+                   list_transacciones, update_transaccion_modal
 
 app_name = 'captura'
 
@@ -42,7 +42,9 @@ urlpatterns = [
     url(r'^borrar-transaccion/(?P<id_transaccion>[0-9]+)',
         delete_transaccion,
         name='delete_transaccion'),
-    url(r'^familia/transacciones/(?P<id_familia>[0-9]+)', transacciones, name='transacciones'),
+    url(r'^familia/transacciones/(?P<id_familia>[0-9]+)',
+        list_transacciones,
+        name='list_transacciones'),
     url(r'^api-obtener-informacion-preguntas/',
         APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),

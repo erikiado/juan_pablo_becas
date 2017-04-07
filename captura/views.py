@@ -421,7 +421,7 @@ def update_create_transaccion(request, id_familia):
     """
     if request.is_ajax() and request.method == 'POST':
         response_data = {}
-        if request.POST['id_transaccion']:  # In case of updating
+        if request.POST.get('id_transaccion', None):  # In case of updating
             transaccion = get_object_or_404(Transaccion, pk=request.POST['id_transaccion'])
             transaccion_form = TransaccionForm(request.POST, instance=transaccion)
         else:  # In case of creation
@@ -429,7 +429,7 @@ def update_create_transaccion(request, id_familia):
         if transaccion_form.is_valid():
             transaccion_form.save()
             if transaccion_form.cleaned_data['es_ingreso']:
-                if hasattr(transaccion_form.instance, 'ingreso'):
+                if hasattr(transaccion_form.instance, 'ingreso'):  # In case of updating
                     ingreso_form = IngresoForm(id_familia, request.POST,
                                                instance=transaccion_form.instance.ingreso)
                 else:
@@ -437,14 +437,13 @@ def update_create_transaccion(request, id_familia):
                 if ingreso_form.is_valid():
                     ingreso = ingreso_form.save(commit=False)
                     ingreso.transaccion = transaccion_form.instance
-                    print(ingreso_form.errors)
                     ingreso.save()
                     response_data['msg'] = 'Ingreso guardado con éxito'
                     return JsonResponse(response_data)
                 return HttpResponse(ingreso_form.errors.as_json(),
                                     status=400,
                                     content_type='application/json')
-            response_data['msg'] = 'Egreso guardado con exito'
+            response_data['msg'] = 'Egreso guardado con éxito'
             return JsonResponse(response_data)
         return HttpResponse(transaccion_form.errors.as_json(),
                             status=400,
@@ -475,12 +474,16 @@ def update_transaccion_modal(request, id_transaccion):
 @login_required
 @user_passes_test(is_capturista)
 def delete_transaccion(request):
+    """ This view soft deletes a transaccion from the family, so it can be
+    ignored in caclulations about their current economic status, but a history
+    can be still be retrieved.
+    """
     pass
 
 
 @login_required
 @user_passes_test(is_capturista)
-def transacciones(request, id_familia):
+def list_transacciones(request, id_familia):
     """ This view allows a capturista to see all the financial information
     of a specific family, they are displayed inside a table, and this view is
     also the interface for the CRUD of transactions.

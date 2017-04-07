@@ -157,7 +157,7 @@ class Ingreso(models.Model):
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
     tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
-    tutor = models.ForeignKey(Tutor, null=True)
+    tutor = models.ForeignKey(Tutor, null=True, blank=True, related_name='tutor_ingresos')
 
     def __str__(self):
         """ This function returns the __str__ method of the parent transaction.

@@ -28,7 +28,7 @@
   <a href="{% url 'captura:list_integrantes' familia.id %}" class="btn btn-danger">
     <i class="glyphicon glyphicon-arrow-left"></i> Ingresos y Egresos
   </a>
-  <a href="{% url 'captura:transacciones' familia.id %}" class="btn btn-danger">
+  <a href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
     Fotos Vivienda <i class="glyphicon glyphicon-arrow-right"></i>
   </a>
 </div>
@@ -65,7 +65,7 @@
 
 
 {% block extra_page_js %}
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src={% static 'js/captura/captura_transaccion.js' %}> </script>
 <script type="text/javascript">
 
