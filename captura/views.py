@@ -694,20 +694,54 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+
 class APIUploadRetrieveImages(viewsets.ViewSet):
+    """ API ViewSet for offline client to submit images to a study.
+
+        This view handles all REST operations for an offline client
+        to upload questions for a study.
     """
-    """
-    def list(self, request):
+    def list(self, request, id_estudio):
+        """ Retrieves all Photos in a given study that belong to
+            the Capturista making the Query.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If there are no photos for the study or the capturista
+            does not have access to a specific study being queried.
+
+            Returns
+            -------
+            Response
+                Response object containing the serializer data
         """
-        """
-        queryset = Foto.objects.all()
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        estudio = get_object_or_404(queryset, pk=id_estudio)
+
+        queryset = Foto.objects.filter(estudio=estudio)
         serializer = FotoSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
-    def create(self, request):
+    def create(self, request, id_estudio):
+        """ Creates and saves a new Foto object for an estudio.
+
+            If the object is not properly serializer, a JSON
+            object is returned indicating format errors.
+
+            Returns
+            -------
+            On Success
+                Response
+                    Response object containing the serializer data
+            On Error
+                Response
+                    Response object containing the serializer errors
         """
-        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        get_object_or_404(queryset, pk=request.POST['estudio'])
+
         serializer = FotoSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -716,17 +750,12 @@ class APIUploadRetrieveImages(viewsets.ViewSet):
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request):
+    def delete(self, request, id_foto):
         """
         """
-        pass
+        foto = get_list_or_404(Foto.objects.get(pk=id_foto))
 
-    def update(self, request):
-        """
-        """
-        pass
-
-    def delete(self, request):
-        """
-        """
-        pass
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        get_object_or_404(queryset, pk=foto.estudio)
+        foto.delete()
+        return Response(status.HTTP_202_ACCEPTED)

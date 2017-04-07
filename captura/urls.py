@@ -11,7 +11,7 @@ app_name = 'captura'
 
 router = routers.DefaultRouter()
 router.register(r'estudio', APIUploadRetrieveStudy, base_name='estudio')
-router.register(r'imagenes', APIUploadRetrieveImages, base_name='imagenes')
+router.register(r'imagenes/(?P<id_estudio>[0-9]+)/', APIUploadRetrieveImages, base_name='imagenes')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

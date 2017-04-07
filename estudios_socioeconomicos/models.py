@@ -58,14 +58,22 @@ class Estudio(models.Model):
             'RECHAZADO': Estudio.RECHAZADO
         }
 
+
 class Foto(models.Model):
-    """
+    """ The model that represents an image for a Estudio.
+
+        Attributes:
+        -----------
+        file_name: The name the file should have on sercer.
+        upload: Path to the image
+        is_active: boolean indicating if model is active.
     """
     estudio = models.ForeignKey(Estudio, on_delete=models.CASCADE)
 
     file_name = models.CharField(max_length=300)
     upload = models.FileField(upload_to='')
     is_active = models.BooleanField(default=True)
+
 
 @receiver(post_save, sender=Estudio)
 def create_answers_for_study(sender, instance=None, created=False, **kwargs):
