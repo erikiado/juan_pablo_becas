@@ -1,0 +1,94 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="row">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Información de Alumno</h3>
+    </div>
+  </div>
+  
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_content">
+
+        <h2> 
+          Información General
+        </h2>
+
+        <p class="text-muted font-13 m-b-30">
+          Datos generales
+        </p>
+
+        <table id="table_general_info" class="table table-striped">
+          <tbody>
+            <tr>
+              <td> <strong>Nombres</strong> </td>
+              <td>{{student.integrante.nombres}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Apellidos</strong> </td>
+              <td>{{student.integrante.apellidos}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Teléfono</strong> </td>
+              <td>{{student.integrante.telefono}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Fecha de Nacimiento</strong> </td>
+              <td>{{student.integrante.fecha_de_nacimiento}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Nivel de Estudios</strong> </td>
+              <td>{{student.integrante.get_nivel_estudios_display}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Número SAE</strong> </td>
+              <td>{{student.numero_sae}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Escuela</strong> </td>
+              <td>{{student.escuela}}</td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_content">
+        <h2> 
+          Becas
+        </h2>
+
+        <p class="text-muted font-13 m-b-30">
+          Historial de Becas
+        </p>
+
+        <table id="table_becas" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Fecha de Asignación</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for beca in becas %}
+              <tr>
+                <td> {{beca.fecha_de_asignacion}} </td>
+                <td> {{beca.monto}} </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
