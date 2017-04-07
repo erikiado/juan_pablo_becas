@@ -749,13 +749,3 @@ class APIUploadRetrieveImages(viewsets.ViewSet):
             return Response(FotoSerializer(instance).data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, id_foto):
-        """
-        """
-        foto = get_list_or_404(Foto.objects.get(pk=id_foto))
-
-        queryset = Estudio.objects.filter(capturista=request.user.capturista)
-        get_object_or_404(queryset, pk=foto.estudio)
-        foto.delete()
-        return Response(status.HTTP_202_ACCEPTED)
