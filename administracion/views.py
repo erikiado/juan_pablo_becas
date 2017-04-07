@@ -150,6 +150,7 @@ def search_students(request):
     students = Alumno.objects.filter(activo=True)
     return render(request, 'administracion/search_students.html', {'students': students})
 
+
 @login_required
 @user_passes_test(is_administrador)
 def detail_student(request, id_alumno):
@@ -163,4 +164,3 @@ def detail_student(request, id_alumno):
         'becas': becas
     }
     return render(request, 'administracion/detail_student.html', context)
-
