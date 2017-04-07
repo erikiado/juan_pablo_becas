@@ -1,11 +1,10 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from .views import capturista_dashboard, capture_study, add_answer_study, remove_answer_study, \
-                   create_estudio, edit_familia, integrantes, create_integrante, edit_integrante, \
-                   create_alumno, create_tutor, APIQuestionsInformation, APIUploadRetrieveStudy, \
-                   APIOficioInformation, APIEscuelaInformation, estudio_delete_modal, \
-                   estudio_delete, APIUploadRetrieveImages
-
+                   create_estudio, edit_familia, list_integrantes, create_edit_integrante, \
+                   APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
+                   estudio_delete, get_form_edit_integrante, APIOficioInformation, \
+                   APIEscuelaInformation, APIUploadRetrieveImages
 
 app_name = 'captura'
 
@@ -24,20 +23,18 @@ urlpatterns = [
     url(r'^borrar-estudio/(?P<id_estudio>[0-9]+)/',
         estudio_delete_modal,
         name='estudio_delete_modal'),
-    url(r'^borrar-estudio/confirmar/', estudio_delete, name='estudio_delete'),
-    url(r'^familia/(?P<id_familia>[0-9]+)', edit_familia, name='familia'),
-    url(r'^familia/integrantes/(?P<id_familia>[0-9]+)', integrantes, name='integrantes'),
+    url(r'^borrar-estudio/confirmar/',
+        estudio_delete, name='estudio_delete'),
+    url(r'^familia/(?P<id_familia>[0-9]+)',
+        edit_familia, name='familia'),
+    url(r'^familia/integrantes/(?P<id_familia>[0-9]+)',
+        list_integrantes, name='list_integrantes'),
     url(r'^familia/create-integrante/(?P<id_familia>[0-9]+)',
-        create_integrante,
-        name='create_integrante'),
-    url(r'^integrante/create-alumno/(?P<id_integrante>[0-9]+)',
-        create_alumno,
-        name='create_alumno'),
-    url(r'^integrante/create-tutor/(?P<id_integrante>[0-9]+)',
-        create_tutor,
-        name='create_tutor'),
-    url(r'^integrante/(?P<id_integrante>[0-9]+)', edit_integrante, name='integrante'),
-    url(r'^api-obtener-informacion-preguntas/', APIQuestionsInformation.as_view(),
+        create_edit_integrante, name='create_integrante'),
+    url(r'^familia/edit-integrante/(?P<id_integrante>[0-9]+)',
+        get_form_edit_integrante, name='form_edit_integrante'),
+    url(r'^api-obtener-informacion-preguntas/',
+        APIQuestionsInformation.as_view(),
         name='api_obtener_informacion_preguntas'),
     url(r'api-obtener-informacion-escuelas/', APIEscuelaInformation.as_view(),
         name='api_obtener_informacion_escuelas'),
