@@ -1,0 +1,77 @@
+<div>
+    <p class="heading-seccion">Secciones</p>
+    {% for seccion in cuestionario %}
+        <ul>
+            <li class="seccion-index">
+                <a href="#seccion_{{seccion.id}}">
+                    {{seccion.nombre}}
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
+    
+    {% for seccion in cuestionario %}
+        <a name="seccion_{{seccion.id}}"></a>
+        
+        <div class="seccion">
+            <p class="heading-seccion">{{seccion.nombre}}</p>
+
+            {% for subseccion in seccion.subsecciones %}
+
+                <p class="heading-subseccion">{{subseccion.nombre}}</p>
+
+                {% for pregunta in subseccion.preguntas %}
+                    
+                    <p class="heading-pregunta">{{ pregunta.texto }}</p>
+                    
+                    <ul>
+                        {% for respuesta in pregunta.respuestas %}
+                            <li class="texto-respuesta">
+                                <p>
+                                    {{ respuesta.respuesta }}
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+
+            {% endfor %}
+        </div>
+
+    {% endfor %}
+
+</div>
+
+<style>
+
+    .seccion-index {
+        font-size: 15px;
+    }
+    
+    .seccion {
+        padding: 10px;
+        border-top: solid 1px;
+        border-bottom: solid 1px;
+    }
+
+    .heading-seccion {
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .heading-subseccion {
+        font-size: 19px;
+        margin-left: 40px;
+    }
+
+    .heading-pregunta {
+        margin-left: 60px;
+        font-size: 16px;
+    }
+
+    .texto-respuesta {
+        margin-left: 80px;
+        font-size: 13px;
+    }
+    
+</style>
