@@ -428,6 +428,7 @@ def get_form_delete_integrante(request, id_integrante):
             'delete_form': form
         }
         return render(request, 'captura/integrante_delete_modal.html', context)
+    return HttpResponseBadRequest()
 
 
 @login_required
