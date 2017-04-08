@@ -13,7 +13,7 @@ from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
-from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
 from familias.models import Familia, Integrante
 from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
@@ -344,7 +344,7 @@ def list_integrantes(request, id_familia):
     """
     context = {}
 
-    integrantes = Integrante.objects.filter(familia__pk=id_familia)
+    integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
     context['integrantes'] = integrantes
     context['familia'] = familia
@@ -409,6 +409,38 @@ def get_form_edit_integrante(request, id_integrante):
         }
         return render(request, 'captura/create_integrante_form.html', context)
 
+
+@login_required
+@user_passes_test(is_capturista)
+def get_form_delete_integrante(request, id_integrante):
+    """ View that is called via ajax to render the modal
+    to confirm the deletion of an Integrante.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        integrante = get_object_or_404(Integrante, pk=id_integrante)
+        form = DeleteIntegranteForm(initial={'integrante_id': integrante.pk})
+        context = {
+            'integrante': integrante,
+            'delete_form': form
+        }
+        return render(request, 'captura/integrante_delete_modal.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def delete_integrante(request, id_integrante):
+    """ This view receives the form to delete an integrante
+    and redirects to the listing of integrantes.
+    """
+    if request.method == 'POST':
+        form = DeleteIntegranteForm(request.POST)
+        integrante = get_object_or_404(Integrante, pk=id_integrante)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:list_integrantes', id_familia=integrante.familia.pk)
+    return HttpResponseBadRequest()
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.

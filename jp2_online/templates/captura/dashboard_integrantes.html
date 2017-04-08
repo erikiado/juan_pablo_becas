@@ -20,22 +20,23 @@
         <div class="clearfix"></div>
       </div>
       <div class="x_content">
-        <table id="tablaCapturista" class="table table-striped table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-              <th>Correo</th>
-              <th>Nivel de Estudios</th>
-              <th>Fecha de Nacimiento</th>
-              <th>Activo</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {% if integrantes %}
+        {% if integrantes %}
+          <table id="tablaCapturista" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Nivel de Estudios</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
               {% for integrante in integrantes %}
-              <tr class="odd gradeX {%if not integrante.activo%} danger {%endif%}">
+                <tr class="odd gradeX {%if not integrante.activo%} danger {%endif%}">
                   <td>
                     {{integrante}}
                   </td>
@@ -56,22 +57,21 @@
                   </td>
 
                   <td>
-                    <button class="btn btn-default">
-                      <i class="glyphicon glyphicon-eye-open"></i> Ver
-                    </button>
-
                     <a class="btn btn-primary edit-integrante-link" data-form="{% url 'captura:form_edit_integrante' integrante.id %}">
                       <i class="glyphicon glyphicon-pencil"></i> Editar
                     </a>
+                    <a id="delete_integrante_{{ integrante.id }}" class="delete_integrante_link mouseClick btn btn-danger" data-form="{% url 'captura:form_delete_integrante' integrante.id %}">
+                      <i class="glyphicon glyphicon-trash"></i> 
+                      Borrar
+                    </a>
                   </td>
-              </tr>
+                </tr>
               {% endfor %}
-            {% else %}
-              <h5>No hay registro de integrates</h5>
-            {% endif %}
-            
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        {% else %}
+          <h5>No hay registro de integrates</h5>
+        {% endif %}
       </div>
     </div>
   </div>                
@@ -89,6 +89,15 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_edit_integrante">
   <div class="modal-dialog" role="document">
     <div class="modal-content" id="modal_edit_integrante_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_integrante">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_integrante_content">
       
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
