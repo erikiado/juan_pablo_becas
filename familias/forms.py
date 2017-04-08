@@ -142,14 +142,14 @@ class DeleteIntegranteForm(Form):
     """Form to delete user from dashboard which is used to validate the post information.
 
     """
-    integrante_id = IntegerField(widget=HiddenInput())
+    id_integrante = IntegerField(widget=HiddenInput())
 
     def clean(self):
         """ Override clean data to validate the id corresponds
         to a real integrante.
         """
         cleaned_data = super(DeleteIntegranteForm, self).clean()
-        integrante = Integrante.objects.filter(pk=cleaned_data['integrante_id'])
+        integrante = Integrante.objects.filter(pk=cleaned_data['id_integrante'])
         if not integrante:
             raise ValidationError('El integrante no existe')
         return cleaned_data
@@ -159,7 +159,7 @@ class DeleteIntegranteForm(Form):
         We also take care of the case in which there's
         an alumno related to it.
         """
-        integrante = Integrante.objects.get(pk=self.cleaned_data['integrante_id'])
+        integrante = Integrante.objects.get(pk=self.cleaned_data['id_integrante'])
         integrante.activo = False
         if hasattr(integrante, 'alumno_integrante'):
             alumno = Alumno.objects.get(integrante=integrante)

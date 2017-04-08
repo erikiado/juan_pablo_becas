@@ -401,11 +401,11 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         study_id = response.data['id']
         change_study = response.data
         change_study['familia']['integrante_familia'][0]['activo'] = False
-        integrante_id = change_study['familia']['integrante_familia'][0]['id']
+        id_integrante = change_study['familia']['integrante_familia'][0]['id']
 
         response = self.update_existing_study(change_study, study_id)
 
-        integrante = Integrante.objects.get(pk=integrante_id)
+        integrante = Integrante.objects.get(pk=id_integrante)
         self.assertEqual(integrante.activo, False)
         # self.assertEqual(len(response.data['familia']['integrante_familia']), 2)
 
@@ -758,14 +758,14 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         }
 
         integrante = change_study['familia']['integrante_familia'][1]
-        integrante_id = integrante['id']
+        id_integrante = integrante['id']
         self.assertEqual(len(integrante['tutor_integrante']['tutor_ingresos']), 0)
         integrante['tutor_integrante']['tutor_ingresos'].append(ingreso)
 
         response = self.update_existing_study(change_study, study_id)
 
         for integrante in response.data['familia']['integrante_familia']:
-            if integrante['id'] == integrante_id:
+            if integrante['id'] == id_integrante:
                 ingreso = integrante['tutor_integrante']['tutor_ingresos'][0]
                 self.assertEqual(int(float(ingreso['transaccion']['monto'])), 55000)
                 self.assertEqual(ingreso['fecha'], '2017-12-12')

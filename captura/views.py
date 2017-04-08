@@ -419,7 +419,7 @@ def get_form_delete_integrante(request, id_integrante):
     """
     if request.is_ajax() and request.method == 'GET':
         integrante = get_object_or_404(Integrante, pk=id_integrante)
-        form = DeleteIntegranteForm(initial={'integrante_id': integrante.pk})
+        form = DeleteIntegranteForm(initial={'id_integrante': integrante.pk})
         context = {
             'integrante': integrante,
             'delete_form': form

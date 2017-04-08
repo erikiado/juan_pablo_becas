@@ -201,7 +201,7 @@ class TestIntegranteDeleteForm(TestCase):
         """ Test the save method validating that the integrante changes to inactive.
 
         """
-        form = DeleteIntegranteForm({'integrante_id': self.integrante1.pk})
+        form = DeleteIntegranteForm({'id_integrante': self.integrante1.pk})
         self.assertTrue(self.integrante1.activo)
         self.assertTrue(form.is_valid())
         form.save()
@@ -212,7 +212,7 @@ class TestIntegranteDeleteForm(TestCase):
         """ Test that the form is invalid if provided an invalid id.
 
         """
-        form = DeleteIntegranteForm({'integrante_id': -1})
+        form = DeleteIntegranteForm({'id_integrante': -1})
         self.assertFalse(form.is_valid())
         with self.assertRaises(ValidationError):
             form.clean()
@@ -221,7 +221,7 @@ class TestIntegranteDeleteForm(TestCase):
         """ Test the soft delete for a student.
 
         """
-        form = DeleteIntegranteForm({'integrante_id': self.integrante2.pk})
+        form = DeleteIntegranteForm({'id_integrante': self.integrante2.pk})
         self.assertTrue(self.integrante2.activo)
         self.assertTrue(form.is_valid())
         form.save()
