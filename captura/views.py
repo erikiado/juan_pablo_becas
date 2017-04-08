@@ -12,13 +12,16 @@ from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
-from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio
+from estudios_socioeconomicos.serializers import FotoSerializer
+from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
 from familias.models import Familia, Integrante
+from familias.utils import total_egresos_familia, total_ingresos_familia, \
+                           total_neto_familia
 from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
-from indicadores.models import Oficio
-
+from indicadores.models import Transaccion, Ingreso, Oficio
+from indicadores.forms import TransaccionForm, IngresoForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -425,7 +428,6 @@ def get_form_delete_integrante(request, id_integrante):
             'delete_form': form
         }
         return render(request, 'captura/integrante_delete_modal.html', context)
-    return HttpResponseBadRequest()
 
 
 @login_required
@@ -441,6 +443,98 @@ def delete_integrante(request, id_integrante):
             form.save()
         return redirect('captura:list_integrantes', id_familia=integrante.familia.pk)
     return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def update_create_transaccion(request, id_familia):
+    """ This view allows any user to create a new transaccion
+    regardless of it's type either ingreso or egreso.
+
+    """
+    if request.is_ajax() and request.method == 'POST':
+        response_data = {}
+        if request.POST.get('id_transaccion', None):  # In case of updating
+            transaccion = get_object_or_404(Transaccion, pk=request.POST['id_transaccion'])
+            transaccion_form = TransaccionForm(request.POST, instance=transaccion)
+        else:  # In case of creation
+            transaccion_form = TransaccionForm(request.POST)
+        if transaccion_form.is_valid():
+            transaccion_form.save()
+            if transaccion_form.cleaned_data['es_ingreso']:
+                if hasattr(transaccion_form.instance, 'ingreso'):  # In case of updating
+                    ingreso_form = IngresoForm(id_familia, request.POST,
+                                               instance=transaccion_form.instance.ingreso)
+                else:
+                    ingreso_form = IngresoForm(id_familia, request.POST)
+                if ingreso_form.is_valid():
+                    ingreso = ingreso_form.save(commit=False)
+                    ingreso.transaccion = transaccion_form.instance
+                    ingreso.save()
+                    response_data['msg'] = 'Ingreso guardado con éxito'
+                    return JsonResponse(response_data)
+                return HttpResponse(ingreso_form.errors.as_json(),
+                                    status=400,
+                                    content_type='application/json')
+            response_data['msg'] = 'Egreso guardado con éxito'
+            return JsonResponse(response_data)
+        return HttpResponse(transaccion_form.errors.as_json(),
+                            status=400,
+                            content_type='application/json')
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def update_transaccion_modal(request, id_transaccion):
+    """ Returns a form that can be used to edit an existing
+    transaccion.
+    """
+    if request.is_ajax():
+        context = {}
+        transaccion = get_object_or_404(Transaccion, pk=id_transaccion)
+        id_familia = transaccion.familia.pk
+        context['id_familia'] = id_familia
+        id_transaccion = transaccion.pk
+        context['transaccion_form'] = TransaccionForm(instance=transaccion,
+                                                      initial={'id_transaccion': id_transaccion})
+        if hasattr(transaccion, 'ingreso'):
+            context['ingreso_form'] = IngresoForm(id_familia, instance=transaccion.ingreso)
+        return render(request, 'captura/edit_ingreso_egreso_form.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def delete_transaccion(request):
+    """ This view soft deletes a transaccion from the family, so it can be
+    ignored in caclulations about their current economic status, but a history
+    can be still be retrieved.
+    """
+    pass
+
+
+@login_required
+@user_passes_test(is_capturista)
+def list_transacciones(request, id_familia):
+    """ This view allows a capturista to see all the financial information
+    of a specific family, they are displayed inside a table, and this view is
+    also the interface for the CRUD of transactions.
+    """
+    context = {}
+    context['familia'] = get_object_or_404(Familia, pk=id_familia)
+    context['total_egresos_familia'] = total_egresos_familia(id_familia)
+    context['total_ingresos_familia'] = total_ingresos_familia(id_familia)
+    context['total_neto_familia'] = total_neto_familia(id_familia)
+    transacciones = Transaccion.objects.filter(es_ingreso=True, familia=context['familia'])
+    context['ingresos'] = Ingreso.objects.filter(transaccion__in=transacciones)
+    context['egresos'] = Transaccion.objects.filter(es_ingreso=False, familia=context['familia'])
+    context['create_egreso_form'] = TransaccionForm(initial={'es_ingreso': False,
+                                                             'familia': context['familia']})
+    context['create_transaccion_form'] = TransaccionForm(initial={'es_ingreso': True,
+                                                                  'familia': context['familia']})
+    context['create_ingreso_form'] = IngresoForm(id_familia)
+    return render(request, 'captura/dashboard_transacciones.html', context)
 
 
 class APIQuestionsInformation(generics.ListAPIView):
@@ -537,7 +631,7 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
 
         if serializer.is_valid():
             instance = serializer.create(request.user.capturista)
-            return Response(EstudioSerializer(instance).data)
+            return Response(EstudioSerializer(instance).data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -591,3 +685,59 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             return Response(EstudioSerializer(update).data)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class APIUploadRetrieveImages(viewsets.ViewSet):
+    """ API ViewSet for offline client to submit images to a study.
+
+        This view handles all REST operations for an offline client
+        to upload questions for a study.
+    """
+    def list(self, request, id_estudio):
+        """ Retrieves all Photos in a given study that belong to
+            the Capturista making the Query.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If there are no photos for the study or the capturista
+            does not have access to a specific study being queried.
+
+            Returns
+            -------
+            Response
+                Response object containing the serializer data
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        estudio = get_object_or_404(queryset, pk=id_estudio)
+
+        queryset = Foto.objects.filter(estudio=estudio)
+        serializer = FotoSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def create(self, request, id_estudio):
+        """ Creates and saves a new Foto object for an estudio.
+
+            If the object is not properly serializer, a JSON
+            object is returned indicating format errors.
+
+            Returns
+            -------
+            On Success
+                Response
+                    Response object containing the serializer data
+            On Error
+                Response
+                    Response object containing the serializer errors
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        get_object_or_404(queryset, pk=request.POST['estudio'])
+
+        serializer = FotoSerializer(data=request.data)
+
+        if serializer.is_valid():
+            instance = serializer.create(serializer.validated_data)
+            return Response(FotoSerializer(instance).data, status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

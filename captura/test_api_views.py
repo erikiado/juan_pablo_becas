@@ -1,13 +1,16 @@
+import os
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework import status
 
-
+from jp2_online.settings.base import MEDIA_ROOT
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
-from estudios_socioeconomicos.models import Respuesta
+from estudios_socioeconomicos.models import Respuesta, Foto
 from estudios_socioeconomicos.load import load_data
 from familias.models import Familia, Comentario, Integrante
 from indicadores.models import Oficio
@@ -17,6 +20,7 @@ from indicadores.models import Ingreso
 
 from .views import APIQuestionsInformation, APIUploadRetrieveStudy
 from .views import APIOficioInformation, APIEscuelaInformation
+from .views import APIUploadRetrieveImages
 
 
 class TestAPIStudyMetaInformationRetrieval(APITestCase):
@@ -793,3 +797,103 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             if integrante['id'] == id_integrante:
                 ingresos = integrante['tutor_integrante']['tutor_ingresos'][0]
                 self.assertEqual(ingresos['fecha'], '1917-10-17')
+
+    def test_upload_images_for_estudio(self):
+        """ Test that an image can be uploaded to a study
+            through a REST endpoint.
+        """
+        request = self.create_base_study()
+        id_study = request.data['id']
+
+        image = SimpleUploadedFile('prueba.png', b'file_content')
+
+        data = {
+            'estudio': id_study,
+            'file_name': 'imagen1',
+            'upload': image
+        }
+
+        view = APIUploadRetrieveImages.as_view({
+                'get': 'list',
+                'post': 'create',
+            })
+
+        url = reverse('captura:imagenes-list', kwargs={'id_estudio': id_study})
+        request = self.factory.post(url, data, format='multipart')
+        force_authenticate(request, user=self.user, token=self.token)
+        response = view(request, id_study)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        file_exists = os.path.isfile('{}../{}'.format(MEDIA_ROOT, response.data['upload']))
+        self.assertTrue(file_exists)
+
+        image = Foto.objects.get(pk=response.data['id'])
+        self.assertEqual(image.file_name, response.data['file_name'])
+
+    def test_listing_images(self):
+        """ Test images for a study can be queried through API endpoint
+        """
+        request = self.create_base_study()
+        id_study = request.data['id']
+
+        image = SimpleUploadedFile('prueba.png', b'file_content')
+
+        data = {
+            'estudio': Estudio.objects.get(pk=id_study),
+            'file_name': 'imagen1',
+            'upload': image
+        }
+
+        Foto.objects.create(**data)
+        self.assertEqual(Foto.objects.all().count(), 1)
+
+        view = APIUploadRetrieveImages.as_view({
+                'get': 'list',
+                'post': 'create',
+            })
+
+        url = reverse('captura:imagenes-list', kwargs={'id_estudio': id_study})
+        request = self.factory.get(url)
+        force_authenticate(request, user=self.user, token=self.token)
+        response = view(request, id_study)
+        self.assertEqual(len(response.data), 1)
+        image = response.data[0]
+        self.assertEqual(image['file_name'], data['file_name'])
+
+    def test_uploading_uploading_non_authorized(self):
+        """ Test a user can't upload file to a study that
+            does not belong to him.
+        """
+        study_data = self.create_base_study().data
+        id_study = study_data['id']
+
+        data = {'username': 'elbukok', 'password': 'vacalalo'}
+
+        response = self.client.post(
+            reverse('perfiles_usuario:obtain_auth_token'),
+            data,
+            format='json')
+
+        image = SimpleUploadedFile('prueba.png', b'file_content')
+
+        data = {
+            'estudio': id_study,
+            'file_name': 'imagen1',
+            'upload': image
+        }
+
+        user = User.objects.get(username='elbukok')
+        token = response.data['token']
+
+        view = APIUploadRetrieveImages.as_view({
+                'get': 'list',
+                'post': 'create',
+            })
+
+        url = reverse('captura:imagenes-list', kwargs={'id_estudio': id_study})
+        request = self.factory.post(url, data, format='multipart')
+        force_authenticate(request, user=user, token=token)
+        response = view(request, id_study)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
