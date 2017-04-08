@@ -1,15 +1,17 @@
 from django.test import TestCase
-from django.contrib.auth.models import User, Group
-from perfiles_usuario.utils import CAPTURISTA_GROUP
+from django.contrib.auth.models import User
+from django.forms import ValidationError
 from familias.models import Familia, Integrante, Alumno
 from administracion.models import Escuela
 from perfiles_usuario.models import Capturista
-from .forms import DeleteEstudioCapturistaForm
+from .forms import DeleteEstudioCapturistaForm, RecoverEstudioForm
 from .models import Estudio
 
 
-class AppFormTests(TestCase):
+class RecoverDeleteFormsTest(TestCase):
     """
+    Suite to test the forms to Delete and Recover studies.
+
     Attributes
     ----------
     elerik : User
@@ -35,17 +37,12 @@ class AppFormTests(TestCase):
         """ This sets up the database with the necessary values for the testing of the
         DeleteEstudioCapturistaForm
         """
-        test_username = 'erikiano'
-        test_password = 'vacalalo'
-
         elerik = User.objects.create_user(
-            username=test_username,
+            username='erikiano',
             email='latelma@junipero.sas',
-            password=test_password,
-            first_name='telma',
+            password='vacalalo',
+            first_name='erik',
             last_name='suapellido')
-        capturista_group = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
-        capturista_group.user_set.add(elerik)
 
         self.escuela = Escuela.objects.create(nombre='Juan Pablo')
 
@@ -93,3 +90,95 @@ class AppFormTests(TestCase):
         self.assertEqual(integrante.activo, False)
         alumno = Alumno.objects.get(pk=self.alumno1.pk)
         self.assertEqual(alumno.activo, False)
+
+    def test_recover_study_valid_data(self):
+        """ Test that the form is valid provided valid data.
+
+        """
+        self.estudio1.status = Estudio.ELIMINADO_CAPTURISTA
+        self.estudio1.save()
+        form = RecoverEstudioForm({'id_estudio': self.estudio1.pk})
+        self.assertTrue(form.is_valid())
+
+    def test_recover_study_valid_data2(self):
+        """ Test that the form is valid.
+
+        """
+        self.estudio1.status = Estudio.ELIMINADO_ADMIN
+        self.estudio1.save()
+        form = RecoverEstudioForm({'id_estudio': self.estudio1.pk})
+        self.assertTrue(form.is_valid())
+
+    def test_recover_study_invalid(self):
+        """ Test the form is invalid if study does not exist.
+
+        """
+        form = RecoverEstudioForm({'id_estudio': -1})
+        self.assertFalse(form.is_valid())
+        with self.assertRaises(ValidationError):
+            form.clean()
+
+    def test_recover_study_invalid2(self):
+        """ Test the form is invalid if the study is not deleted.
+
+        We check with a study that has all status except
+        deleted by admin and capturista.
+        """
+        opts = Estudio.get_options_status()
+        for s in filter(lambda x: 'eliminado' not in x, opts.values()):
+            self.estudio1.status = s
+            self.estudio1.save()
+            form = RecoverEstudioForm({'id_estudio': self.estudio1.pk})
+            self.assertFalse(form.is_valid())
+            with self.assertRaises(ValidationError):
+                form.clean()
+
+    def test_recover_deleted_admin(self):
+        """ Test that the form correctly updates the status of a deleted
+        study by an admin, and changes the members from inactive to active.
+        """
+        self.estudio1.status = Estudio.ELIMINADO_ADMIN
+        self.estudio1.save()
+        self.integrante1.activo = False
+        self.integrante1.save()
+        self.integrante2.activo = False
+        self.integrante2.save()
+        self.alumno1.activo = False
+        self.alumno1.save()
+
+        form = RecoverEstudioForm({'id_estudio': self.estudio1.pk})
+        self.assertTrue(form.is_valid())
+        form.save()
+        estudio = Estudio.objects.get(pk=self.estudio1.pk)
+        self.assertEqual(estudio.status, Estudio.APROBADO)
+
+        integrante1 = Integrante.objects.get(pk=self.integrante1.pk)
+        self.assertTrue(integrante1.activo)
+        integrante2 = Integrante.objects.get(pk=self.integrante2.pk)
+        self.assertTrue(integrante2.activo)
+        self.assertTrue(integrante2.alumno_integrante.activo)
+
+    def test_recover_deleted_capturista(self):
+        """ Test that the form correctly updates the status of a deleted
+        study by a capturista, and changes the members from inactive to active.
+        """
+        self.estudio1.status = Estudio.ELIMINADO_CAPTURISTA
+        self.estudio1.save()
+        self.integrante1.activo = False
+        self.integrante1.save()
+        self.integrante2.activo = False
+        self.integrante2.save()
+        self.alumno1.activo = False
+        self.alumno1.save()
+
+        form = RecoverEstudioForm({'id_estudio': self.estudio1.pk})
+        self.assertTrue(form.is_valid())
+        form.save()
+        estudio = Estudio.objects.get(pk=self.estudio1.pk)
+        self.assertEqual(estudio.status, Estudio.BORRADOR)
+
+        integrante1 = Integrante.objects.get(pk=self.integrante1.pk)
+        self.assertTrue(integrante1.activo)
+        integrante2 = Integrante.objects.get(pk=self.integrante2.pk)
+        self.assertTrue(integrante2.activo)
+        self.assertTrue(integrante2.alumno_integrante.activo)

@@ -2,5 +2,63 @@
 {% load staticfiles %}
 
 {% block content %}
+  
+<div class="row"> 
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Estudios eliminados</h2>
+        <div class="clearfix"></div>
+      </div>
+
+      <div class="x_content">
+        <table id="datatable" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Nombre Familia</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+
+          <tbody>
+            {% if estudios %}
+              {% for estudio in estudios %}
+                <tr class="odd gradeX {%if estudio.status == status_options.RECHAZADO%} danger {%endif%}">
+                  <td>
+                    {{estudio.id}}
+                  </td>
+
+                  <td>
+                    {{estudio.familia}}
+                  </td>
+
+                  <td>
+                    <a id="recover_estudio_{{ estudio.id }}" class="recover_estudio_link mouseClick btn btn-success" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
+                      <i class="glyphicon glyphicon-plus"></i> Recuperar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+                  
+            {% else %}
+              <h5>No hay tienes estudios eliminados.</h5>
+            {% endif %}
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>                
+</div> 
+  
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_recover_estudio">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_recover_estudio_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% endblock %}

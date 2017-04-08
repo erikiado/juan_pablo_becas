@@ -45,7 +45,7 @@ class RespuestaForm(forms.ModelForm):
 
 
 class DeleteEstudioCapturistaForm(forms.Form):
-    """ Form to delete study from dashboard, it is used to validate the post information.
+    """ This form is meant to be used by Capturistas, to delete studies.
 
     """
     id_estudio = forms.IntegerField(widget=forms.HiddenInput())
@@ -66,3 +66,45 @@ class DeleteEstudioCapturistaForm(forms.Form):
                 alumno.save()
             integrante.save()
         estudio_instance.save()
+
+
+class RecoverEstudioForm(forms.Form):
+    """ Form to recover a study that has been deleted.
+
+    """
+    id_estudio = forms.IntegerField(widget=forms.HiddenInput())
+
+    def clean(self):
+        """ Override clean data to validate the id corresponds
+        to a real estudio
+        """
+        cleaned_data = super(RecoverEstudioForm, self).clean()
+        estudios = Estudio.objects.filter(pk=cleaned_data['id_estudio'])
+        if not estudios:
+            raise forms.ValidationError('El estudio no existe')
+        elif estudios[0].status not in [Estudio.ELIMINADO_CAPTURISTA, Estudio.ELIMINADO_ADMIN]:
+            raise forms.ValidationError('El estudio no está eliminado')
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        """ Override save to change the status of the study.
+
+        We change the status back to borrador and activate
+        all the associated integrantes.
+        """
+        estudio = Estudio.objects.get(pk=self.cleaned_data['id_estudio'])
+        integrantes = Integrante.objects.filter(familia=estudio.familia)
+        for integrante in integrantes:
+            integrante.activo = True
+            if hasattr(integrante, 'alumno_integrante'):
+                alumno = integrante.alumno_integrante
+                alumno.activo = True
+                alumno.save()
+            integrante.save()
+
+        if estudio.status == Estudio.ELIMINADO_CAPTURISTA:
+            estudio.status = Estudio.BORRADOR
+        else:
+            estudio.status = Estudio.APROBADO
+        estudio.save()
+        return estudio
