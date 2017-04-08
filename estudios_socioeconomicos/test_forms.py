@@ -4,7 +4,7 @@ from perfiles_usuario.utils import CAPTURISTA_GROUP
 from familias.models import Familia, Integrante, Alumno
 from administracion.models import Escuela
 from perfiles_usuario.models import Capturista
-from .forms import DeleteEstudioForm
+from .forms import DeleteEstudioCapturistaForm
 from .models import Estudio
 
 
@@ -33,7 +33,7 @@ class AppFormTests(TestCase):
 
     def setUp(self):
         """ This sets up the database with the necessary values for the testing of the
-        DeleteEstudioForm
+        DeleteEstudioCapturistaForm
         """
         test_username = 'erikiano'
         test_password = 'vacalalo'
@@ -82,11 +82,11 @@ class AppFormTests(TestCase):
         of the estudio, as well as the activo value of all related 'people'.
         """
         form_data = {'id_estudio': self.estudio1.id}
-        form = DeleteEstudioForm(data=form_data)
+        form = DeleteEstudioCapturistaForm(data=form_data)
         self.assertTrue(form.is_valid())
         form.save()
         estudio = Estudio.objects.get(pk=self.estudio1.pk)
-        self.assertEqual(estudio.status, Estudio.ELIMINADO)
+        self.assertEqual(estudio.status, Estudio.ELIMINADO_CAPTURISTA)
         integrante = Integrante.objects.get(pk=self.integrante1.pk)
         self.assertEqual(integrante.activo, False)
         integrante = Integrante.objects.get(pk=self.integrante2.pk)
