@@ -13,7 +13,7 @@ from perfiles_usuario.models import Capturista
 
 
 class TestViewsTransacciones(TestCase):
-    """ Integration test suite for testing the views in the app: captura.
+    """ Test suite for testing the views in the app: captura.
 
     Test the urls for 'captura' that make up the CRUD of transactions
 
@@ -608,3 +608,55 @@ class TestViewsFamilia(TestCase):
         url = reverse('captura:estudio_delete')
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
+
+
+class TestViewsRecuperaEstudio(TestCase):
+    """ Unit tests for the views related to
+    recovering studies.
+
+    """
+
+    def setUp(self):
+        """ Create studies for a capturista.
+
+        """
+        self.client = Client()
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+        self.client.login(username=test_username, password=test_password)
+
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=3,
+                                               estado_civil='soltero',
+                                               localidad='salitre')
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
+
+        self.familia2 = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                               estado_civil='soltero',
+                                               localidad='salitre')
+
+        self.estudio2 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia2)
+
+    def test_url_view_recover(self):
+        """ Test that we can access the view for recovering studies.
+
+        """
+        response = self.client.get(reverse('captura:recover_studies'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_view_recover(self):
+        """ Test that the template being used is the expected.
+
+        """
+        response = self.client.get(reverse('captura:recover_studies'))
+        self.assertTemplateUsed(response, 'captura/recuperar_estudios.html')
