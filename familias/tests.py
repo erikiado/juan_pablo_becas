@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.forms import ValidationError
 from administracion.models import Escuela
 from .models import Familia, Integrante, Alumno
 from .forms import IntegranteModelForm, DeleteIntegranteForm
@@ -164,7 +165,7 @@ class TestIntegranteForm(TestCase):
 
 class TestIntegranteDeleteForm(TestCase):
     """ Unit tests for the form to delete Integrantes.
-    
+
     """
 
     def setUp(self):
@@ -174,8 +175,8 @@ class TestIntegranteDeleteForm(TestCase):
 
         escuela = Escuela.objects.create(nombre='Juan Pablo')
         familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
-                                              estado_civil='soltero',
-                                              localidad='Nabo')
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         self.integrante1 = Integrante.objects.create(
                                 familia=familia,
                                 nombres='Elver',
@@ -197,10 +198,33 @@ class TestIntegranteDeleteForm(TestCase):
                                 escuela=escuela)
 
     def test_integrante(self):
+        """ Test the save method validating that the integrante changes to inactive.
+
+        """
         form = DeleteIntegranteForm({'integrante_id': self.integrante1.pk})
+        self.assertTrue(self.integrante1.activo)
         self.assertTrue(form.is_valid())
         form.save()
         integrante = Integrante.objects.get(pk=self.integrante1.pk)
         self.assertFalse(integrante.activo)
 
+    def test_invalid_integrante(self):
+        """ Test that the form is invalid if provided an invalid id.
 
+        """
+        form = DeleteIntegranteForm({'integrante_id': -1})
+        self.assertFalse(form.is_valid())
+        with self.assertRaises(ValidationError):
+            form.clean()
+
+    def test_student(self):
+        """ Test the soft delete for a student.
+
+        """
+        form = DeleteIntegranteForm({'integrante_id': self.integrante2.pk})
+        self.assertTrue(self.integrante2.activo)
+        self.assertTrue(form.is_valid())
+        form.save()
+        integrante = Integrante.objects.get(pk=self.integrante2.pk)
+        self.assertFalse(integrante.activo)
+        self.assertFalse(integrante.alumno_integrante.activo)

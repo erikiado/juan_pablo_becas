@@ -442,6 +442,7 @@ def delete_integrante(request, id_integrante):
         return redirect('captura:list_integrantes', id_familia=integrante.familia.pk)
     return HttpResponseBadRequest()
 
+
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.
 
