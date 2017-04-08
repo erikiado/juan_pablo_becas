@@ -307,7 +307,12 @@ def recover_studies(request):
     """ View to list the studies that are deleted and can be recovered.
 
     """
-    return render(request, 'captura/recuperar_estudios.html')
+    estudios = Estudio.objects.filter(capturista=request.user.capturista,
+                                      status=Estudio.ELIMINADO_CAPTURISTA)
+    context = {
+        'estudios': estudios
+    }
+    return render(request, 'captura/recuperar_estudios.html', context)
 
 
 @login_required

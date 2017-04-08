@@ -637,7 +637,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         """
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado_administrador']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name,
+                                                          args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
@@ -685,7 +686,8 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
 
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado_administrador']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name,
+                                                          args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
