@@ -13,6 +13,7 @@ from splinter import Browser
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
+from indicadores.models import Periodo, Transaccion, Ingreso
 from familias.models import Familia, Integrante, Alumno, Tutor
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
@@ -794,6 +795,235 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Eugenio'))
 
 
+class TestViewsTransacciones(TestCase):
+    """ Integration test suite for testing the views in the app: captura.
+
+    Test the urls for 'captura' that make up the CRUD of transactions
+
+    Attributes
+    ----------
+    client : Client
+        Django Client for the testing of all the views related to the creation
+        and edition of a family.
+    elerik : User
+        User that will be used as a capturista in order to fill all everything
+        related with familia.
+    capturista : Capturista
+        Asociated with the User, as this object is required for permissions and
+        creation.
+    escuela : Used in tests that depend on creating an object related to an escuela.
+    familia1 : Familia
+        Used in tests that depend on creating or editing an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating or editing an object related to an integrante.
+    integrante_contructor_dictionary : dictrionary
+        Used in order to prevent repetitive code, when creating very similar integrantes
+        in different tests.
+    alumno_contructor_dictionary : dictionary
+        Used in order to prevent repetitive code, when creating very similar alumnos in
+        different tests.
+    tutor_constructor_dictionary : dictionary
+        Used in order to prevent repetivie code, when creating very similar tutores in
+        different tests.
+    """
+    def setUp(self):
+        """ Creates all the initial necessary objects for the tests
+
+        """
+        self.client = Client()
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        numero_hijos_inicial = 3
+        estado_civil_inicial = 'soltero'
+        localidad_inicial = 'salitre'
+        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                               estado_civil=estado_civil_inicial,
+                                               localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
+
+        self.integrante1 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='Rick',
+                                                     apellidos='Astley',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1996-02-26')
+        self.tutor1 = Tutor.objects.create(integrante=self.integrante1,
+                                           relacion='padre')
+
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+        self.transaccion1 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=False)
+        self.transaccion2 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=True)
+
+        self.ingreso1 = Ingreso.objects.create(transaccion=self.transaccion2,
+                                               fecha='2016-02-02',
+                                               tipo='comprobable',
+                                               tutor=self.tutor1)
+
+        self.transaccion_constructor_dictionary = {'monto': 40,
+                                                   'periodicidad': self.periodicidad1.id,
+                                                   'observacion': 'Distribucion',
+                                                   'es_ingreso': False,
+                                                   'familia': self.familia1.id}
+        self.ingreso_constructor_dictionary = {'fecha': '2016-02-02',
+                                               'tipo': 'comprobable'}
+
+        self.client.login(username=test_username, password=test_password)
+
+    def test_create_egreso(self):
+        """ Test that an egreso can be created if the correct information
+        if provided to the create_transaccion url.
+        """
+
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Egreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_egreso_incomplete(self):
+        """ Test that an egreso won't be created if required information is
+        incomplete.
+
+        """
+        self.transaccion_constructor_dictionary['monto'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['monto'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_ingreso(self):
+        """ Test that an ingreso can be created if we provide all the required information
+        to the create_transaccion url. Checks for the confirmation message.
+
+        """
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_ingreso_incomplete(self):
+        """ Test that an ingreso won't be created if the required information is
+        incomplete. Checks that an error status is returned, as well as an error
+        message.
+        """
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        self.ingreso_constructor_dictionary['fecha'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['fecha'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_update_egreso(self):
+        """ Test that an egreso can be updated if it's id is passed in the form for
+        creating a transaccion, as long of all the required information.
+
+        Checks for the acutal change in the egreso, the confirmation message, and the
+        success code.
+        """
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Egreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+        transaccion = Transaccion.objects.get(pk=self.transaccion1.id)
+        self.assertEqual('-$160.00 mensuales', str(transaccion))
+
+    def test_update_egreso_incomplete(self):
+        """ This tests that a form won't be updated in case the complete information
+        is passed to the create transaccion view.
+
+        Checks for the error message, as well as the error code.
+        """
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        self.transaccion_constructor_dictionary['monto'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['monto'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+    def test_update_ingreso(self):
+        """ Check that an ingreso can be updated if the id of the transaccion is passed
+        to the update_create_transaccion view.
+
+        This checks for the success code and message.
+        """
+        self.transaccion_constructor_dictionary['id_transaccion'] = self.transaccion1.id
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+    def test_update_ingreso_incomplete(self):
+        """ Test that an ingrewo can't be updated if the required information is incomplete.
+
+        Checks for the error code, as well as the error message.
+        """
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+        self.ingreso_constructor_dictionary['fecha'] = ''
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['fecha'][0]['message'],
+                         'This field is required.')
+        self.assertEqual(r.status_code, 400)
+
+
 class TestViewsAdministracion(StaticLiveServerTestCase):
     """Integration test suite for testing the views in the app: captura.
 
@@ -807,7 +1037,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
     """
 
     def setUp(self):
-        """Initialize the browser and create a user, before running the tests.
+        """ Initialize the browser and create a user, before running the tests.
         """
         self.browser = Browser('chrome')
         test_username = 'estebes'
