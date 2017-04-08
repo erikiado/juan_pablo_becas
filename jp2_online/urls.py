@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^captura/', include('captura.urls')),
     url(r'^indicadores/', include('indicadores.urls')),
     url(r'^becas/', include('becas.urls')),
+    url(r'^estudios-socioeconomicos/', include('estudios_socioeconomicos.urls')),
     url('', include('django.contrib.auth.urls'))
 ]
