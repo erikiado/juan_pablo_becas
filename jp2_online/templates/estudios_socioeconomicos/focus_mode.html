@@ -7,22 +7,6 @@
           
           <div class="x_title">
             <h2>{{ estudio }}<small>Condensado Familia</small></h2>
-            
-            <ul class="nav navbar-right panel_toolbox">
-              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">Settings 1</a>
-                  </li>
-                  <li><a href="#">Settings 2</a>
-                  </li>
-                </ul>
-              </li>
-              <li><a class="close-link"><i class="fa fa-close"></i></a>
-              </li>
-            </ul>
 
             <div class="clearfix"></div>
           </div>
@@ -71,87 +55,42 @@
 
               <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                  <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Integrantes</a>
+                  <li role="presentation" class="active"><a href="#tab_content1" role="tab" data-toggle="tab" aria-expanded="true">Integrantes</a>
                   </li>
 
-                  <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Situacion Económica</a>
+                  <li role="presentation" class=""><a href="#tab_content2" role="tab" data-toggle="tab" aria-expanded="false">Situacion Económica</a>
                   </li>
 
-                  <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Vivienda</a>
+                  <li role="presentation" class=""><a href="#tab_content3" role="tab" data-toggle="tab" aria-expanded="false">Vivienda</a>
+                  </li>
+
+                  <li role="presentation" class=""><a href="#tab_content4" role="tab" data-toggle="tab" aria-expanded="false">Información Adicional</a>
                   </li>
 
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
-                  
-                  <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">                    
-                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                          <tr>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Correo</th>
-                            <th>Telefono</th>
-                            <th>Nivel de Estudios</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Extra</th>
-    
-                          </tr>
-                        </thead>
-                        <tbody>
-                            {% for integrante in integrantes%}
-                              <tr>
-                                <td>{{ integrante.nombres }}</td>
-                                <td>{{ integrante.apellidos }}</td>
-                                <td>{{ integrante.correo }}</td>
-                                <td>{{ integrante.telefono }}</td>
-                                <td>{{ integrante.nivel_estudios }}</td>
-                                <td>{{ integrante.fecha_de_nacimiento }}</td>
-                                <td>
-                                    {% if integrante.alumno_integrante %}
-                                        
-                                        <br> Alumno <br>
-                                        Numero Sae: {{integrante.alumno_integrante.numero_sae}} <br>
-                                        Escuela: {{integrante.alumno_integrante.escuela}}
-                                        
-                                    {% endif %}
-
-                                    {% if integrante.tutor_integrante %}
-                                        <br> Tutor
-                                        Relación: {{integrante.tutor_integrante.relacion }}
-                                    {% endif %}
-                                </td>
-                    
-                              </tr>                          
-                            {% endfor %}
-                        </tbody>
-                      </table>
+                
+                  <!-- SECCION INTEGRANTES -->
+                  <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_integrantes.html' %}
                   </div>
+                  <!-- END SECCION INTEGRANTES -->
                   
-
+                  <!-- SECCION ECONÓMICA -->
                   <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-
-
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_economica.html' %}
                   </div>
+                  <!-- END Sección Económica -->
 
+                  <!-- SECCION VIVIENDA -->
                   <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
-                    
-                    {% for foto in fotos %}
-                    
-                        <div class="col-md-55">
-                            <div class="thumbnail">
-                              <div class="image view view-first">
-                                <img style="width: 100%; display: block;" src="{{ foto.upload }}" alt="image" />
-                                
-                              </div>
-                              <!--<div class="caption">
-                                <p></p>
-                              </div>-->
-                            </div>
-                        </div>
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
+                  </div>
+                  <!-- END SECCION DE VIVIENDA  -->
 
-                    {% endfor %}
-
+                  <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_cuestionario.html' %}
                   </div>
 
                 </div>
