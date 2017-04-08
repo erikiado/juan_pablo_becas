@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from administracion.models import Escuela
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
-from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
+from estudios_socioeconomicos.forms import DeleteEstudioCapturistaForm, RespuestaForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
@@ -281,7 +281,7 @@ def estudio_delete_modal(request, id_estudio):
     """
     if request.is_ajax():
         estudio = get_object_or_404(Estudio, pk=id_estudio)
-        form = DeleteEstudioForm(initial={'id_estudio': estudio.pk})
+        form = DeleteEstudioCapturistaForm(initial={'id_estudio': estudio.pk})
         return render(request, 'estudios_socioeconomicos/estudio_delete_modal.html',
                       {'estudio_to_delete': estudio, 'delete_form': form})
     return HttpResponseBadRequest()
@@ -294,7 +294,7 @@ def estudio_delete(request):
 
     """
     if request.method == 'POST':
-        form = DeleteEstudioForm(request.POST)
+        form = DeleteEstudioCapturistaForm(request.POST)
         if form.is_valid():
             form.save()
         return redirect('captura:estudios')

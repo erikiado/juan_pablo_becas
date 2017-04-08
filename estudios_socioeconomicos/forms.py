@@ -44,7 +44,7 @@ class RespuestaForm(forms.ModelForm):
         exclude = ('pregunta', 'integrante')
 
 
-class DeleteEstudioForm(forms.Form):
+class DeleteEstudioCapturistaForm(forms.Form):
     """ Form to delete study from dashboard, it is used to validate the post information.
 
     """
@@ -55,7 +55,7 @@ class DeleteEstudioForm(forms.Form):
         """
         data = self.cleaned_data
         estudio_instance = get_object_or_404(Estudio, pk=data['id_estudio'])
-        estudio_instance.status = Estudio.ELIMINADO
+        estudio_instance.status = Estudio.ELIMINADO_CAPTURISTA
         integrantes = Integrante.objects.filter(familia=estudio_instance.familia)
         for integrante in integrantes:
             integrante.activo = False

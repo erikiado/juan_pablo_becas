@@ -407,7 +407,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
         self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('En revisión'))
+        self.assertTrue(self.browser.is_text_present('Rechazado'))
 
     def test_if_not_exist_any_studies_as_pending(self):
         """ Test for url 'administracion:main_estudios' with the 'revision' parameter.
@@ -630,14 +630,14 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Borrador'))
 
     def test_if_not_exist_any_studies_deleted(self):
-        """ Test for url 'administracion:main_estudios' with the 'eliminado' parameter.
+        """ Test for url 'administracion:main_estudios' with the 'eliminado_admin' parameter.
 
             Visit the url of name 'administracion:main_estudios' and check if loads the
             empty page with the rigth message.
         """
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
@@ -653,7 +653,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Ver'))
 
     def test_studies_deleted_appears_for_admin(self):
-        """ Test for url 'administracion:main_estudios' with the 'eliminado' parameter.
+        """ Test for url 'administracion:main_estudios' with the 'eliminado_admin' parameter.
 
             Visit the url of name 'administracion:main_estudios' and check it loads the
             content of the socio-economic studies deleted in the dashboard panel.
@@ -677,15 +677,15 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.ELIMINADO)
+                     status=Estudio.ELIMINADO_ADMIN)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.ELIMINADO)
+                     status=Estudio.ELIMINADO_ADMIN)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
