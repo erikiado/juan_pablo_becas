@@ -300,6 +300,11 @@ def estudio_delete(request):
         return redirect('captura:estudios')
     return HttpResponseBadRequest()
 
+@login_required
+@user_passes_test(is_capturista)
+def recover_studies(request):
+    return render(request, 'captura/recuperar_estudios.html')
+
 
 @login_required
 @user_passes_test(is_capturista)
