@@ -2,16 +2,12 @@
 {% load staticfiles %}
 
 {% block content %}
-
-<div class="pull-right">
-  {% include "captura/estudio_form.html" %}
-</div>
   
 <div class="row"> 
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_title">
-        <h2>Mis estudios socioeconómicos</h2>
+        <h2>Estudios eliminados</h2>
         <div class="clearfix"></div>
       </div>
 
@@ -21,7 +17,6 @@
             <tr>
               <th>Número</th>
               <th>Nombre Familia</th>
-              <th>Status</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -40,29 +35,15 @@
                   </td>
 
                   <td>
-                    {{estudio.get_status_display}}
-                  </td>
-
-                  <td>
-                    <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
-                      <i class="glyphicon glyphicon-trash"></i> Borrar
-                    </a>
-
-                    {% if estudio.status == status_options.RECHAZADO %}
-                      <button class="btn btn-info">
-                        <i class="glyphicon glyphicon-inbox"></i> Ver Retroalimentación
-                      </button>
-                    {% endif %}
-
-                    <a href="{% url 'captura:familia' estudio.familia.id %}" class="btn btn-primary">
-                      <i class="glyphicon glyphicon-pencil"></i> Editar
+                    <a id="recover_estudio_{{ estudio.id }}" class="recover_estudio_link mouseClick btn btn-success" data-form="{% url 'captura:estudio_recover_modal' estudio.pk %}">
+                      <i class="glyphicon glyphicon-plus"></i> Recuperar
                     </a>
                   </td>
                 </tr>
               {% endfor %}
                   
             {% else %}
-              <h5>No hay registro de estudios socioeconómicos</h5>
+              <h5>No existen estudios eliminados.</h5>
             {% endif %}
             
           </tbody>
@@ -72,14 +53,16 @@
   </div>                
 </div> 
   
-<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_estudio">
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_recover_estudio">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" id="modal_delete_estudio_content">
+    <div class="modal-content" id="modal_recover_estudio_content">
       
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 {% endblock %}
+
 
 {% block extra_page_js %}
   <script type="text/javascript">
@@ -106,19 +89,19 @@
     var csrftoken = getCookie('csrftoken');
     $.ajaxSetup({
       beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
       }
     });
 
-  $(".delete_estudio_link").click(function(ev) { // for each edit contact url
-      ev.preventDefault(); // prevent navigation
-      var url = $(this).data("form"); // get the contact form url
-      $("#modal_delete_estudio_content").load(url, function() { // load the url into the modal
-          $("#modal_delete_estudio").modal('show'); // display the modal on url load
-      });
-      return false; // prevent the click propagation
+  $('.recover_estudio_link').click(function(ev) {
+    ev.preventDefault(); // prevent navigation
+    var url = $(this).data('form'); // get the contact form url
+    $('#modal_recover_estudio_content').load(url, function() { // load the url into the modal
+      $('#modal_recover_estudio').modal('show'); // display the modal on url load
+    });
+    return false; // prevent the click propagation
   });
 
   </script>

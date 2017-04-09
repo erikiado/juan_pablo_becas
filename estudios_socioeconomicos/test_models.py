@@ -66,7 +66,8 @@ class EstudioTestCase(TestCase):
         self.assertEqual(options['RECHAZADO'], Estudio.RECHAZADO)
         self.assertEqual(options['BORRADOR'], Estudio.BORRADOR)
         self.assertEqual(options['REVISION'], Estudio.REVISION)
-        self.assertEqual(options['ELIMINADO'], Estudio.ELIMINADO)
+        self.assertEqual(options['ELIMINADO_CAPTURISTA'], Estudio.ELIMINADO_CAPTURISTA)
+        self.assertEqual(options['ELIMINADO_ADMIN'], Estudio.ELIMINADO_ADMIN)
 
 
 class SeccionTestCase(TestCase):

@@ -31,12 +31,14 @@ class Estudio(models.Model):
     RECHAZADO = 'rechazado'  # rejected from the POV of the admin
     BORRADOR = 'borrador'  # draft of a capturista
     REVISION = 'revision'  # the admin has to check it
-    ELIMINADO = 'eliminado'
+    ELIMINADO_CAPTURISTA = 'eliminado_capturista'  # deleted by capturista
+    ELIMINADO_ADMIN = 'eliminado_administrador'  # deleted by admin
     OPCIONES_STATUS = ((APROBADO, 'Aprobado'),
                        (RECHAZADO, 'Rechazado'),
                        (BORRADOR, 'Borrador'),
                        (REVISION, 'Revisión'),
-                       (ELIMINADO, 'Eliminado'))
+                       (ELIMINADO_CAPTURISTA, 'Eliminado'),
+                       (ELIMINADO_ADMIN, 'Eliminado'))
 
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
@@ -53,7 +55,8 @@ class Estudio(models.Model):
         return {
             'APROBADO': Estudio.APROBADO,
             'BORRADOR': Estudio.BORRADOR,
-            'ELIMINADO': Estudio.ELIMINADO,
+            'ELIMINADO_CAPTURISTA': Estudio.ELIMINADO_CAPTURISTA,
+            'ELIMINADO_ADMIN': Estudio.ELIMINADO_ADMIN,
             'REVISION': Estudio.REVISION,
             'RECHAZADO': Estudio.RECHAZADO
         }

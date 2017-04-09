@@ -1,10 +1,14 @@
 from django.test import TestCase
+from django.forms import ValidationError
 from administracion.models import Escuela
-from familias.models import Familia
-from .forms import IntegranteModelForm
+from .models import Familia, Integrante, Alumno
+from .forms import IntegranteModelForm, DeleteIntegranteForm
 
 
 class TestIntegranteForm(TestCase):
+    """ Unit tests for the form to edit and create Integrantes.
+
+    """
 
     def setUp(self):
         """Setup the dictionary with data for feeding the form.
@@ -157,3 +161,70 @@ class TestIntegranteForm(TestCase):
         self.assertTrue(form.is_valid())
         integrante = form.save()
         self.assertEqual(integrante.alumno_integrante.numero_sae, '987')
+
+
+class TestIntegranteDeleteForm(TestCase):
+    """ Unit tests for the form to delete Integrantes.
+
+    """
+
+    def setUp(self):
+        """Setup data for tests.
+
+        """
+
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
+        self.integrante1 = Integrante.objects.create(
+                                familia=familia,
+                                nombres='Elver',
+                                apellidos='Ga',
+                                telefono='4424356788',
+                                nivel_estudios=Integrante.OPCION_ESTUDIOS_UNIVERSIDAD,
+                                fecha_de_nacimiento='1943-03-19')
+
+        self.integrante2 = Integrante.objects.create(
+                                familia=familia,
+                                nombres='Elm',
+                                apellidos='Otelo',
+                                telefono='4424356788',
+                                nivel_estudios=Integrante.OPCION_ESTUDIOS_4,
+                                fecha_de_nacimiento='1999-03-19')
+        self.alumno = Alumno.objects.create(
+                                integrante=self.integrante2,
+                                numero_sae='12345',
+                                escuela=escuela)
+
+    def test_integrante(self):
+        """ Test the save method validating that the integrante changes to inactive.
+
+        """
+        form = DeleteIntegranteForm({'id_integrante': self.integrante1.pk})
+        self.assertTrue(self.integrante1.activo)
+        self.assertTrue(form.is_valid())
+        form.save()
+        integrante = Integrante.objects.get(pk=self.integrante1.pk)
+        self.assertFalse(integrante.activo)
+
+    def test_invalid_integrante(self):
+        """ Test that the form is invalid if provided an invalid id.
+
+        """
+        form = DeleteIntegranteForm({'id_integrante': -1})
+        self.assertFalse(form.is_valid())
+        with self.assertRaises(ValidationError):
+            form.clean()
+
+    def test_student(self):
+        """ Test the soft delete for a student.
+
+        """
+        form = DeleteIntegranteForm({'id_integrante': self.integrante2.pk})
+        self.assertTrue(self.integrante2.activo)
+        self.assertTrue(form.is_valid())
+        form.save()
+        integrante = Integrante.objects.get(pk=self.integrante2.pk)
+        self.assertFalse(integrante.activo)
+        self.assertFalse(integrante.alumno_integrante.activo)

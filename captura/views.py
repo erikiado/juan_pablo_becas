@@ -10,11 +10,12 @@ from rest_framework.response import Response
 from administracion.models import Escuela
 from perfiles_usuario.utils import is_capturista
 from perfiles_usuario.models import Capturista
-from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm
+from estudios_socioeconomicos.forms import DeleteEstudioCapturistaForm, RespuestaForm, \
+                                           RecoverEstudioForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
-from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
 from familias.models import Familia, Integrante
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
@@ -281,7 +282,7 @@ def estudio_delete_modal(request, id_estudio):
     """
     if request.is_ajax():
         estudio = get_object_or_404(Estudio, pk=id_estudio)
-        form = DeleteEstudioForm(initial={'id_estudio': estudio.pk})
+        form = DeleteEstudioCapturistaForm(initial={'id_estudio': estudio.pk})
         return render(request, 'estudios_socioeconomicos/estudio_delete_modal.html',
                       {'estudio_to_delete': estudio, 'delete_form': form})
     return HttpResponseBadRequest()
@@ -294,10 +295,56 @@ def estudio_delete(request):
 
     """
     if request.method == 'POST':
-        form = DeleteEstudioForm(request.POST)
+        form = DeleteEstudioCapturistaForm(request.POST)
         if form.is_valid():
             form.save()
         return redirect('captura:estudios')
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def recover_estudios(request):
+    """ View to list the studies that are deleted and can be recovered.
+
+    """
+    estudios = Estudio.objects.filter(capturista=request.user.capturista,
+                                      status=Estudio.ELIMINADO_CAPTURISTA)
+    context = {
+        'estudios': estudios
+    }
+    return render(request, 'captura/recuperar_estudios.html', context)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def estudio_recover_modal(request, id_estudio):
+    """ View that is called via ajax to render the modal
+    to confirm the recovery of a study.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        estudio = get_object_or_404(Estudio, pk=id_estudio)
+        form = RecoverEstudioForm(initial={'id_estudio': estudio.pk})
+        context = {
+            'estudio': estudio,
+            'recover_form': form
+        }
+        return render(request, 'estudios_socioeconomicos/estudio_recover_modal.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def estudio_recover(request):
+    """ This view receives the form to recover a study
+    and redirects to the listing of deleted studies.
+    """
+    if request.method == 'POST':
+        form = RecoverEstudioForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:recover_studies')
     return HttpResponseBadRequest()
 
 
@@ -347,7 +394,7 @@ def list_integrantes(request, id_familia):
     """
     context = {}
 
-    integrantes = Integrante.objects.filter(familia__pk=id_familia)
+    integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
     context['integrantes'] = integrantes
     context['familia'] = familia
@@ -411,6 +458,39 @@ def get_form_edit_integrante(request, id_integrante):
             'id_integrante': id_integrante
         }
         return render(request, 'captura/create_integrante_form.html', context)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def get_form_delete_integrante(request, id_integrante):
+    """ View that is called via ajax to render the modal
+    to confirm the deletion of an Integrante.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        integrante = get_object_or_404(Integrante, pk=id_integrante)
+        form = DeleteIntegranteForm(initial={'id_integrante': integrante.pk})
+        context = {
+            'integrante': integrante,
+            'delete_form': form
+        }
+        return render(request, 'captura/integrante_delete_modal.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def delete_integrante(request, id_integrante):
+    """ This view receives the form to delete an integrante
+    and redirects to the listing of integrantes.
+    """
+    if request.method == 'POST':
+        form = DeleteIntegranteForm(request.POST)
+        integrante = get_object_or_404(Integrante, pk=id_integrante)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:list_integrantes', id_familia=integrante.familia.pk)
+    return HttpResponseBadRequest()
 
 
 @login_required

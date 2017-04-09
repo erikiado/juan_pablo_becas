@@ -28,3 +28,9 @@ class Capturista(models.Model):
         user_group = Group.objects.get_or_create(name=CAPTURISTA_GROUP)[0]
         self.user.groups.add(user_group)
         return super(Capturista, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """ Return the string representation of the user
+        related to this capturista.
+        """
+        return str(self.user)

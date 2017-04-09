@@ -2,69 +2,75 @@
 
   <ul class="nav side-menu">
       
-      {% if request.user|has_group:'Administrador' %}
-        <h3>Administración</h3>
-        
-        <li>
-          <a href="{% url 'administracion:main' %}">
-            <i class="fa fa-laptop"></i> Dashboard
-          </a>
-        </li>
-
-        <li>
-          <a href="{% url 'administracion:users' %}">
-            <i class="fa fa-users"></i> Usuarios
-          </a>
-        </li>
-        
-        <li>
-          <a>
-            <i class="fa fa-home"></i> Estudios 
-            <span class="fa fa-chevron-down"></span></a>
-          <ul class="nav child_menu">
-            <!--<li><a href="">Todos</a></li>-->
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'revision' %}">
-                Pendientes
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'aprobado' %}">
-                Aprobados
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'rechazado' %}">
-                Rechazados
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'eliminado' %}">
-                Eliminados
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'administracion:main_estudios' 'borrador' %}">
-                Borrador
-              </a>
-            </li>
-        </ul>
-      </li>
-
+    {% if request.user|has_group:'Administrador' %}
+      <h3>Administración</h3>
+      
       <li>
-        <a href="{% url 'administracion:search_students' %}">
-          <i class="fa fa-search"></i> Búsqueda
-        </a>
-      </li>
-    {% endif %}
-
-    {% if request.user|has_group:'Capturista' %}
-
-      <li>
-        <a href="{% url 'captura:estudios' %}">
-          <i class="fa fa-file-text"></i> Estudios
+        <a href="{% url 'administracion:main' %}">
+          <i class="fa fa-laptop"></i> Dashboard
         </a>
       </li>
 
-    {% endif %}
-  </ul>
+      <li>
+        <a href="{% url 'administracion:users' %}">
+          <i class="fa fa-users"></i> Usuarios
+        </a>
+      </li>
+      
+      <li>
+        <a>
+          <i class="fa fa-home"></i> Estudios 
+          <span class="fa fa-chevron-down"></span>
+        </a>
+        <ul class="nav child_menu">
+          <!--<li><a href="">Todos</a></li>-->
+          <li>
+            <a href="{% url 'administracion:main_estudios' 'revision' %}">
+              Pendientes
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'administracion:main_estudios' 'aprobado' %}">
+              Aprobados
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'administracion:main_estudios' 'rechazado' %}">
+              Rechazados
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'administracion:main_estudios' 'eliminado_administrador' %}">
+              Eliminados
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'administracion:main_estudios' 'borrador' %}">
+              Borrador
+            </a>
+          </li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="{% url 'administracion:search_students' %}">
+        <i class="fa fa-search"></i> Búsqueda
+      </a>
+    </li>
+  {% endif %}
+
+  {% if request.user|has_group:'Capturista' %}
+
+    <li>
+      <a href="{% url 'captura:estudios' %}">
+        <i class="fa fa-file-text"></i> Estudios
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'captura:recover_studies' %}">
+        <i class="fa fa-trash"></i> Recuperar Estudio
+      </a>
+    </li>
+
+  {% endif %}
+</ul>

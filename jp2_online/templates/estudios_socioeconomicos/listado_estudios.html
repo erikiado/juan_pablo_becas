@@ -12,7 +12,7 @@
       Borrador            
     {% elif estado == status_options.APROBADO %}              
       Aprobados            
-    {% elif estado == status_options.ELIMINADO %}
+    {% elif estado == status_options.ELIMINADO_ADMIN %}
       Eliminados
     {% endif %}
   </p>
@@ -45,17 +45,7 @@
 
                       <td>{{estudio.familia.id}}</td>
                       <td>
-                        {% if estado == status_options.REVISION %}
-                          Pendiente
-                        {% elif estado == status_options.RECHAZADO %}
-                          En revisión            
-                        {% elif estado == status_options.BORRADOR %}              
-                          Borrador            
-                        {% elif estado == status_options.APROBADO %}              
-                          Aprobados           
-                        {% elif estado == status_options.ELIMINADO %}
-                          Eliminado
-                        {% endif %}
+                        {{ estudio.get_status_display }}
                       </td>
                       <td>
                         <a class="btn btn-success btn-circle-sm" href="#">

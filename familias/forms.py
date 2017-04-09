@@ -1,5 +1,5 @@
 from django.forms import ModelForm, ChoiceField, HiddenInput, ModelChoiceField, CharField, \
-                         ValidationError
+                         ValidationError, Form, IntegerField
 from administracion.models import Escuela
 from .models import Familia, Integrante, Alumno, Tutor
 
@@ -136,3 +136,33 @@ class IntegranteModelForm(IntegranteForm):
                 alumno.escuela = data['escuela']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
+
+
+class DeleteIntegranteForm(Form):
+    """Form to delete user from dashboard which is used to validate the post information.
+
+    """
+    id_integrante = IntegerField(widget=HiddenInput())
+
+    def clean(self):
+        """ Override clean data to validate the id corresponds
+        to a real integrante.
+        """
+        cleaned_data = super(DeleteIntegranteForm, self).clean()
+        integrante = Integrante.objects.filter(pk=cleaned_data['id_integrante'])
+        if not integrante:
+            raise ValidationError('El integrante no existe')
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        """ Override save to soft delete the integrante.
+        We also take care of the case in which there's
+        an alumno related to it.
+        """
+        integrante = Integrante.objects.get(pk=self.cleaned_data['id_integrante'])
+        integrante.activo = False
+        if hasattr(integrante, 'alumno_integrante'):
+            alumno = Alumno.objects.get(integrante=integrante)
+            alumno.activo = False
+            alumno.save()
+        integrante.save()
