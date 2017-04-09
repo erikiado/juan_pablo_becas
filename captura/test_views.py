@@ -589,6 +589,39 @@ class TestViewsFamilia(TestCase):
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)
 
+    def test_delete_integrante(self):
+        """ Test that we get redirected after deleting the integrante.
+
+        """
+        response = self.client.post(reverse('captura:delete_integrante',
+                                            kwargs={'id_integrante': self.integrante1.pk}),
+                                    {'id_integrante': self.integrante1.pk})
+        self.assertRedirects(response, reverse('captura:list_integrantes',
+                                               kwargs={'id_familia': self.familia1.pk}))
+        integrante = Integrante.objects.get(pk=self.integrante1.pk)
+        self.assertFalse(integrante.activo)
+
+    def test_delete_integrante_bad_request(self):
+        """ Test that the view that sends the form
+        for rendering the modal returns 400 if the request is not ajax.
+        """
+        url = reverse('captura:form_delete_integrante',
+                      kwargs={'id_integrante': self.integrante1.pk})
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
+    def test_get_modal_delete_integrante(self):
+        """ Test that the view that sends the form via ajax
+        returns the form we want.
+        """
+        response = self.client.get(reverse('captura:form_delete_integrante',
+                                           kwargs={'id_integrante': self.integrante1.pk}),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(b'seguro que desea borrar al integrante' in response.content)
+
     def test_estudio_delete(self):
         """ Test that submitting a form for delition of a estudio will be handeled correctly.
         """
