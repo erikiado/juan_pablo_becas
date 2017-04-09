@@ -638,14 +638,16 @@ class TestViewsRecuperaEstudio(TestCase):
                                                localidad='salitre')
 
         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
-                                               familia=self.familia1)
+                                               familia=self.familia1,
+                                               status=Estudio.ELIMINADO_CAPTURISTA)
 
         self.familia2 = Familia.objects.create(numero_hijos_diferentes_papas=2,
                                                estado_civil='soltero',
                                                localidad='salitre')
 
         self.estudio2 = Estudio.objects.create(capturista=self.capturista,
-                                               familia=self.familia2)
+                                               familia=self.familia2,
+                                               status=Estudio.ELIMINADO_CAPTURISTA)
 
     def test_url_view_recover(self):
         """ Test that we can access the view for recovering studies.
@@ -660,3 +662,42 @@ class TestViewsRecuperaEstudio(TestCase):
         """
         response = self.client.get(reverse('captura:recover_studies'))
         self.assertTemplateUsed(response, 'captura/recuperar_estudios.html')
+
+    def test_recover_study(self):
+        """ Test that we get redirected after recovering a study.
+
+        """
+        response = self.client.post(reverse('captura:estudio_recover'),
+                                    {'id_estudio': self.estudio1.pk})
+        self.assertRedirects(response, reverse('captura:recover_studies'))
+        estudio = Estudio.objects.get(pk=self.estudio1.pk)
+        self.assertEqual(estudio.status, Estudio.BORRADOR)
+
+    def test_modal_recover_bad_request(self):
+        """ Test that the view that sends the form
+        for rendering the modal returns 404 if the request is not ajax.
+        """
+        url = reverse('captura:estudio_recover_modal',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
+    def test_get_modal_delete_integrante(self):
+        """ Test that the view that sends the form via ajax
+        returns the form we want.
+        """
+        response = self.client.get(reverse('captura:estudio_recover_modal',
+                                           kwargs={'id_estudio': self.estudio1.pk}),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(b'seguro que desea recuperar el estudio?' in response.content)
+
+    def test_estudio_recover_bad_request(self):
+        """ This test checks that the view 'captura:estudio_recover'
+        raises a HttpResponseBadRequest when accessed via a non POST method
+        """
+        url = reverse('captura:estudio_recover')
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)

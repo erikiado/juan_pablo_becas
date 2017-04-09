@@ -61,7 +61,7 @@ urlpatterns = [
         delete_integrante, name='delete_integrante'),
     url(r'recuperar-estudios/$', recover_estudios,
         name='recover_studies'),
-    url(r'recuperar-estudio/(?P<id_estudio>[0-9]+)', estudio_recover_modal, 
+    url(r'recuperar-estudio/(?P<id_estudio>[0-9]+)', estudio_recover_modal,
         name='estudio_recover_modal'),
     url(r'recuperar-estudio/confirmar/', estudio_recover,
         name='estudio_recover'),
