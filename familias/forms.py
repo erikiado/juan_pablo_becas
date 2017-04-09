@@ -149,6 +149,7 @@ class DeleteIntegranteForm(Form):
         to a real integrante.
         """
         cleaned_data = super(DeleteIntegranteForm, self).clean()
+        print(cleaned_data['id_integrante'])
         integrante = Integrante.objects.filter(pk=cleaned_data['id_integrante'])
         if not integrante:
             raise ValidationError('El integrante no existe')

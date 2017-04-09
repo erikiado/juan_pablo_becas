@@ -1,4 +1,4 @@
-from django.forms import ModelForm, HiddenInput, IntegerField
+from django.forms import Form, ModelForm, HiddenInput, IntegerField, ValidationError
 from familias.models import Integrante, Tutor
 from .models import Transaccion, Ingreso
 
@@ -56,3 +56,28 @@ class IngresoForm(ModelForm):
         self.fields['tutor'].queryset = tutores
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class DeleteTransaccionForm(Form):
+    """Form to delete user from dashboard which is used to validate the post information.
+
+    """
+    id_transaccion = IntegerField(widget=HiddenInput())
+
+    def clean(self):
+        """ Override clean data to validate the id corresponds
+        to a real transaccion.
+        """
+        cleaned_data = super(DeleteTransaccionForm, self).clean()
+        transaccion = Transaccion.objects.filter(pk=cleaned_data['id_transaccion'])
+        if not transaccion:
+            raise ValidationError('La transacción no existe')
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        """ Override save to soft delete the transaccion.
+
+        """
+        transaccion = Transaccion.objects.get(pk=self.cleaned_data['id_transaccion'])
+        transaccion.activo = False
+        transaccion.save()

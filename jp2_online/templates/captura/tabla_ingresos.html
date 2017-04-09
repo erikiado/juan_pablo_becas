@@ -29,7 +29,7 @@
         </a>
         &nbsp;&nbsp;
         
-        <a id="delete_user_{{ user.id }}" class="delete_user_link mouseClick btn btn-danger" data-form="{% url 'administracion:users_delete_modal' user.id %}">
+        <a id="delete_transaccion_{{ ingreso.transaccion.id }}" class="delete_transaccion_link mouseClick btn btn-danger" data-form="{% url 'captura:form_delete_transaccion' ingreso.transaccion.id %}">
           <i class="glyphicon glyphicon-trash"></i> 
           Borrar
         </a>

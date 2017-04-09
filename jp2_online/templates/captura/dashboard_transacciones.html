@@ -53,9 +53,9 @@
 </div><!-- /.modal -->
 
 
-<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_user">
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_transaccion">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" id="modal_delete_user_content">
+    <div class="modal-content" id="modal_delete_transaccion_content">
       
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -67,17 +67,4 @@
 {% block extra_page_js %}
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src={% static 'js/captura/captura_transaccion.js' %}> </script>
-<script type="text/javascript">
-
-
-$(".delete_user_link").click(function(ev) { // for each edit contact url
-    ev.preventDefault(); // prevent navigation
-    var url = $(this).data("form"); // get the contact form url
-    $("#modal_delete_user_content").load(url, function() { // load the url into the modal
-        $("#modal_delete_user").modal('show'); // display the modal on url load
-    });
-    return false; // prevent the click propagation
-});
-
-</script>
 {% endblock %}
