@@ -30,4 +30,7 @@ class Capturista(models.Model):
         return super(Capturista, self).save(*args, **kwargs)
 
     def __str__(self):
+        """ Return the string representation of the user
+        related to this capturista.
+        """
         return str(self.user)
