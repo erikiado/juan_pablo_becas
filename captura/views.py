@@ -347,6 +347,7 @@ def estudio_recover(request):
         return redirect('captura:recover_studies')
     return HttpResponseBadRequest()
 
+
 @login_required
 @user_passes_test(is_capturista)
 def edit_familia(request, id_familia):
