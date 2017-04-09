@@ -89,8 +89,12 @@ class RecoverEstudioForm(forms.Form):
     def save(self, *args, **kwargs):
         """ Override save to change the status of the study.
 
-        We change the status back to borrador and activate
-        all the associated integrantes.
+        If the capturista is recovering the study, then it goes back to
+        borrador.
+        If an admin is recovering it, then it goes back to aprobado. This implies
+        an admin should only be allowed to delete approved studies.
+
+        In both cases we activate all the integrantes associated.
         """
         estudio = Estudio.objects.get(pk=self.cleaned_data['id_estudio'])
         integrantes = Integrante.objects.filter(familia=estudio.familia)
