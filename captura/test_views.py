@@ -603,7 +603,7 @@ class TestViewsFamilia(TestCase):
 
     def test_delete_integrante_bad_request(self):
         """ Test that the view that sends the form
-        for rendering the modal returns 404 if the request is not ajax.
+        for rendering the modal returns 400 if the request is not ajax.
         """
         url = reverse('captura:form_delete_integrante',
                       kwargs={'id_integrante': self.integrante1.pk})
