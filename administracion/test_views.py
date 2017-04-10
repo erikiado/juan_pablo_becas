@@ -358,7 +358,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
         # self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_rejected_appears_for_user_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'rechazado' argument.
@@ -406,7 +406,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Rechazado'))
 
     def test_if_not_exist_any_studies_as_pending(self):
@@ -431,7 +431,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_as_pending_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'revision' parameter.
@@ -479,7 +479,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Pendiente'))
 
     def test_if_not_exist_any_studies_approved(self):
@@ -504,7 +504,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_approved_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'aprobado' parameter.
@@ -553,7 +553,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Aprobado'))
 
     def test_if_not_exist_any_draft_studies(self):
@@ -578,7 +578,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_draft_studies_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'borrador' parameter.
@@ -626,7 +626,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Borrador'))
 
     def test_if_not_exist_any_studies_deleted(self):
@@ -651,7 +651,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_deleted_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'eliminado_admin' parameter.
@@ -701,5 +701,5 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Número'))
         self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Eliminado'))

@@ -8,9 +8,10 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 
 from administracion.models import Escuela
-from perfiles_usuario.utils import is_capturista
+from perfiles_usuario.utils import CAPTURISTA_GROUP, ADMINISTRADOR_GROUP, is_member, \
+                                   is_capturista
 from perfiles_usuario.models import Capturista
-from estudios_socioeconomicos.forms import DeleteEstudioCapturistaForm, RespuestaForm, \
+from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm, \
                                            RecoverEstudioForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
@@ -263,7 +264,7 @@ def create_estudio(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def estudio_delete_modal(request, id_estudio):
     """ View to send the form to delete users.
 
@@ -282,22 +283,22 @@ def estudio_delete_modal(request, id_estudio):
     """
     if request.is_ajax():
         estudio = get_object_or_404(Estudio, pk=id_estudio)
-        form = DeleteEstudioCapturistaForm(initial={'id_estudio': estudio.pk})
+        form = DeleteEstudioForm(initial={'id_estudio': estudio.pk})
         return render(request, 'estudios_socioeconomicos/estudio_delete_modal.html',
                       {'estudio_to_delete': estudio, 'delete_form': form})
     return HttpResponseBadRequest()
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def estudio_delete(request):
     """ View to delete estudio.
 
     """
     if request.method == 'POST':
-        form = DeleteEstudioCapturistaForm(request.POST)
+        form = DeleteEstudioForm(request.POST)
         if form.is_valid():
-            form.save()
+            form.save(user_id=request.user.pk)
         return redirect('captura:estudios')
     return HttpResponseBadRequest()
 
