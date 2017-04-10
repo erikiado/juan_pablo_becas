@@ -1,0 +1,34 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_upload_foto">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="form-upload-foto" class="form-horizontal form-upload-foto" method="POST" action="{% url 'captura:upload_photo' familia.estudio.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Subir Imágen</h4>
+        </div>
+        <div class="modal-body">
+          {{ form.errors }}
+          {% for field in form.visible_fields %}
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-3">
+              {{ field.errors }}
+              <strong>{{field.label}}:</strong>
+            </div>
+            <div class="col-sm-offset-1 col-sm-7">
+              {{ field }}
+            </div>
+          </div>
+          {% endfor %}
+          {% for field in form.hidden_fields %}
+            {{ field }}
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn_send_create_user">Subir Imágen</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
