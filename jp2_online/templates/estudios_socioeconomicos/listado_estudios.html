@@ -55,6 +55,10 @@
                           <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
                             <i class="glyphicon glyphicon-trash"></i> Borrar
                           </a>
+                        {% elif estudio.status == status_options.ELIMINADO_ADMIN %}
+                          <a id="recover_estudio_{{ estudio.id }}" class="recover_estudio_link mouseClick btn btn-success" data-form="{% url 'captura:estudio_recover_modal' estudio.pk %}">
+                            <i class="glyphicon glyphicon-plus"></i> Recuperar
+                          </a>
                         {% endif %}
                       </td>
                     </tr>
@@ -85,6 +89,16 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_recover_estudio">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_recover_estudio_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 {% endblock %}
 
 {% block extra_page_js %}
@@ -119,12 +133,21 @@
     });
 
   $(".delete_estudio_link").click(function(ev) { // for each edit contact url
-      ev.preventDefault(); // prevent navigation
-      var url = $(this).data("form"); // get the contact form url
-      $("#modal_delete_estudio_content").load(url, function() { // load the url into the modal
-          $("#modal_delete_estudio").modal('show'); // display the modal on url load
-      });
-      return false; // prevent the click propagation
+    ev.preventDefault(); // prevent navigation
+    var url = $(this).data("form"); // get the contact form url
+    $("#modal_delete_estudio_content").load(url, function() { // load the url into the modal
+      $("#modal_delete_estudio").modal('show'); // display the modal on url load
+    });
+    return false; // prevent the click propagation
+  });
+
+  $('.recover_estudio_link').click(function(ev) {
+    ev.preventDefault(); // prevent navigation
+    var url = $(this).data('form'); // get the contact form url
+    $('#modal_recover_estudio_content').load(url, function() { // load the url into the modal
+      $('#modal_recover_estudio').modal('show'); // display the modal on url load
+    });
+    return false; // prevent the click propagation
   });
 
   </script>

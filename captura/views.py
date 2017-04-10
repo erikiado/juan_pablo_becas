@@ -318,7 +318,7 @@ def recover_estudios(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def estudio_recover_modal(request, id_estudio):
     """ View that is called via ajax to render the modal
     to confirm the recovery of a study.
@@ -336,7 +336,7 @@ def estudio_recover_modal(request, id_estudio):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def estudio_recover(request):
     """ This view receives the form to recover a study
     and redirects to the listing of deleted studies.
