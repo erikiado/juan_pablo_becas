@@ -83,7 +83,7 @@ class RecoverDeleteFormsTest(TestCase):
         form_data = {'id_estudio': self.estudio1.id}
         form = DeleteEstudioForm(data=form_data)
         self.assertTrue(form.is_valid())
-        form.save(user_id=self.capturista.pk)
+        form.save(user_id=self.capturista.user.pk)
         estudio = Estudio.objects.get(pk=self.estudio1.pk)
         self.assertEqual(estudio.status, Estudio.ELIMINADO_CAPTURISTA)
         integrante = Integrante.objects.get(pk=self.integrante1.pk)
