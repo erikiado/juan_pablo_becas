@@ -48,7 +48,7 @@
                         {{ estudio.get_status_display }}
                       </td>
                       <td>
-                        <a class="btn btn-success btn-circle-sm" href="#">
+                        <a class="btn btn-success btn-circle-sm" href="{% url 'estudios_socioeconomicos:focus_mode' estudio.id%}" >
                           <span class="glyphicon glyphicon-circle-arrow-right"></span>
                         </a>
                         {% if estudio.status == status_options.APROBADO %} 
