@@ -1,4 +1,5 @@
-from estudios_socioeconomicos.models import Subseccion, Pregunta, OpcionRespuesta, Respuesta, Seccion
+from estudios_socioeconomicos.models import Subseccion, Pregunta
+from estudios_socioeconomicos.models import OpcionRespuesta, Respuesta, Seccion
 from estudios_socioeconomicos.forms import RespuestaForm
 
 """
@@ -13,15 +14,18 @@ SECTIONS_FLOW = {
     6: {'next': 7, 'previous': 4},
     7: {'next': 8, 'previous': 6}}
 
+
 def get_study_info(estudio):
-    """
+    """ Returns all structured information for a complete study.
+
+        We query each section and get all information for that
+        section using get_study_info_for_section.
     """
     secciones = Seccion.objects.all().values()
-    
 
     for seccion in secciones:
-        s = Seccion.objects.get(pk=seccion['id'])
-        subsecciones, respuestas = get_study_info_for_section(estudio, s)
+        seccion_instance = Seccion.objects.get(pk=seccion['id'])
+        subsecciones, respuestas = get_study_info_for_section(estudio, seccion_instance)
         seccion['subsecciones'] = subsecciones
 
     return secciones
