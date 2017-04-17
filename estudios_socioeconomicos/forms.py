@@ -1,6 +1,8 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from familias.models import Integrante, Alumno
+from perfiles_usuario.utils import ADMINISTRADOR_GROUP
 from .models import Estudio, Respuesta, OpcionRespuesta
 
 
@@ -44,18 +46,25 @@ class RespuestaForm(forms.ModelForm):
         exclude = ('pregunta', 'integrante')
 
 
-class DeleteEstudioCapturistaForm(forms.Form):
+class DeleteEstudioForm(forms.Form):
     """ This form is meant to be used by Capturistas, to delete studies.
 
     """
     id_estudio = forms.IntegerField(widget=forms.HiddenInput())
 
-    def save(self, *args, **kwargs):
+    def save(self, user_id, *args, **kwargs):
         """Override save method to soft delete estudio instance, and related models.
+
+        It changes the status of the study depending on which user
+        is deleting it.
         """
         data = self.cleaned_data
         estudio_instance = get_object_or_404(Estudio, pk=data['id_estudio'])
-        estudio_instance.status = Estudio.ELIMINADO_CAPTURISTA
+        user = get_object_or_404(get_user_model(), pk=user_id)
+        if user.groups.filter(name=ADMINISTRADOR_GROUP).exists():
+            estudio_instance.status = Estudio.ELIMINADO_ADMIN
+        else:
+            estudio_instance.status = Estudio.ELIMINADO_CAPTURISTA
         integrantes = Integrante.objects.filter(familia=estudio_instance.familia)
         for integrante in integrantes:
             integrante.activo = False
