@@ -822,10 +822,12 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         request = self.factory.post(url, data, format='multipart')
         force_authenticate(request, user=self.user, token=self.token)
         response = view(request, id_study)
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        file_exists = os.path.isfile('{}../{}'.format(MEDIA_ROOT, response.data['upload']))
+        file_name = os.path.basename(response.data['upload'])
+        path = os.path.join(os.path.dirname(MEDIA_ROOT), 'media', file_name)
+        file_exists = os.path.isfile(path)
+
         self.assertTrue(file_exists)
 
         image = Foto.objects.get(pk=response.data['id'])
