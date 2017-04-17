@@ -81,7 +81,7 @@ class TestFocusMode(TestCase):
 
         self.assertIn(self.integrante_alumno.nombres, response_text)
         self.assertIn(str(self.estudio), response_text)
-        self.assertIn(self.familia.localidad, response_text)
+        self.assertIn(self.familia.get_localidad_display(), response_text)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_no_access_capturista(self):

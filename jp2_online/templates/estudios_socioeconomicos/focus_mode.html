@@ -26,7 +26,7 @@
 
               <ul class="list-unstyled user_data">
                 <li>
-                    Localidad {{ estudio.familia.localidad }}
+                    Localidad {{ estudio.familia.get_localidad_display }}
                 </li>
 
                 <li>
@@ -36,7 +36,7 @@
                 </li>
                 
                 <li>
-                    Status estudio: {{ estudio.status }}
+                    Status estudio: {{ estudio.get_status_display }}
                 </li>
 
                 <li>
@@ -87,10 +87,12 @@
                     {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
                   </div>
                   <!-- END SECCION DE VIVIENDA  -->
-
+                  
+                  <!-- SECCION PREGUNTAS -->
                   <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
                     {% include 'estudios_socioeconomicos/focus_mode_seccion_cuestionario.html' %}
                   </div>
+                  <!-- END SECCION PREGUNTAS -->
 
                 </div>
               </div>
