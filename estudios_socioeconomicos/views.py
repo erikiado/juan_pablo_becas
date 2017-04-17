@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from captura.utils import get_study_info
-from perfiles_usuario.utils import is_capturista_or_administrador, is_capturista
+from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from familias.models import Integrante
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from indicadores.models import Transaccion, Ingreso
@@ -10,7 +10,7 @@ from .models import Estudio, Foto
 
 
 @login_required
-@user_passes_test(is_capturista_or_administrador)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def focus_mode(request, id_estudio):
     """ View to see the detail information about a family and their study.
     """

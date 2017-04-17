@@ -29,25 +29,6 @@ def is_member(user, groups):
     return any(map(lambda g: user.groups.filter(name=g).exists(), groups))
 
 
-def is_capturista_or_administrador(user):
-    """ Test if a user has the administrador or capturista group.
-
-    This function is meant to be used by the user_passes_test decorator to control access
-    to views. It uses the is_member function with a predefined list of groups.
-
-    Parameters
-    ----------
-    user : django.contrib.auth.models.User
-        The user which we are trying to identify that belongs to administrador.
-
-    Returns
-    ---------
-    bool
-        True if the user has administrador or capturista as a group.
-    """
-    return is_member(user, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP])
-
-
 def is_administrador(user):
     """ Test if a user has the administrador group.
 
