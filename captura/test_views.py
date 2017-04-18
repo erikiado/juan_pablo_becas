@@ -644,7 +644,6 @@ class TestViewsFotos(StaticLiveServerTestCase):
                       kwargs={'id_estudio': self.estudio1.pk})
         static_url = static('test_files/cocina.jpeg')[1:]
         test_image = os.path.join(settings.BASE_DIR, static_url)
-        print(test_image)
         self.browser.visit(self.live_server_url + url)
         self.browser.find_by_id('btn_modal_upload_photo').click()
         time.sleep(1)
