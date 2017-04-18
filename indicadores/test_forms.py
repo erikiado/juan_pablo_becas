@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.test import TestCase
 from familias.models import Familia, Integrante, Tutor
 from .forms import IngresoForm, DeleteTransaccionForm
@@ -86,13 +87,19 @@ class TestFormsTransacciones(TestCase):
         """ Test that the delete transaccion form, soft deltes the transaccion and the value of
         the transaccion is reported as 0.
         """
-        transaccion = Transaccion.objects.all().first()
-        id_transaccion = transaccion.pk
-        form = DeleteTransaccionForm(initial={'id_transaccion': id_transaccion})
-        form.is_valid()
-        print(form)
-        print(form.non_field_errors)
-        print(form.errors)
+        id_transaccion = self.transaccion1.pk
+        form = DeleteTransaccionForm({'id_transaccion': id_transaccion})
+        self.assertTrue(self.transaccion1.activo)
         self.assertTrue(form.is_valid())
-
         form.save()
+        transaccion = Transaccion.objects.get(pk=self.transaccion1.pk)
+        self.assertFalse(transaccion.activo)
+
+    def test_invalid_transaccion(self):
+        """ Test that the form is invalid if provided an invalid id.
+
+        """
+        form = DeleteTransaccionForm({'id_transaccion': -1})
+        self.assertFalse(form.is_valid())
+        with self.assertRaises(ValidationError):
+            form.clean()

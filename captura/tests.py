@@ -241,6 +241,38 @@ class TestViewsTransacciones(TestCase):
                          'This field is required.')
         self.assertEqual(r.status_code, 400)
 
+    def test_delete_transaccion(self):
+        """ Test that we get redirected after deleting the transaccion.
+        """
+        response = self.client.post(reverse('captura:delete_transaccion',
+                                            kwargs={'id_transaccion': self.transaccion1.pk}),
+                                    {'id_transaccion': self.transaccion1.pk})
+        self.assertRedirects(response, reverse('captura:list_transacciones',
+                                               kwargs={'id_familia': self.familia1.pk}))
+        transaccion = Transaccion.objects.get(pk=self.transaccion1.pk)
+        self.assertFalse(transaccion.activo)
+
+    def test_delete_transaccion_bad_request(self):
+        """ Test that the view that sends the form
+        for rendering the modal returns 400 if the request is not ajax.
+        """
+        url = reverse('captura:form_delete_transaccion',
+                      kwargs={'id_transaccion': self.transaccion1.pk})
+        response = self.client.post(url)
+        self.assertEqual(400, response.status_code)
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
+    def test_get_modal_delete_integrante(self):
+        """ Test that the view that sends the form via ajax
+        returns the form needed to delete a transaccion.
+        """
+        response = self.client.get(reverse('captura:form_delete_transaccion',
+                                           kwargs={'id_transaccion': self.transaccion1.pk}),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(b'seguro que desea borrar la transacci' in response.content)
+
 
 class TestViewsFamilia(TestCase):
     """ Integration test suite for testing the views in the app captura,
