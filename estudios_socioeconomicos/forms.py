@@ -124,7 +124,11 @@ class RecoverEstudioForm(forms.Form):
 
 
 class FotoForm(forms.ModelForm):
+    """ Form for uploading a new picture to the estudio socioeconomico.
+
+    """
     upload = forms.ImageField()
+
     class Meta:
         model = Foto
         fields = ('estudio',
