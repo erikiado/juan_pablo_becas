@@ -6,7 +6,6 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP
 from .models import Estudio, Respuesta, OpcionRespuesta, Foto
 
 
-
 class RespuestaForm(forms.ModelForm):
     """ Model form for answers
 
