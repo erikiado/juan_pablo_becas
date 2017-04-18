@@ -263,7 +263,7 @@ class TestViewsTransacciones(TestCase):
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
 
-    def test_get_modal_delete_integrante(self):
+    def test_get_modal_delete_transaccion(self):
         """ Test that the view that sends the form via ajax
         returns the form needed to delete a transaccion.
         """

@@ -62,7 +62,7 @@ class DeleteTransaccionForm(Form):
     """Form to delete user from dashboard which is used to validate the post information.
 
     """
-    id_transaccion = IntegerField()
+    id_transaccion = IntegerField(widget=HiddenInput())
 
     def clean(self):
         """ Override clean data to validate the id corresponds
