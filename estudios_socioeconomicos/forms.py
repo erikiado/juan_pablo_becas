@@ -124,6 +124,7 @@ class RecoverEstudioForm(forms.Form):
 
 
 class FotoForm(forms.ModelForm):
+    upload = forms.ImageField()
     class Meta:
         model = Foto
         fields = ('estudio',
@@ -143,5 +144,5 @@ class FotoForm(forms.ModelForm):
         # This adds the class form control to every single input field.
         # Implemented for bootstrap purposes.
         super(FotoForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+        # for field_name, field in self.fields.items():
+        #     field.widget.attrs['class'] = 'form-control'

@@ -7,7 +7,8 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.test import TestCase
 from django.test import Client
 
-from jp2_online.settings.base import BASE_DIR
+from django.conf import settings
+# from jp2_online.settings.base import BASE_DIR
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Foto
 from indicadores.models import Periodo, Transaccion, Ingreso
@@ -775,7 +776,7 @@ class TestViewsFotos(TestCase):
         """
         url = reverse('captura:upload_photo',
                       kwargs={'id_estudio': self.estudio1.pk})
-        test_image = BASE_DIR + static('test_files/cocina.jpeg')
+        test_image = settings.BASE_DIR + static('test_files/cocina.jpeg')
         with open(test_image, 'r+b') as testing:
             form = {'estudio': self.estudio1.pk,
                     'file_name': 'prueba',
@@ -784,7 +785,8 @@ class TestViewsFotos(TestCase):
             self.assertEqual(302, response.status_code)
             image = Foto.objects.filter(estudio=self.estudio1).last()
             self.assertEqual('prueba', image.file_name)
-            os.remove(BASE_DIR + '/..' + image.upload.url)
+            image_url = image.upload.url[1:]
+            os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
 
     def test_upload_photo_bad_request(self):
         """ This test checks that the view 'captura:upload_photo',

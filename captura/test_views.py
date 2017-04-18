@@ -9,7 +9,8 @@ from django.contrib.auth.models import User, Group
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from splinter import Browser
 
-from jp2_online.settings.base import BASE_DIR
+from django.conf import settings
+# from jp2_online.settings.base import BASE_DIR
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta, Foto
@@ -641,7 +642,9 @@ class TestViewsFotos(StaticLiveServerTestCase):
         """
         url = reverse('captura:list_photos',
                       kwargs={'id_estudio': self.estudio1.pk})
-        test_image = BASE_DIR + static('test_files/cocina.jpeg')
+        static_url = static('test_files/cocina.jpeg')[1:]
+        test_image = os.path.join(settings.BASE_DIR, static_url)
+        print(test_image)
         self.browser.visit(self.live_server_url + url)
         self.browser.find_by_id('btn_modal_upload_photo').click()
         time.sleep(1)
@@ -652,4 +655,5 @@ class TestViewsFotos(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('prueba'))
         image = Foto.objects.filter(estudio=self.estudio1).last()
         self.assertEqual('prueba', image.file_name)
-        os.remove(BASE_DIR + '/..' + image.upload.url)
+        image_url = image.upload.url[1:]
+        os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
