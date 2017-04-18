@@ -1,3 +1,4 @@
+import os
 import time
 import string
 import random
@@ -5,11 +6,13 @@ import random
 from django.core.urlresolvers import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User, Group
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from splinter import Browser
 
+from jp2_online.settings.base import BASE_DIR
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
-from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta
+from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta, Foto
 from familias.models import Familia, Integrante, Alumno, Tutor
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
@@ -558,3 +561,99 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         # Check that the following texts are present if exists any socio-economic study
         self.assertTrue(self.browser.is_text_present('Editar'))
         self.assertTrue(self.browser.is_text_present('Ver Retroalimentación'))
+
+
+class TestViewsFotos(StaticLiveServerTestCase):
+    """ Integration test suite for testing the views in the app captura,
+    that surround the creation of editing of the familia model.
+
+    Attributes
+    ----------
+    client : Client
+        Django Client for the testing of all the views related to the creation
+        and edition of a family.
+    elerik : User
+        User that will be used as a capturista in order to fill all everything
+        related with familia.
+    capturista : Capturista
+        Asociated with the User, as this object is required for permissions and
+        creation.
+    escuela : Used in tests that depend on creating an object related to an escuela.
+    familia1 : Familia
+        Used in tests that depend on creating or editing an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating or editing an object related to an integrante.
+    integrante_contructor_dictionary : dictrionary
+        Used in order to prevent repetitive code, when creating very similar integrantes
+        in different tests.
+    alumno_contructor_dictionary : dictionary
+        Used in order to prevent repetitive code, when creating very similar alumnos in
+        different tests.
+    tutor_constructor_dictionary : dictionary
+        Used in order to prevent repetivie code, when creating very similar tutores in
+        different tests.
+    """
+
+    def setUp(self):
+        """ Creates all the initial necessary objects for the tests
+        """
+        self.browser = Browser('chrome')
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        numero_hijos_inicial = 3
+        estado_civil_inicial = 'soltero'
+        localidad_inicial = 'salitre'
+        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                               estado_civil=estado_civil_inicial,
+                                               localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
+
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+
+    def tearDown(self):
+        """ At the end of tests, close the browser.
+        """
+        self.browser.driver.close()
+        self.browser.quit()
+
+    def test_upload_photo(self):
+        """ This test checks that the view 'captura:upload_photo', allows
+        the upload of a new family photo, and the photo is displayed.
+        """
+        url = reverse('captura:list_photos',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = BASE_DIR + static('test_files/cocina.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            self.browser.visit(self.live_server_url + url)
+            self.browser.find_by_id('btn_modal_upload_photo').click()
+            time.sleep(1)
+            self.browser.fill('file_name', 'prueba')
+            self.browser.fill('upload', test_image)
+            self.browser.find_by_id('btn_send_create_photo').click()
+            time.sleep(1)
+            self.assertTrue(self.browser.is_text_present('prueba'))
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+            self.assertEqual('prueba', image.file_name)
+            os.remove(BASE_DIR + '/..' + image.upload.url)

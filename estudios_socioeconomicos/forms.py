@@ -131,6 +131,15 @@ class FotoForm(forms.ModelForm):
                   'file_name',
                   'upload')
 
+        widgets = {
+            'estudio': forms.HiddenInput()
+        }
+
+        labels = {
+            'file_name': 'Nombre del archivo',
+            'upload': 'Foto a subir'
+        }
+
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
         # Implemented for bootstrap purposes.

@@ -613,7 +613,7 @@ def list_photos(request, id_estudio):
     context['fotos'] = Foto.objects.filter(estudio=estudio)
     context['form'] = FotoForm(initial={'estudio': estudio.pk})
     context['familia'] = estudio.familia
-    return render(request, 'captura/dashboard_imagenes.html', context)
+    return render(request, 'captura/list_imagenes.html', context)
 
 
 class APIQuestionsInformation(generics.ListAPIView):
