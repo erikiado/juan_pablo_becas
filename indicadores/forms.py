@@ -62,17 +62,17 @@ class DeleteTransaccionForm(Form):
     """Form to delete user from dashboard which is used to validate the post information.
 
     """
-    id_transaccion = IntegerField(widget=HiddenInput())
+    id_transaccion = IntegerField()
 
     def clean(self):
         """ Override clean data to validate the id corresponds
         to a real transaccion.
         """
-        cleaned_data = super(DeleteTransaccionForm, self).clean()
-        transaccion = Transaccion.objects.filter(pk=cleaned_data['id_transaccion'])
+        self.cleaned_data = super(DeleteTransaccionForm, self).clean()
+        transaccion = Transaccion.objects.filter(pk=self.cleaned_data['id_transaccion'])
         if not transaccion:
             raise ValidationError('La transacción no existe')
-        return cleaned_data
+        return self.cleaned_data
 
     def save(self, *args, **kwargs):
         """ Override save to soft delete the transaccion.

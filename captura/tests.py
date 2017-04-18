@@ -90,6 +90,7 @@ class TestViewsTransacciones(TestCase):
                                                        periodicidad=self.periodicidad1,
                                                        observacion='Cultivo',
                                                        es_ingreso=False)
+
         self.transaccion2 = Transaccion.objects.create(familia=self.familia1,
                                                        monto=30,
                                                        periodicidad=self.periodicidad1,

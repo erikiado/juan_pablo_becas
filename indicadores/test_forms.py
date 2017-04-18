@@ -1,6 +1,7 @@
 from django.test import TestCase
 from familias.models import Familia, Integrante, Tutor
-from .forms import IngresoForm
+from .forms import IngresoForm, DeleteTransaccionForm
+from .models import Periodo, Transaccion
 
 
 class TestFormsTransacciones(TestCase):
@@ -56,6 +57,17 @@ class TestFormsTransacciones(TestCase):
         self.tutor2 = Tutor.objects.create(integrante=self.integrante2,
                                            relacion='padre')
 
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+
+        self.transaccion1 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=False)
+        self.transaccion1.save()
+
     def test_ingreso_tutor_queryset(self):
         """ Test that the select tutor option only includes tutores that are
         part of the family an ingreso is going to be added to.
@@ -69,3 +81,18 @@ class TestFormsTransacciones(TestCase):
         all_tutores = Tutor.objects.all()
         self.assertEqual(list(tutores_familia), list(tutores_form_queryset))
         self.assertNotEqual(list(all_tutores), list(tutores_familia))
+
+    def test_delete_transaccion_form(self):
+        """ Test that the delete transaccion form, soft deltes the transaccion and the value of
+        the transaccion is reported as 0.
+        """
+        transaccion = Transaccion.objects.all().first()
+        id_transaccion = transaccion.pk
+        form = DeleteTransaccionForm(initial={'id_transaccion': id_transaccion})
+        form.is_valid()
+        print(form)
+        print(form.non_field_errors)
+        print(form.errors)
+        self.assertTrue(form.is_valid())
+
+        form.save()
