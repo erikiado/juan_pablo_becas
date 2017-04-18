@@ -642,18 +642,14 @@ class TestViewsFotos(StaticLiveServerTestCase):
         url = reverse('captura:list_photos',
                       kwargs={'id_estudio': self.estudio1.pk})
         test_image = BASE_DIR + static('test_files/cocina.jpeg')
-        with open(test_image, 'r+b') as testing:
-            form = {'estudio': self.estudio1.pk,
-                    'file_name': 'prueba',
-                    'upload': testing}
-            self.browser.visit(self.live_server_url + url)
-            self.browser.find_by_id('btn_modal_upload_photo').click()
-            time.sleep(1)
-            self.browser.fill('file_name', 'prueba')
-            self.browser.fill('upload', test_image)
-            self.browser.find_by_id('btn_send_create_photo').click()
-            time.sleep(1)
-            self.assertTrue(self.browser.is_text_present('prueba'))
-            image = Foto.objects.filter(estudio=self.estudio1).last()
-            self.assertEqual('prueba', image.file_name)
-            os.remove(BASE_DIR + '/..' + image.upload.url)
+        self.browser.visit(self.live_server_url + url)
+        self.browser.find_by_id('btn_modal_upload_photo').click()
+        time.sleep(1)
+        self.browser.fill('file_name', 'prueba')
+        self.browser.fill('upload', test_image)
+        self.browser.find_by_id('btn_send_create_photo').click()
+        time.sleep(1)
+        self.assertTrue(self.browser.is_text_present('prueba'))
+        image = Foto.objects.filter(estudio=self.estudio1).last()
+        self.assertEqual('prueba', image.file_name)
+        os.remove(BASE_DIR + '/..' + image.upload.url)
