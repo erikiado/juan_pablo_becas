@@ -1,0 +1,60 @@
+{% include 'captura/tabla_economic_status.html' %}
+                    
+<!-- Tabla Ingresos -->
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Monto Mensual</th>
+      <th>Monto</th>
+      <th>Periodicidad</th>
+      <th>Observación</th>
+      <th>Recibido Desde</th>
+      <th>Tutor</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+    {% for ingreso in ingresos %}
+    <tr class="">
+      <td>{{ ingreso }}</td>
+      <td>${{ ingreso.transaccion.obtener_valor_de_transaccion }}</td>
+      <td>{{ ingreso.transaccion.periodicidad }}</td>
+      <td>{{ ingreso.transaccion.observacion }}</td>
+      <td>{{ ingreso.fecha }}</td>
+      <td>{{ ingreso.tutor }}</td>
+    </tr>
+    {% endfor %}
+    
+  </tbody>
+</table>
+
+<!-- END Tabla Ingresos -->
+
+
+<!-- Tabla Egresos -->
+<h2>Egresos</h2>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Monto Mensual</th>
+      <th>Monto</th>
+      <th>Periodicidad</th>
+      <th>Observación</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+    {% for egreso in egresos %}
+    <tr class="">
+      <td>{{ egreso }}</td>
+      <td>{{ egreso.obtener_valor_de_transaccion }}</td>
+      <td>{{ egreso.periodicidad }}</td>
+      <td>{{ egreso.observacion }}</td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+<!-- END Tabla egresos-->

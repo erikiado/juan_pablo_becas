@@ -1,0 +1,110 @@
+{% extends 'layouts/dashboard_base.html' %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          
+          <div class="x_title">
+            <h2>{{ estudio }}<small>Condensado Familia</small></h2>
+
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            
+            <div class="col-md-12 col-sm-12 col-xs-12 profile_left">
+              <div class="profile_img">
+                
+              </div>
+              <h3>Familia {{ estudio }}</h3>
+
+              <!-- Verificar el status del estudio -->        
+              <a class="btn btn-success pull-right">
+                <i class="fa fa-edit m-right-xs"></i>
+                Editar Estudio
+              </a>
+
+              <ul class="list-unstyled user_data">
+                <li>
+                    Localidad {{ estudio.familia.get_localidad_display }}
+                </li>
+
+                <li>
+                    Capturista:
+                    {{ estudio.capturista.user.first_name }}
+                    {{ estudio.capturista.user.last_name }}
+                </li>
+                
+                <li>
+                    Status estudio: {{ estudio.get_status_display }}
+                </li>
+
+                <li>
+                    Número de hijos diferentes papas: {{ estudio.familia.numero_hijos_diferentes_papas }}
+                </li>
+
+              </ul>
+                
+              
+            </div>
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            
+
+              <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                  <li role="presentation" class="active"><a href="#tab_content1" role="tab" data-toggle="tab" aria-expanded="true">Integrantes</a>
+                  </li>
+
+                  <li role="presentation" class=""><a href="#tab_content2" role="tab" data-toggle="tab" aria-expanded="false">Situacion Económica</a>
+                  </li>
+
+                  <li role="presentation" class=""><a href="#tab_content3" role="tab" data-toggle="tab" aria-expanded="false">Vivienda</a>
+                  </li>
+
+                  <li role="presentation" class=""><a href="#tab_content4" role="tab" data-toggle="tab" aria-expanded="false">Información Adicional</a>
+                  </li>
+
+                </ul>
+
+                <div id="myTabContent" class="tab-content">
+                
+                  <!-- SECCION INTEGRANTES -->
+                  <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_integrantes.html' %}
+                  </div>
+                  <!-- END SECCION INTEGRANTES -->
+                  
+                  <!-- SECCION ECONÓMICA -->
+                  <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_economica.html' %}
+                  </div>
+                  <!-- END Sección Económica -->
+
+                  <!-- SECCION VIVIENDA -->
+                  <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
+                  </div>
+                  <!-- END SECCION DE VIVIENDA  -->
+                  
+                  <!-- SECCION PREGUNTAS -->
+                  <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_cuestionario.html' %}
+                  </div>
+                  <!-- END SECCION PREGUNTAS -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        $('#datatable-responsive').DataTable();
+    </script>
+{% endblock %}
