@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from perfiles_usuario.utils import is_administrador
-from estudios_socioeconomicos.models import Estudio
+from estudios_socioeconomicos.models import Estudio, Foto
 
 
 @login_required
@@ -23,13 +23,17 @@ def estudios(request):
 def asignar_beca(request, id_estudio):
     """ Renders the view where the admin assigns the scolarship
     to a family after approving a study.
+
+    TODO: ensure that the study is approved.
     """
     estudio = get_object_or_404(Estudio, pk=id_estudio)
-    context = {}
-    context['estudio'] = estudio
+    fotos = Foto.objects.filter(estudio=id_estudio)
 
-    context['total_egresos_familia'] = total_egresos_familia(estudio.familia.id)
-    context['total_ingresos_familia'] = total_ingresos_familia(estudio.familia.id)
-    context['total_neto_familia'] = total_neto_familia(estudio.familia.id)
-
+    context = {
+        'estudio': estudio,
+        'total_egresos_familia': total_egresos_familia(estudio.familia.id),
+        'total_ingresos_familia': total_ingresos_familia(estudio.familia.id),
+        'total_neto_familia': total_neto_familia(estudio.familia.id),
+        'fotos': fotos
+    }
     return render(request, 'becas/asignar_beca.html', context)

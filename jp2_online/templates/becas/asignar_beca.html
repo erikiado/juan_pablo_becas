@@ -23,10 +23,7 @@
             {{ estudio.capturista.user.first_name }}
             {{ estudio.capturista.user.last_name }}
           </li>
-          
-          <li>
-            Status estudio: {{ estudio.get_status_display }}
-          </li>
+
 
           <li>
             Número de hijos diferentes papas: {{ estudio.familia.numero_hijos_diferentes_papas }}
@@ -34,6 +31,7 @@
         </ul>
 
         {% include 'captura/tabla_economic_status.html' %}
+        {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
       </div>
     </div>
   </div>
