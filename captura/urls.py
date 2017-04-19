@@ -5,9 +5,10 @@ from .views import capturista_dashboard, capture_study, add_answer_study, remove
                    APIQuestionsInformation, APIUploadRetrieveStudy, estudio_delete_modal, \
                    estudio_delete, get_form_edit_integrante, APIOficioInformation, \
                    APIEscuelaInformation, APIUploadRetrieveImages, update_create_transaccion, \
-                   delete_transaccion, list_transacciones, update_transaccion_modal, \
-                   get_form_delete_integrante, delete_integrante, recover_estudios, \
-                   estudio_recover_modal, estudio_recover, list_photos, upload_photo
+                   get_form_delete_transaccion, delete_transaccion, list_transacciones, \
+                   update_transaccion_modal, get_form_delete_integrante, delete_integrante, \
+                   recover_estudios, estudio_recover_modal, estudio_recover, list_photos, \
+                   upload_photo
 
 app_name = 'captura'
 
@@ -43,6 +44,9 @@ urlpatterns = [
         update_transaccion_modal,
         name='update_transaccion_modal'),
     url(r'^borrar-transaccion/(?P<id_transaccion>[0-9]+)',
+        get_form_delete_transaccion,
+        name='form_delete_transaccion'),
+    url(r'^borrar-transaccion/confirmar/(?P<id_transaccion>[0-9]+)',
         delete_transaccion,
         name='delete_transaccion'),
     url(r'^familia/transacciones/(?P<id_familia>[0-9]+)',
