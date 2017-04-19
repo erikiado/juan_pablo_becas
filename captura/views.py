@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
+
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
@@ -25,7 +26,7 @@ from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
 from indicadores.models import Transaccion, Ingreso, Oficio
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
-from .utils import SECTIONS_FLOW, get_study_info_for_section
+from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
 
 
 @login_required
@@ -174,6 +175,9 @@ def capture_study(request, id_estudio, numero_seccion):
     context = {}
     estudio = get_object_or_404(Estudio, pk=id_estudio)
     seccion = get_object_or_404(Seccion, numero=numero_seccion)
+
+    if not user_can_modify_study(request.user, estudio):
+        raise Http404()
 
     (data, respuestas) = get_study_info_for_section(estudio, seccion)
 
@@ -371,8 +375,12 @@ def edit_familia(request, id_familia):
         On error returns to the same form but with errors.
     """
     form = None
+    instance = get_object_or_404(Familia, pk=id_familia)
+    
+    if not user_can_modify_study(request.user, instance.estudio):
+        raise Http404()
+    
     if request.method == 'POST':
-        instance = get_object_or_404(Familia, pk=id_familia)
         form = FamiliaForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
@@ -399,6 +407,10 @@ def list_integrantes(request, id_familia):
 
     integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
+
+    if not user_can_modify_study(request.user, familia.estudio):
+        raise Http404()
+
     context['integrantes'] = integrantes
     context['familia'] = familia
     context['create_integrante_form'] = IntegranteModelForm()
@@ -598,6 +610,10 @@ def list_transacciones(request, id_familia):
     """
     context = {}
     context['familia'] = get_object_or_404(Familia, pk=id_familia)
+    
+    if not user_can_modify_study(request.user, context['familia'].estudio):
+        raise Http404()
+
     context['total_egresos_familia'] = total_egresos_familia(id_familia)
     context['total_ingresos_familia'] = total_ingresos_familia(id_familia)
     context['total_neto_familia'] = total_neto_familia(id_familia)
@@ -626,9 +642,19 @@ def save_upload_study(request, id_estudio):
     if is_capturista(request.user):
         get_object_or_404(Estudio, pk=id_estudio, capturista=request.user.capturista)
     
+    if request.method == 'POST':
+
+        if is_capturista(request.user): #Capturista can only save in revision mode
+            estudio.status = Estudio.REVISION
+            estudio.save()
+            #MESSAGE
+
+            return redirect('captura:estudios')
+
     context['estudio'] = estudio
     return render(request, 'captura/save_upload_study.html', context)
 
+<<<<<<< 476351b9f07255fad63746c217d282fb7c7bf984
 @login_required
 @user_passes_test(is_capturista)
 def upload_photo(request, id_estudio):
@@ -663,6 +689,8 @@ def list_photos(request, id_estudio):
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
 
+=======
+>>>>>>> views permissions son
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.

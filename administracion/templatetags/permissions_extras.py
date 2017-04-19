@@ -1,5 +1,9 @@
 from django import template
 
+from estudios_socioeconomicos.models import Estudio
+from perfiles_usuario.utils import is_capturista, is_administrador
+from captura.utils import user_can_modify_study
+
 register = template.Library()
 
 
@@ -15,3 +19,11 @@ def has_group(user, group_name):
         folder called templatetags to add custom templatetags.
     """
     return user.groups.filter(name=group_name).exists()
+
+
+@register.filter(name='can_modify_study')
+def can_modify_study(user, study):
+    """
+    """
+    return user_can_modify_study(user, study)
+

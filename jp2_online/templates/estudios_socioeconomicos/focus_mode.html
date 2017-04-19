@@ -1,4 +1,5 @@
 {% extends 'layouts/dashboard_base.html' %}
+{% load permissions_extras %}
 
 {% block content %}
     <div class="row">
@@ -18,11 +19,15 @@
               </div>
               <h3>Familia {{ estudio }}</h3>
 
-              <!-- Verificar el status del estudio -->        
-              <a href="{% url 'captura:familia' estudio.familia.id %}" class="btn btn-success pull-right">
-                <i class="fa fa-edit m-right-xs"></i>
-                Editar Estudio
-              </a>
+              <!-- Verificar el status del estudio -->
+
+              {% if request.user|can_modify_study:estudio %}
+                <a href="{% url 'captura:familia' estudio.familia.id %}" class="btn btn-success pull-right">
+                    <i class="fa fa-edit m-right-xs"></i>
+                    Editar Estudio
+                </a>
+              {% endif %}
+              
 
               <ul class="list-unstyled user_data">
                 <li>

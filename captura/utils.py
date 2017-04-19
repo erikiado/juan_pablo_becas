@@ -1,7 +1,8 @@
-from estudios_socioeconomicos.models import Subseccion, Pregunta
+from estudios_socioeconomicos.models import Subseccion, Pregunta, Estudio
 from estudios_socioeconomicos.models import OpcionRespuesta, Respuesta, Seccion
 from estudios_socioeconomicos.forms import RespuestaForm
 
+from perfiles_usuario.utils import is_capturista, is_administrador
 """
     Mapping of next and previous section to fill in study.
 """
@@ -14,6 +15,25 @@ SECTIONS_FLOW = {
     6: {'next': 7, 'previous': 4},
     7: {'next': 8, 'previous': 6},
     8: {'next': False, 'previous': 7}}
+
+
+def user_can_modify_study(user, estudio):
+    """
+    """
+    
+    if is_capturista(user):
+        if estudio.status == Estudio.BORRADOR:
+            return True
+        if estudio.status == Estudio.RECHAZADO:
+            return True
+
+    if is_administrador(user):
+        if estudio.status != Estudio.BORRADOR and \
+            estudio.status != Estudio.RECHAZADO:
+            return True
+
+    return False
+            
 
 
 def get_study_info(estudio):

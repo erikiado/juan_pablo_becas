@@ -19,42 +19,26 @@
                 
               </div>
               <h3>Familia {{ estudio }}</h3>
+            
+              <p>
+                  Hasta este punto el estudio esta guardado como 
+                  borrador. Una vez subida a revisión no podras
+                  hacer modificaciones al estudio.
+              </p>
+              
+              <form method="post" action="{% url 'captura:save_upload_study' estudio.id %}">
+                  {% csrf_token %}
+                  <input value="revision" class="hidden" name="action" type="text">
+                  
+                  <button class="btn btn-success">
+                    <i class="fa fa-edit m-right-xs"></i>
+                    Subir a Revisión
+                  </button>
 
-              <!-- Verificar el status del estudio -->        
-              <a href="" class="btn btn-success pull-right">
-                <i class="fa fa-edit m-right-xs"></i>
-                Subir a Revisión
-              </a>
-
-              <a href="" class="btn btn-warning pull-right">
-                <i class="fa fa-edit m-right-xs"></i>
-                Guardar como Borrador
-              </a>
-
-              <ul class="list-unstyled user_data">
-                <li>
-                    Localidad {{ estudio.familia.get_localidad_display }}
-                </li>
-
-                <li>
-                    Capturista:
-                    {{ estudio.capturista.user.first_name }}
-                    {{ estudio.capturista.user.last_name }}
-                </li>
-                
-                <li>
-                    Status estudio: {{ estudio.get_status_display }}
-                </li>
-
-                <li>
-                    Número de hijos diferentes papas: {{ estudio.familia.numero_hijos_diferentes_papas }}
-                </li>
-
-              </ul>
+              </form> 
                 
               
-            </div>
-                
+            </div>        
           </div>
         </div>
       </div>
