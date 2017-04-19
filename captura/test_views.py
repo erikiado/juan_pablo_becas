@@ -15,6 +15,7 @@ from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta, Foto
 from familias.models import Familia, Integrante, Alumno, Tutor
+from indicadores.models import Periodo
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
 from perfiles_usuario.utils import CAPTURISTA_GROUP
@@ -567,7 +568,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 class TestViewsFotos(StaticLiveServerTestCase):
     """ Integration test suite for testing the views in the app captura,
     that surround the creation of editing of the familia model.
-
     Attributes
     ----------
     client : Client
@@ -673,3 +673,94 @@ class TestViewsFotos(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Upload a valid image'))
         number_of_images_after = Foto.objects.filter(estudio=self.estudio1).count()
         self.assertEqual(number_of_images_before, number_of_images_after)
+
+
+class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
+    """
+    """
+    def setUp(self):
+        """
+        """
+        self.browser = Browser('chrome')
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+        self.capturista.save()
+
+        load_data()
+
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+
+    def tearDown(self):
+        self.browser.driver.close()
+        self.browser.quit()
+
+    def create_transactions(self, monto, observacion):
+        """
+        """
+        self.browser.find_by_id('btn_modal_create_user').click()
+        time.sleep(.3)
+        self.browser.find_by_id('id_monto').fill(monto)
+        self.browser.find_by_id('id_observacion').fill(observacion)
+        self.browser.select('periodicidad', '1')
+        self.browser.find_by_id('id_fecha').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.select('tipo', 'comprobable')
+        self.browser.find_by_id('btn_send_create_user').click()
+
+    def test_captura_complete_study(self):
+        """
+        """
+        self.browser.visit(self.live_server_url + reverse('captura:estudios'))
+        self.browser.find_by_id('create_estudio').click()
+        time.sleep(.1)
+
+        """ Create Family and Study
+        """
+        self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(2)
+        self.browser.select('estado_civil', 'casado_iglesia')
+        self.browser.select('localidad', 'poblado_jurica')
+        self.browser.find_by_id('submit_familia').click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(self,
+            nombres='Juan',
+            apellidos='Perez',
+            telefono='4424567899',
+            correo='abc@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(self,
+            nombres='Hector',
+            apellidos='Perez',
+            telefono='222222222',
+            correo='efg@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(self,
+            nombres='Laura',
+            apellidos='Perez',
+            telefono='4424567899',
+            correo='hij@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        self.browser.find_by_id('next_ingresos_egresos').click()
+        time.sleep(.1)
+
+        self.create_transactions(1000, 'Ninguna')
+        time.sleep(.1)

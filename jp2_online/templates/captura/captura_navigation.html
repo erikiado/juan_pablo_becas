@@ -101,6 +101,7 @@
 
               <h3>Preguntas</h3>
               <p>
+              {% if not create %}
                 {% if estudio %}
                   <a href="{% url 'captura:contestar_estudio' estudio.id  1 %}">1</a>
                   <a href="{% url 'captura:contestar_estudio' estudio.id  2 %}">2</a>
@@ -118,7 +119,7 @@
                   <a href="{% url 'captura:contestar_estudio' familia.estudio.id  7 %}">7</a>
                   <a href="{% url 'captura:contestar_estudio' familia.estudio.id  8 %}">8</a>
                 {% endif %}
-                
+              {% endif%}
               </p>
             </div>
         </div>

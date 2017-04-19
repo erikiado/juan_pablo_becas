@@ -636,6 +636,7 @@ def list_transacciones(request, id_familia):
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def save_upload_study(request, id_estudio):
     """
+        @TODO: Check study is actually ready for upload
     """
     context = {}
     estudio = get_object_or_404(Estudio, pk=id_estudio)

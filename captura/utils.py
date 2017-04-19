@@ -18,9 +18,8 @@ SECTIONS_FLOW = {
 
 
 def user_can_modify_study(user, estudio):
+    """     
     """
-    """
-
     if is_capturista(user):
         if estudio.status == Estudio.BORRADOR:
             return True

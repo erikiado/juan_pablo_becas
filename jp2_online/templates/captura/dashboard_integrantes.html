@@ -79,10 +79,10 @@
 </div>
 
 <div class="text-center">
-  <a href="{% url 'captura:familia' familia.id %}" class="btn btn-danger">
+  <a id="previous_familia" href="{% url 'captura:familia' familia.id %}" class="btn btn-danger">
     <i class="glyphicon glyphicon-arrow-left"></i> Datos Familia
   </a>
-  <a href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
+  <a id="next_ingresos_egresos" href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
     Ingresos y Egresos <i class="glyphicon glyphicon-arrow-right"></i>
   </a>
 </div>
