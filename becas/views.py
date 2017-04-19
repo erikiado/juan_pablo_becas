@@ -1,5 +1,9 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test, login_required
+
+from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
+from perfiles_usuario.utils import is_administrador
+from estudios_socioeconomicos.models import Estudio
 
 
 @login_required
@@ -12,3 +16,20 @@ def estudios(request):
     TODO: name properly and implement everything
     """
     return render(request, 'layouts/dashboard_base.html')
+
+
+@login_required
+@user_passes_test(is_administrador)
+def asignar_beca(request, id_estudio):
+    """ Renders the view where the admin assigns the scolarship
+    to a family after approving a study.
+    """
+    estudio = get_object_or_404(Estudio, pk=id_estudio)
+    context = {}
+    context['estudio'] = estudio
+
+    context['total_egresos_familia'] = total_egresos_familia(estudio.familia.id)
+    context['total_ingresos_familia'] = total_ingresos_familia(estudio.familia.id)
+    context['total_neto_familia'] = total_neto_familia(estudio.familia.id)
+
+    return render(request, 'becas/asignar_beca.html', context)

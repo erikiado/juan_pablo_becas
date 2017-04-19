@@ -1,0 +1,45 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+
+        <div class="x_title">
+          <h2>Asignación de Beca</h2>
+          <div class="clearfix"></div>
+        </div>
+
+        <h3>Familia {{ estudio }}</h3>
+        <ul class="list-unstyled user_data">
+          <li>
+            Localidad {{ estudio.familia.get_localidad_display }}
+          </li>
+
+          <li>
+            Capturista:
+            {{ estudio.capturista.user.first_name }}
+            {{ estudio.capturista.user.last_name }}
+          </li>
+          
+          <li>
+            Status estudio: {{ estudio.get_status_display }}
+          </li>
+
+          <li>
+            Número de hijos diferentes papas: {{ estudio.familia.numero_hijos_diferentes_papas }}
+          </li>
+        </ul>
+
+        {% include 'captura/tabla_economic_status.html' %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_page_js %}
+
+{% endblock %}
