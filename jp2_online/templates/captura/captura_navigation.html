@@ -1,7 +1,15 @@
 
 <div class="row">
     
-    <a href="">
+
+    
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:familia' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:familia' familia.id %}">
+      {% endif %}
+    {% endif %}
         <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats">
               
@@ -15,9 +23,15 @@
               <p></p>
             </div>
         </div>
-    </a>
+    {% if not create %} </a> {% endif %}
 
-    {% if not create %} <a href=""> {% endif %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:list_integrantes' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:list_integrantes' familia.id %}">
+      {% endif %}
+    {% endif %}
         <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
@@ -33,7 +47,13 @@
         </div>
     {% if not create %} </a> {% endif %}
 
-    {% if not create %} <a href=""> {% endif %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:list_transacciones' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:list_transacciones' familia.id %}">
+      {% endif %}
+    {% endif %}
         <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
@@ -65,7 +85,13 @@
         </div>
     {% if not create %} </a> {% endif %}
 
-    {% if not create %} <a href=""> {% endif %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:contestar_estudio' estudio.id  1%}"> 
+      {% else %}
+        <a href="{% url 'captura:contestar_estudio' familia.estudio.id  1 %}">
+      {% endif %}
+    {% endif %}
         <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               

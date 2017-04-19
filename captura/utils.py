@@ -12,7 +12,8 @@ SECTIONS_FLOW = {
     3: {'next': 4, 'previous': 2},
     4: {'next': 6, 'previous': 3},
     6: {'next': 7, 'previous': 4},
-    7: {'next': 8, 'previous': 6}}
+    7: {'next': 8, 'previous': 6},
+    8: {'next': False, 'previous': 7}}
 
 
 def get_study_info(estudio):
