@@ -7,7 +7,8 @@ from .views import capturista_dashboard, capture_study, add_answer_study, remove
                    APIEscuelaInformation, APIUploadRetrieveImages, update_create_transaccion, \
                    get_form_delete_transaccion, delete_transaccion, list_transacciones, \
                    update_transaccion_modal, get_form_delete_integrante, delete_integrante, \
-                   recover_estudios, estudio_recover_modal, estudio_recover
+                   recover_estudios, estudio_recover_modal, estudio_recover, list_photos, \
+                   upload_photo
 
 app_name = 'captura'
 
@@ -68,4 +69,10 @@ urlpatterns = [
         name='estudio_recover_modal'),
     url(r'recuperar-estudio/confirmar/', estudio_recover,
         name='estudio_recover'),
+    url(r'^familia/fotos/(?P<id_estudio>[0-9]+)',
+        list_photos,
+        name='list_photos'),
+    url(r'^upload-photo/(?P<id_estudio>[0-9]+)',
+        upload_photo,
+        name='upload_photo'),
 ]

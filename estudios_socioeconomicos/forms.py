@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from familias.models import Integrante, Alumno
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP
-from .models import Estudio, Respuesta, OpcionRespuesta
+from .models import Estudio, Respuesta, OpcionRespuesta, Foto
 
 
 class RespuestaForm(forms.ModelForm):
@@ -121,3 +121,32 @@ class RecoverEstudioForm(forms.Form):
             estudio.status = Estudio.APROBADO
         estudio.save()
         return estudio
+
+
+class FotoForm(forms.ModelForm):
+    """ Form for uploading a new picture to the estudio socioeconomico.
+
+    """
+    upload = forms.ImageField()
+
+    class Meta:
+        model = Foto
+        fields = ('estudio',
+                  'file_name',
+                  'upload')
+
+        widgets = {
+            'estudio': forms.HiddenInput()
+        }
+
+        labels = {
+            'file_name': 'Nombre del archivo',
+            'upload': 'Foto a subir'
+        }
+
+    def __init__(self, *args, **kwargs):
+        # This adds the class form control to every single input field.
+        # Implemented for bootstrap purposes.
+        super(FotoForm, self).__init__(*args, **kwargs)
+        # for field_name, field in self.fields.items():
+        #     field.widget.attrs['class'] = 'form-control'

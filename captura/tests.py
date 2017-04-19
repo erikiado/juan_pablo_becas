@@ -1,12 +1,16 @@
+import os
 import json
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.test import TestCase
 from django.test import Client
 
+from django.conf import settings
+# from jp2_online.settings.base import BASE_DIR
 from administracion.models import Escuela
-from estudios_socioeconomicos.models import Estudio
+from estudios_socioeconomicos.models import Estudio, Foto
 from indicadores.models import Periodo, Transaccion, Ingreso
 from familias.models import Familia, Integrante, Tutor
 from perfiles_usuario.models import Capturista
@@ -732,5 +736,97 @@ class TestViewsRecuperaEstudio(TestCase):
         raises a HttpResponseBadRequest when accessed via a non POST method
         """
         url = reverse('captura:estudio_recover')
+        response = self.client.get(url)
+        self.assertEqual(400, response.status_code)
+
+
+class TestViewsFotos(TestCase):
+    """ Integration test suite for testing the views in the app captura,
+    that surround the creation of editing of the familia model.
+
+    Attributes
+    ----------
+    client : Client
+        Django Client for the testing of all the views related to the creation
+        and edition of a family.
+    elerik : User
+        User that will be used as a capturista in order to fill all everything
+        related with familia.
+    capturista : Capturista
+        Asociated with the User, as this object is required for permissions and
+        creation.
+    escuela : Used in tests that depend on creating an object related to an escuela.
+    familia1 : Familia
+        Used in tests that depend on creating or editing an object related to a familia.
+    estudio1 : Estudio
+        Used in tests that depend on creating or editing an existent estudio.
+    integrante1 : Integrante
+        Used in tests that depend on creating or editing an object related to an integrante.
+    integrante_contructor_dictionary : dictrionary
+        Used in order to prevent repetitive code, when creating very similar integrantes
+        in different tests.
+    alumno_contructor_dictionary : dictionary
+        Used in order to prevent repetitive code, when creating very similar alumnos in
+        different tests.
+    tutor_constructor_dictionary : dictionary
+        Used in order to prevent repetivie code, when creating very similar tutores in
+        different tests.
+    """
+
+    def setUp(self):
+        """ Creates all the initial necessary objects for the tests
+        """
+        self.client = Client()
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        numero_hijos_inicial = 3
+        estado_civil_inicial = 'soltero'
+        localidad_inicial = 'salitre'
+        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+                                               estado_civil=estado_civil_inicial,
+                                               localidad=localidad_inicial)
+
+        self.estudio1 = Estudio.objects.create(capturista=self.capturista,
+                                               familia=self.familia1)
+
+        self.client.login(username=test_username, password=test_password)
+
+    def test_upload_photo(self):
+        """ This test checks that the view 'captura:upload_photo', allows
+        the upload of a new family photo.
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = settings.BASE_DIR + static('test_files/cocina.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            response = self.client.post(url, form)
+            self.assertEqual(302, response.status_code)
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+            self.assertEqual('prueba', image.file_name)
+            image_url = image.upload.url[1:]
+            os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
+
+    def test_upload_photo_bad_request(self):
+        """ This test checks that the view 'captura:upload_photo',
+        raises a HttpResponseBadRequest when accessed via a non POST
+        method
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)

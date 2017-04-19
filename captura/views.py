@@ -15,6 +15,7 @@ from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm, \
                                            RecoverEstudioForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
+from estudios_socioeconomicos.forms import FotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
 from familias.models import Familia, Integrante
@@ -612,6 +613,41 @@ def list_transacciones(request, id_familia):
                                                                   'familia': context['familia']})
     context['create_ingreso_form'] = IngresoForm(id_familia)
     return render(request, 'captura/dashboard_transacciones.html', context)
+
+
+@login_required
+@user_passes_test(is_capturista)
+def upload_photo(request, id_estudio):
+    """ Allows a capturista to upload a new photo of the house of
+    the family, via a POST request.
+    """
+    if request.POST:
+        context = {}
+        estudio = get_object_or_404(Estudio, pk=id_estudio)
+        form = FotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('captura:list_photos', id_estudio=estudio.pk)
+        else:
+            context['fotos'] = Foto.objects.filter(estudio=estudio)
+            context['form'] = form
+            context['familia'] = estudio.familia
+            return render(request, 'captura/list_imagenes.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def list_photos(request, id_estudio):
+    """ This view allows a capturista to see all the photos of the house of a
+    specific family.
+    """
+    context = {}
+    estudio = get_object_or_404(Estudio, pk=id_estudio)
+    context['fotos'] = Foto.objects.filter(estudio=estudio)
+    context['form'] = FotoForm(initial={'estudio': estudio.pk})
+    context['familia'] = estudio.familia
+    return render(request, 'captura/list_imagenes.html', context)
 
 
 class APIQuestionsInformation(generics.ListAPIView):
