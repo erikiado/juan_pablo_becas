@@ -594,11 +594,17 @@ def upload_photo(request, id_estudio):
     the family, via a POST request.
     """
     if request.POST:
+        context = {}
         estudio = get_object_or_404(Estudio, pk=id_estudio)
         form = FotoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-        return redirect('captura:list_photos', id_estudio=estudio.pk)
+            return redirect('captura:list_photos', id_estudio=estudio.pk)
+        else:
+            context['fotos'] = Foto.objects.filter(estudio=estudio)
+            context['form'] = form
+            context['familia'] = estudio.familia
+            return render(request, 'captura/list_imagenes.html', context)
     return HttpResponseBadRequest()
 
 

@@ -656,3 +656,20 @@ class TestViewsFotos(StaticLiveServerTestCase):
         self.assertEqual('prueba', image.file_name)
         image_url = image.upload.url[1:]
         os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
+
+    def test_check_error_messages(self):
+        url = reverse('captura:list_photos',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        number_of_images_before = Foto.objects.filter(estudio=self.estudio1).count()
+        static_url = static('test_files/fake.jpeg')[1:]
+        test_image = os.path.join(settings.BASE_DIR, static_url)
+        self.browser.visit(self.live_server_url + url)
+        self.browser.find_by_id('btn_modal_upload_photo').click()
+        time.sleep(1)
+        self.browser.fill('file_name', 'prueba')
+        self.browser.fill('upload', test_image)
+        self.browser.find_by_id('btn_send_create_photo').click()
+        time.sleep(1)
+        self.assertTrue(self.browser.is_text_present('Upload a valid image'))
+        number_of_images_after = Foto.objects.filter(estudio=self.estudio1).count()
+        self.assertEqual(number_of_images_before, number_of_images_after)

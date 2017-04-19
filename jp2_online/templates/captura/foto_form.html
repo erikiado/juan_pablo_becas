@@ -8,16 +8,25 @@
           <h4 class="modal-title">Subir Imágen</h4>
         </div>
         <div class="modal-body">
-          {{ form.errors }}
+
           {% for field in form.visible_fields %}
           <div class="form-group">
+            {% if field.errors %}
+              <div class="alert alert-danger text-center">
+                {% for error in field.errors %}
+                  <strong>{{ error|escape }}</strong>
+                {% endfor %}
+              </div>
+            {% endif %}
             <div class="col-sm-offset-1 col-sm-3">
-              {{ field.errors }}
               <strong>{{field.label}}:</strong>
             </div>
             <div class="col-sm-offset-1 col-sm-7">
               {{ field }}
             </div>
+            <br>
+            <br>
+            <hr>
           </div>
           {% endfor %}
           {% for field in form.hidden_fields %}
