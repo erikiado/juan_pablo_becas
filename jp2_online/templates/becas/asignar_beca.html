@@ -2,36 +2,63 @@
 {% load staticfiles %}
 
 {% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
 
-  <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <div class="x_panel">
+          <div class="x_title">
+            <h3>Asignación de Beca <small>Familia {{ estudio }}</small></h3>
+            <div class="clearfix"></div>
+          </div>
 
-        <div class="x_title">
-          <h2>Asignación de Beca</h2>
-          <div class="clearfix"></div>
+          <p class="text-muted font-13 m-b-30">
+            Condensado económico y fotos vivienda
+          </p>
+
+          <div class="row">
+
+            {% include 'captura/tabla_economic_status.html' %}
+            {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
+          </div> 
+
+          <div class="x_title">
+            <h2>Beca calculada</h2>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="row">
+            <form action="{% url 'becas:asignar_beca' estudio.pk %}" method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="form-group col-md-4 col-sm-12">
+                  <label for="{{ form.tabulador.id_for_label }}">Tabulador</label>
+                  {{ form.tabulador }}
+                </div>
+
+                <div class="form-group col-md-4 col-sm-12">
+                  <label for="{{ form.porcentaje.id_for_label }}">Porcentaje asignado</label>
+                  {{ form.porcentaje }}
+                </div>
+
+                <div class="form-group col-md-4 col-sm-12">
+                  <label for="monto_beca">Aportación a Pagar</label>
+                  <p>
+                    1500$
+                  </p>
+                </div>
+              </div>
+              
+              <div class="ln_solid"></div>
+              <div class="form-group">
+                <center>
+                  <button type="submit" class="btn btn-primary" id="btn_asignar_beca">Asignar Beca</button>
+                </center>
+              </div>
+            </form>
+          </div>
+
         </div>
-
-        <h3>Familia {{ estudio }}</h3>
-        <ul class="list-unstyled user_data">
-          <li>
-            Localidad {{ estudio.familia.get_localidad_display }}
-          </li>
-
-          <li>
-            Capturista:
-            {{ estudio.capturista.user.first_name }}
-            {{ estudio.capturista.user.last_name }}
-          </li>
-
-
-          <li>
-            Número de hijos diferentes papas: {{ estudio.familia.numero_hijos_diferentes_papas }}
-          </li>
-        </ul>
-
-        {% include 'captura/tabla_economic_status.html' %}
-        {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
       </div>
     </div>
   </div>
