@@ -97,6 +97,10 @@
                     <button id="previous_section_button" type="submit" class="btn btn-success">
                         Anterior
                     </button>
+               {% else %}
+                    <a href="{% url 'captura:list_photos' estudio.id %}" id="previous_section_button" type="submit" class="btn btn-success">
+                        Sección Vivienda
+                    </a>
                {% endif %}
             </div>
 

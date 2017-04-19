@@ -30,7 +30,7 @@
                   {% csrf_token %}
                   <input value="revision" class="hidden" name="action" type="text">
                   
-                  <button class="btn btn-success">
+                  <button id="submit_estudio" class="btn btn-success">
                     <i class="fa fa-edit m-right-xs"></i>
                     Subir a Revisión
                   </button>
@@ -41,6 +41,12 @@
             </div>        
           </div>
         </div>
+
+        <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 8%}" class="btn btn-default">
+          Cuestionario
+        </a>
+
       </div>
     </div>
+
 {% endblock %}

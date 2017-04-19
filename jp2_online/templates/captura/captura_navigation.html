@@ -8,7 +8,7 @@
         <a href="{% url 'captura:familia' familia.id %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_familia" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats">
               
               <div class="icon">
@@ -30,7 +30,7 @@
         <a href="{% url 'captura:list_integrantes' familia.id %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_integrantes" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
               <div class="icon">
@@ -52,7 +52,7 @@
         <a href="{% url 'captura:list_transacciones' familia.id %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_transacciones" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
               <div class="icon">
@@ -71,12 +71,12 @@
 
     {% if not create %}
       {% if estudio %}
-        <a href="{% url 'captura:list_photos' estudio.estudio.id %}"> 
+        <a href="{% url 'captura:list_photos' estudio.id %}"> 
       {% else %}
         <a href="{% url 'captura:list_photos' familia.estudio.id %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_fotos" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
               <div class="icon">
@@ -98,7 +98,7 @@
         <a href="{% url 'captura:contestar_estudio' familia.estudio.id  1 %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_cuestionario" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
               <div class="icon">
@@ -140,7 +140,7 @@
         <a href="{% url 'captura:save_upload_study' familia.estudio.id %}">
       {% endif %}
     {% endif %}
-        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+        <div id="navigation_subir" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               
               <div class="icon">

@@ -192,6 +192,9 @@ def capture_study(request, id_estudio, numero_seccion):
             if form.is_valid():
                 form.save()
 
+        if request.POST.get('next') == 'next' and seccion.numero == 8:
+            return redirect(reverse('captura:save_upload_study', kwargs={'id_estudio': id_estudio}))
+
         next_section = SECTIONS_FLOW.get(seccion.numero).get(request.POST.get('next', ''))
 
         if next_section:  # if anybody messes with JS it will return None
