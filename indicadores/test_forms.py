@@ -1,6 +1,8 @@
+from django.forms import ValidationError
 from django.test import TestCase
 from familias.models import Familia, Integrante, Tutor
-from .forms import IngresoForm
+from .forms import IngresoForm, DeleteTransaccionForm
+from .models import Periodo, Transaccion
 
 
 class TestFormsTransacciones(TestCase):
@@ -56,6 +58,17 @@ class TestFormsTransacciones(TestCase):
         self.tutor2 = Tutor.objects.create(integrante=self.integrante2,
                                            relacion='padre')
 
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+
+        self.transaccion1 = Transaccion.objects.create(familia=self.familia1,
+                                                       monto=30,
+                                                       periodicidad=self.periodicidad1,
+                                                       observacion='Cultivo',
+                                                       es_ingreso=False)
+        self.transaccion1.save()
+
     def test_ingreso_tutor_queryset(self):
         """ Test that the select tutor option only includes tutores that are
         part of the family an ingreso is going to be added to.
@@ -69,3 +82,24 @@ class TestFormsTransacciones(TestCase):
         all_tutores = Tutor.objects.all()
         self.assertEqual(list(tutores_familia), list(tutores_form_queryset))
         self.assertNotEqual(list(all_tutores), list(tutores_familia))
+
+    def test_delete_transaccion_form(self):
+        """ Test that the delete transaccion form, soft deltes the transaccion and the value of
+        the transaccion is reported as 0.
+        """
+        id_transaccion = self.transaccion1.pk
+        form = DeleteTransaccionForm({'id_transaccion': id_transaccion})
+        self.assertTrue(self.transaccion1.activo)
+        self.assertTrue(form.is_valid())
+        form.save()
+        transaccion = Transaccion.objects.get(pk=self.transaccion1.pk)
+        self.assertFalse(transaccion.activo)
+
+    def test_invalid_transaccion(self):
+        """ Test that the form is invalid if provided an invalid id.
+
+        """
+        form = DeleteTransaccionForm({'id_transaccion': -1})
+        self.assertFalse(form.is_valid())
+        with self.assertRaises(ValidationError):
+            form.clean()

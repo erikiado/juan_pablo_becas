@@ -23,7 +23,7 @@ from familias.utils import total_egresos_familia, total_ingresos_familia, \
 from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
 from indicadores.models import Transaccion, Ingreso, Oficio
-from indicadores.forms import TransaccionForm, IngresoForm
+from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section
 
 
@@ -555,12 +555,36 @@ def update_transaccion_modal(request, id_transaccion):
 
 @login_required
 @user_passes_test(is_capturista)
-def delete_transaccion(request):
+def get_form_delete_transaccion(request, id_transaccion):
+    """ View that is called via ajax to render the modal
+    to confirm the deletion of a Transaccion.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        transaccion = get_object_or_404(Transaccion, pk=id_transaccion)
+        form = DeleteTransaccionForm(initial={'id_transaccion': transaccion.pk})
+        context = {
+            'transaccion': transaccion,
+            'delete_form': form
+        }
+        return render(request, 'captura/transaccion_delete_modal.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(is_capturista)
+def delete_transaccion(request, id_transaccion):
     """ This view soft deletes a transaccion from the family, so it can be
     ignored in caclulations about their current economic status, but a history
     can be still be retrieved.
     """
-    pass
+    if request.method == 'POST':
+        form = DeleteTransaccionForm(request.POST)
+        transaccion = get_object_or_404(Transaccion, pk=id_transaccion)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:list_transacciones', id_familia=transaccion.familia.pk)
+    return HttpResponseBadRequest()
 
 
 @login_required
@@ -575,9 +599,13 @@ def list_transacciones(request, id_familia):
     context['total_egresos_familia'] = total_egresos_familia(id_familia)
     context['total_ingresos_familia'] = total_ingresos_familia(id_familia)
     context['total_neto_familia'] = total_neto_familia(id_familia)
-    transacciones = Transaccion.objects.filter(es_ingreso=True, familia=context['familia'])
+    transacciones = Transaccion.objects.filter(es_ingreso=True,
+                                               familia=context['familia'],
+                                               activo=True)
     context['ingresos'] = Ingreso.objects.filter(transaccion__in=transacciones)
-    context['egresos'] = Transaccion.objects.filter(es_ingreso=False, familia=context['familia'])
+    context['egresos'] = Transaccion.objects.filter(es_ingreso=False,
+                                                    familia=context['familia'],
+                                                    activo=True)
     context['create_egreso_form'] = TransaccionForm(initial={'es_ingreso': False,
                                                              'familia': context['familia']})
     context['create_transaccion_form'] = TransaccionForm(initial={'es_ingreso': True,
