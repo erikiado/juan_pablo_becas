@@ -1,7 +1,5 @@
 from django import template
 
-from estudios_socioeconomicos.models import Estudio
-from perfiles_usuario.utils import is_capturista, is_administrador
 from captura.utils import user_can_modify_study
 
 register = template.Library()
@@ -26,4 +24,3 @@ def can_modify_study(user, study):
     """
     """
     return user_can_modify_study(user, study)
-

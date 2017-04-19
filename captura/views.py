@@ -376,10 +376,10 @@ def edit_familia(request, id_familia):
     """
     form = None
     instance = get_object_or_404(Familia, pk=id_familia)
-    
+
     if not user_can_modify_study(request.user, instance.estudio):
         raise Http404()
-    
+
     if request.method == 'POST':
         form = FamiliaForm(request.POST, instance=instance)
         if form.is_valid():
@@ -610,7 +610,7 @@ def list_transacciones(request, id_familia):
     """
     context = {}
     context['familia'] = get_object_or_404(Familia, pk=id_familia)
-    
+
     if not user_can_modify_study(request.user, context['familia'].estudio):
         raise Http404()
 
@@ -631,6 +631,7 @@ def list_transacciones(request, id_familia):
     context['create_ingreso_form'] = IngresoForm(id_familia)
     return render(request, 'captura/dashboard_transacciones.html', context)
 
+
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def save_upload_study(request, id_estudio):
@@ -641,13 +642,12 @@ def save_upload_study(request, id_estudio):
 
     if is_capturista(request.user):
         get_object_or_404(Estudio, pk=id_estudio, capturista=request.user.capturista)
-    
+
     if request.method == 'POST':
 
-        if is_capturista(request.user): #Capturista can only save in revision mode
+        if is_capturista(request.user):  # Capturista can only save in revision mode
             estudio.status = Estudio.REVISION
             estudio.save()
-            #MESSAGE
 
             return redirect('captura:estudios')
 

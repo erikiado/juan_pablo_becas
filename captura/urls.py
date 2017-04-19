@@ -69,14 +69,12 @@ urlpatterns = [
         name='estudio_recover_modal'),
     url(r'recuperar-estudio/confirmar/', estudio_recover,
         name='estudio_recover'),
-<<<<<<< 600fdf73526ca100d4bcb65180428734c32b55a1
     url(r'^familia/fotos/(?P<id_estudio>[0-9]+)',
         list_photos,
         name='list_photos'),
     url(r'^upload-photo/(?P<id_estudio>[0-9]+)',
         upload_photo,
         name='upload_photo'),
-=======
-    url(r'guardar-subir-estudio/(?P<id_estudio>[0-9]+)', save_upload_study, name='save_upload_study'),
->>>>>>> Section to upload study
+    url(r'guardar-subir-estudio/(?P<id_estudio>[0-9]+)', save_upload_study,
+        name='save_upload_study'),
 ]
