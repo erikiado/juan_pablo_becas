@@ -763,4 +763,8 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         time.sleep(.1)
 
         self.create_transactions(1000, 'Ninguna')
-        time.sleep(.1)
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        self.browser.find_by_id('next_fotos').click()
+        
+        
+

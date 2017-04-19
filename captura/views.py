@@ -655,7 +655,6 @@ def save_upload_study(request, id_estudio):
     context['estudio'] = estudio
     return render(request, 'captura/save_upload_study.html', context)
 
-<<<<<<< 476351b9f07255fad63746c217d282fb7c7bf984
 @login_required
 @user_passes_test(is_capturista)
 def upload_photo(request, id_estudio):
@@ -690,8 +689,6 @@ def list_photos(request, id_estudio):
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
 
-=======
->>>>>>> views permissions son
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.
