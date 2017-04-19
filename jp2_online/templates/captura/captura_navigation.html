@@ -1,8 +1,6 @@
 
 <div class="row">
     
-
-    
     {% if not create %}
       {% if estudio %}
         <a href="{% url 'captura:familia' estudio.familia.id %}"> 
@@ -84,7 +82,7 @@
             </div>
         </div>
     {% if not create %} </a> {% endif %}
-
+    
     {% if not create %}
       {% if estudio %}
         <a href="{% url 'captura:contestar_estudio' estudio.id  1%}"> 
@@ -102,12 +100,37 @@
               <div class="count">5</div>
 
               <h3>Preguntas</h3>
-              <p></p>
+              <p>
+                {% if estudio %}
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  1 %}">1</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  2 %}">2</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  3 %}">3</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  4 %}">4</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  6 %}">6</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  7 %}">7</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  8 %}">8</a>
+                {% else %}
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  1 %}">1</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  2 %}">2</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  3 %}">3</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  4 %}">4</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  6 %}">6</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  7 %}">7</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  8 %}">8</a>
+                {% endif %}
+                
+              </p>
             </div>
         </div>
     {% if not create %} </a> {% endif %}
 
-    {% if not create %} <a href=""> {% endif %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:save_upload_study' estudio.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:save_upload_study' familia.estudio.id %}">
+      {% endif %}
+    {% endif %}
         <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
             <div class="tile-stats {% if create %} inactive {% endif %}">
               

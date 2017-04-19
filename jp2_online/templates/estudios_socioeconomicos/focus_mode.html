@@ -19,7 +19,7 @@
               <h3>Familia {{ estudio }}</h3>
 
               <!-- Verificar el status del estudio -->        
-              <a class="btn btn-success pull-right">
+              <a href="{% url 'captura:familia' estudio.familia.id %}" class="btn btn-success pull-right">
                 <i class="fa fa-edit m-right-xs"></i>
                 Editar Estudio
               </a>
