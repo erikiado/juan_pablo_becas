@@ -5,6 +5,8 @@ from familias.utils import total_egresos_familia, total_ingresos_familia, total_
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio, Foto
 
+from .forms import BecaForm
+
 
 @login_required
 def estudios(request):
@@ -34,6 +36,7 @@ def asignar_beca(request, id_estudio):
         'total_egresos_familia': total_egresos_familia(estudio.familia.id),
         'total_ingresos_familia': total_ingresos_familia(estudio.familia.id),
         'total_neto_familia': total_neto_familia(estudio.familia.id),
-        'fotos': fotos
+        'fotos': fotos,
+        'form': BecaForm()
     }
     return render(request, 'becas/asignar_beca.html', context)
