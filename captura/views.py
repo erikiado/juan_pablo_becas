@@ -382,9 +382,8 @@ def edit_familia(request, id_familia):
     form = None
     instance = get_object_or_404(Familia, pk=id_familia)
 
-    if hasattr(instance, 'estudio'):
-        if not user_can_modify_study(request.user, instance.estudio):
-            raise Http404()
+    if not user_can_modify_study(request.user, instance.estudio):
+        raise Http404()
 
     if request.method == 'POST':
         form = FamiliaForm(request.POST, instance=instance)
@@ -414,9 +413,8 @@ def list_integrantes(request, id_familia):
     integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
 
-    if hasattr(familia, 'estudio'):
-        if not user_can_modify_study(request.user, familia.estudio):
-            raise Http404()
+    if not user_can_modify_study(request.user, familia.estudio):
+        raise Http404()
 
     context['integrantes'] = integrantes
     context['familia'] = familia

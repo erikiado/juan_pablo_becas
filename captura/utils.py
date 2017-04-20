@@ -21,7 +21,7 @@ def user_can_modify_study(user, estudio):
     """ Checks whether a user can modify a given study. A capturista
         user can only modify studies that are in borrador or rechazado
         status, at the same time. A administrador can only modify studies
-        that are not in this status.
+        that are not in these status.
 
         Returns
         -------

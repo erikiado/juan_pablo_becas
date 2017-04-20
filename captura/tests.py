@@ -401,6 +401,11 @@ class TestViewsFamilia(TestCase):
         familia = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
                                          estado_civil=estado_civil_inicial,
                                          localidad=localidad_inicial)
+
+        estudio = Estudio.objects.create(
+          capturista=self.capturista,
+          familia=familia)
+
         response = self.client.post(reverse('captura:familia', kwargs={'id_familia': familia.id}),
                                     {'numero_hijos_diferentes_papas': numero_hijos_final,
                                      'estado_civil': estado_civil_final,
