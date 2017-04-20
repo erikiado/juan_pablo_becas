@@ -33,12 +33,15 @@ def asignar_beca(request, id_estudio):
     """
     estudio = get_object_or_404(Estudio, pk=id_estudio)
     fotos = Foto.objects.filter(estudio=id_estudio)
+    integrantes = Integrante.objects.filter(familia__pk=estudio.familia.pk, activo=True)
+    integrantes = filter(lambda x: hasattr(x, 'alumno_integrante'), integrantes)
     context = {
         'estudio': estudio,
         'total_egresos_familia': total_egresos_familia(estudio.familia.id),
         'total_ingresos_familia': total_ingresos_familia(estudio.familia.id),
         'total_neto_familia': total_neto_familia(estudio.familia.id),
-        'fotos': fotos
+        'fotos': fotos,
+        'integrantes': integrantes
     }
     if request.method == 'GET':
         context['form'] = BecaForm()
@@ -46,12 +49,11 @@ def asignar_beca(request, id_estudio):
     elif request.method == 'POST':
         form = BecaForm(request.POST)
         if form.is_valid():
-            percentage = float(form.cleaned_data['porcentaje']) / 100.
+            percentage = form.cleaned_data['porcentaje']
             # create scolarships for active students
-            integrantes = Integrante.objects.filter(familia__pk=estudio.familia.pk, activo=True)
-            for integrante in filter(lambda x: hasattr(x, 'alumno_integrante'), integrantes):
+            for integrante in integrantes:
                 Beca.objects.create(alumno=integrante.alumno_integrante,
-                                    monto=1500. - (1500. * percentage))
+                                    porcentaje=percentage)
             return redirect('becas:asignar_beca', id_estudio=id_estudio)
         else:
             context['form'] = form

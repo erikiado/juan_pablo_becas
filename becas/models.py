@@ -17,4 +17,4 @@ class Beca(models.Model):
     fecha_de_asignacion = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
     def __str__(self):
-        return '{}% mensual'.format(self.porcentaje)
+        return '{}%'.format(self.porcentaje)
