@@ -24,11 +24,11 @@ class TestBeca(TestCase):
                                                fecha_de_nacimiento='1943-03-19')
         alumno = Alumno.objects.create(integrante=integrante, escuela=escuela)
         Beca.objects.create(alumno=alumno,
-                            monto=decimal.Decimal('250'))
+                            porcentaje='10')
 
     def test_str(self):
         """ Checks that this method __str__ method returns the name
         of the object.
         """
-        beca = Beca.objects.get(monto=decimal.Decimal('250.0'))
-        self.assertEqual(str(beca), '$250.00 mensuales')
+        beca = Beca.objects.all()[0]
+        self.assertEqual(str(beca), '10% mensual')
