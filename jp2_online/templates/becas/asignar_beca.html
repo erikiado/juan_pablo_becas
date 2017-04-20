@@ -32,20 +32,27 @@
               {% csrf_token %}
               <div class="row">
                 <div class="form-group col-md-4 col-sm-12">
-                  <label for="{{ form.tabulador.id_for_label }}">Tabulador</label>
+                  <center>
+                    <label for="{{ form.tabulador.id_for_label }}">Tabulador</label>
+                  </center>
                   {{ form.tabulador }}
+                  {{ form.tabulador.errors }}
                 </div>
 
                 <div class="form-group col-md-4 col-sm-12">
-                  <label for="{{ form.porcentaje.id_for_label }}">Porcentaje asignado</label>
+                  <center>
+                    <label for="{{ form.porcentaje.id_for_label }}">Porcentaje asignado</label>
+                  </center>
                   {{ form.porcentaje }}
+                  {{ form.porcentaje.errors }}
                 </div>
 
                 <div class="form-group col-md-4 col-sm-12">
-                  <label for="monto_beca">Aportación a Pagar</label>
-                  <p id="id_monto">
-                    1500$
-                  </p>
+                  <center>
+                    <label for="monto_beca">Aportación a Pagar</label>
+                    <h2 id="id_monto">
+                    </h2>
+                  </center>
                 </div>
               </div>
               
@@ -66,5 +73,17 @@
 {% endblock %}
 
 {% block extra_page_js %}
-   <script type="text/javascript" src="{% static 'js/becas/asignar_beca.js' %}"></script>
+  <script>
+    $(document).ready(function() {
+      {% if form.errors %}
+        swal({
+              title: 'Error!',
+              text: 'El porcentaje o el indicador están incorrectos.', 
+              type: 'error',
+              confirmButtonText: 'OK'
+            });
+      {% endif %}
+    });
+  </script>
+  <script type="text/javascript" src="{% static 'js/becas/asignar_beca.js' %}"></script>
 {% endblock %}
