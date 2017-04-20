@@ -20,9 +20,10 @@
               </div>
               <h3>Familia {{ estudio }}</h3>
             
-              <p>
+              <p class="center">
                   Hasta este punto el estudio está guardado como 
-                  borrador. Una vez subido a revisión no podrás
+                  borrador.
+                  Una vez subido a revisión no podrás
                   hacer modificaciones al estudio.
               </p>
               
@@ -30,7 +31,7 @@
                   {% csrf_token %}
                   <input value="revision" class="hidden" name="action" type="text">
                   
-                  <button id="submit_estudio" class="btn btn-success">
+                  <button id="submit_estudio" class="btn btn-success center">
                     <i class="fa fa-edit m-right-xs"></i>
                     Subir a Revisión
                   </button>
@@ -42,11 +43,18 @@
           </div>
         </div>
 
-        <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 8%}" class="btn btn-danger">
+        <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 8%}" class="btn btn-danger center">
           <i class="glyphicon glyphicon-arrow-left"></i>  Cuestionario
         </a>
 
       </div>
     </div>
+
+    <style>
+      .center {
+        display: table;
+        margin: 0 auto;
+      }
+    </style>
 
 {% endblock %}
