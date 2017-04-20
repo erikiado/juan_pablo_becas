@@ -236,7 +236,7 @@ def capturista_dashboard(request):
 
 
 @login_required
-@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+@user_passes_test(is_capturista)
 def create_estudio(request):
     """ This view creates the family, and estudio entities that are
     required for the creation and fullfillment of every piece of functionality
