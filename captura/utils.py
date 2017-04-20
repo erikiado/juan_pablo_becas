@@ -18,7 +18,16 @@ SECTIONS_FLOW = {
 
 
 def user_can_modify_study(user, estudio):
-    """     
+    """ Checks whether a user can modify a given study. A capturista
+        user can only modify studies that are in borrador or rechazado
+        status, at the same time. A administrador can only modify studies
+        that are not in this status.
+
+        Returns
+        -------
+            True if user can modify.
+
+            False if user can not modify.
     """
     if is_capturista(user):
         if estudio.status == Estudio.BORRADOR:

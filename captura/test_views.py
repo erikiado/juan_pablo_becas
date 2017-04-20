@@ -171,7 +171,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         number_answers = Respuesta.objects.all().count()
 
         self.browser.find_by_css('.delete-answer').first.click()
-        self.assertNotEqual(number_answers, Respuesta.objects.all().count())        
+        self.assertNotEqual(number_answers, Respuesta.objects.all().count())
 
     def test_submitting_answers(self):
         """ Test that when a user submits his answers and moves on to the
@@ -228,7 +228,6 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
                     answer_input = self.browser.find_by_id(
                         'id_respuesta-' + str(respuesta.id) + '-respuesta').first
                     self.assertEqual(answer_input.value, random_texts[respuesta.id])
-
 
     def test_submitting_answer_with_dynamic_answers(self):
         """ Test that answers generated dynamically are being saved after submission.
@@ -741,21 +740,24 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.browser.select('localidad', 'poblado_jurica')
         self.browser.find_by_id('submit_familia').click()
 
-        TestViewsFamiliaLive.send_create_integrante_form(self,
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
             nombres='Juan',
             apellidos='Perez',
             telefono='4424567899',
             correo='abc@abc.com')
         self.browser.find_by_css('.swal2-confirm').first.click()
 
-        TestViewsFamiliaLive.send_create_integrante_form(self,
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
             nombres='Hector',
             apellidos='Perez',
             telefono='222222222',
             correo='efg@abc.com')
         self.browser.find_by_css('.swal2-confirm').first.click()
 
-        TestViewsFamiliaLive.send_create_integrante_form(self,
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
             nombres='Laura',
             apellidos='Perez',
             telefono='4424567899',
@@ -768,7 +770,7 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.create_transactions(1000, 'Ninguna')
         self.browser.find_by_css('.swal2-confirm').first.click()
         self.browser.find_by_id('next_fotos').click()
-        
+
         static_url = static('test_files/cocina.jpeg')[1:]
         test_image = os.path.join(settings.BASE_DIR, static_url)
         self.browser.find_by_id('btn_modal_upload_photo').click()
@@ -783,7 +785,6 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         image_url = image.upload.url[1:]
         os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
 
-
         self.browser.find_by_id('next_preguntas').click()  # Preguntas
 
         secciones = Seccion.objects.all().order_by('numero')
@@ -793,27 +794,29 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
 
             subsecciones = Subseccion.objects.filter(seccion=seccion)
             preguntas = Pregunta.objects.filter(subseccion__in=subsecciones)
-            
+
             for pregunta in preguntas:
-                
+
                 respuestas = Respuesta.objects.filter(pregunta=pregunta)
-                
+
                 for respuesta in respuestas:
                     num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
 
                     if num_opciones > 0:
 
                         answer_input = self.browser.find_by_id(
-                            'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+                            'id_respuesta-' + str(respuesta.id)
+                            + '-eleccion_' + str(num_opciones-1))
 
                         answer_input.check()
                     else:
-                        new_text = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
-                        
+                        new_text = ''.join(
+                            random.choice(string.ascii_uppercase) for _ in range(12))
+
                         answer_input = self.browser.find_by_id(
                             'id_respuesta-' + str(respuesta.id) + '-respuesta').first
                         answer_input.fill(new_text)
-                        
+
                         random_texts[respuesta.id] = new_text
 
             self.browser.find_by_id('next_section_button').first.click()
@@ -824,7 +827,7 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         secciones = Seccion.objects.all().order_by('-numero')
 
         for seccion in secciones:
-            
+
             subsecciones = Subseccion.objects.filter(seccion=seccion)
             preguntas = Pregunta.objects.filter(subseccion__in=subsecciones)
 
@@ -836,7 +839,8 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
 
                     if num_opciones > 0:
                         answer_input = self.browser.find_by_id(
-                            'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+                            'id_respuesta-' + str(respuesta.id)
+                            + '-eleccion_' + str(num_opciones-1))
 
                         self.assertTrue(answer_input.checked)
                     else:
@@ -851,11 +855,11 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.browser.find_by_id('navigation_familia').click()
         hijos_bast = self.browser.find_by_id('id_numero_hijos_diferentes_papas').first.value
         self.assertEqual(hijos_bast, '2')
-        
+
         self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(4)
         self.browser.find_by_id('submit_familia').click()
         time.sleep(.1)
-        
+
         self.browser.find_by_id('previous_familia').click()
         hijos_bast = self.browser.find_by_id('id_numero_hijos_diferentes_papas').first.value
         self.assertEqual(hijos_bast, '4')
@@ -879,7 +883,7 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.browser.find_by_css('.ui-datepicker-today').first.click()
         self.browser.select('rol', 'tutor')
         self.browser.select('relacion', 'padre')
-        
+
         self.browser.find_by_id('btn_send_create_user').click()
         time.sleep(.1)
         self.browser.find_by_css('.swal2-confirm').first.click()
@@ -902,8 +906,6 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         time.sleep(.1)
         self.browser.find_by_css('.swal2-confirm').first.click()
         # END CREATE MOTHER
-
-        
 
         # CREATE SON
         self.browser.find_by_id('btn_modal_create_integrante').click()
@@ -929,7 +931,7 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('junior'))
 
         self.browser.find_by_id('navigation_transacciones').click()
-        time.sleep(.1)        
+        time.sleep(.1)
         estudio = Estudio.objects.all().first()
         desired_url = self.live_server_url + reverse(
             'captura:list_transacciones',
@@ -970,5 +972,3 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('Editar'))
         estudio = Estudio.objects.all().first()
         self.assertEqual(estudio.status, Estudio.REVISION)
-
-

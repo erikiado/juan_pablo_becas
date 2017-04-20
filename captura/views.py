@@ -193,7 +193,9 @@ def capture_study(request, id_estudio, numero_seccion):
                 form.save()
 
         if request.POST.get('next') == 'next' and seccion.numero == 8:
-            return redirect(reverse('captura:save_upload_study', kwargs={'id_estudio': id_estudio}))
+            return redirect(reverse(
+                'captura:save_upload_study',
+                kwargs={'id_estudio': id_estudio}))
 
         next_section = SECTIONS_FLOW.get(seccion.numero).get(request.POST.get('next', ''))
 
@@ -638,14 +640,21 @@ def list_transacciones(request, id_familia):
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def save_upload_study(request, id_estudio):
-    """
-        @TODO: Check study is actually ready for upload
+    """ Final view of where a capturista decides whether to upload a study for revision.
+
+        This view allows a capturista user to upload a study for revision.
+        After uploading, the capturista is not allowed to modify the study.
+
+        @TODO: Check study is actually ready for upload?
     """
     context = {}
     estudio = get_object_or_404(Estudio, pk=id_estudio)
 
     if is_capturista(request.user):
         get_object_or_404(Estudio, pk=id_estudio, capturista=request.user.capturista)
+
+    if not user_can_modify_study(request.user, estudio):
+        raise Http404()
 
     if request.method == 'POST':
 
@@ -657,6 +666,7 @@ def save_upload_study(request, id_estudio):
 
     context['estudio'] = estudio
     return render(request, 'captura/save_upload_study.html', context)
+
 
 @login_required
 @user_passes_test(is_capturista)
