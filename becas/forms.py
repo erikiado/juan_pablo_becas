@@ -2,6 +2,11 @@ from django import forms
 
 
 class BecaForm(forms.Form):
+    """ This form is used to assign a scolarship
+    to a set of students. It just has an option for
+    the tabulador used, and a list of possible percentages
+    of scolarship.
+    """
     CATORCE = '14_percent'
     VEINTE = '20_percent'
     OPCIONES_TABULADOR = (
@@ -10,7 +15,7 @@ class BecaForm(forms.Form):
     )
 
     OPCIONES_PORCENTAJE = [
-        ('{}'.format(x), '{}%'.format(x)) for x in range(1, 101)
+        (x, x + '%') for x in map(lambda x: str(x), range(1, 101))
     ]
 
     tabulador = forms.ChoiceField(choices=OPCIONES_TABULADOR,

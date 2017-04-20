@@ -8,6 +8,9 @@ from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio
 from familias.models import Familia, Integrante, Alumno
 
+from .models import Beca
+from .forms import BecaForm
+
 
 class TestViewsBecas(TestCase):
     """Unit test suite for testing the views in the app: administracion.
@@ -77,3 +80,99 @@ class TestViewsBecas(TestCase):
         response = self.client.get(reverse('becas:asignar_beca',
                                            kwargs={'id_estudio': 101010}))
         self.assertEqual(404, response.status_code)
+
+    def test_asignar_becas_correct(self):
+        """ Test that a beca is assigned if the data is correct.
+
+        """
+        data = {
+            'tabulador': BecaForm.CATORCE,
+            'porcentaje': '20'
+        }
+        response = self.client.post(reverse('becas:asignar_beca',
+                                            kwargs={'id_estudio': self.estudio.id}),
+                                    data=data)
+        self.assertRedirects(response, reverse('becas:asignar_beca',
+                                               kwargs={'id_estudio': self.estudio.id}))
+        beca = Beca.objects.filter(alumno=self.alumno)
+        self.assertEqual(len(beca), 1)
+        self.assertEqual(beca[0].monto, 1500. - 1500.*.2)
+
+    def test_asignar_beca_multiple(self):
+        """ Test that a beca is correctly assigned to more than one
+        student if the family has them.
+        """
+        alumnos = []
+        for _ in range(10):
+            integrante = Integrante.objects.create(
+                            familia=self.familia,
+                            nombres='Elver',
+                            apellidos='Ga',
+                            nivel_estudios='doctorado',
+                            fecha_de_nacimiento='1996-02-26')
+            alumno = Alumno.objects.create(
+                            integrante=integrante,
+                            escuela=self.escuela)
+            alumnos.append(alumno)
+
+        data = {
+            'tabulador': BecaForm.CATORCE,
+            'porcentaje': '33'
+        }
+        response = self.client.post(reverse('becas:asignar_beca',
+                                            kwargs={'id_estudio': self.estudio.id}),
+                                    data=data)
+        self.assertRedirects(response, reverse('becas:asignar_beca',
+                                               kwargs={'id_estudio': self.estudio.id}))
+
+        for alumno in alumnos + [self.alumno]:
+            beca = Beca.objects.filter(alumno=alumno)
+            self.assertEqual(len(beca), 1)
+            self.assertEqual(beca[0].monto, 1500. - 1500.*.33)
+
+    def test_asignar_beca_alumnos_activos(self):
+        """ Tests that we only assign scolarships to active students.
+
+        """
+        integrante = Integrante.objects.create(
+            familia=self.familia,
+            nombres='Elver',
+            apellidos='Ga',
+            nivel_estudios='doctorado',
+            fecha_de_nacimiento='1996-02-26',
+            activo=False)
+
+        alumno = Alumno.objects.create(
+            integrante=integrante,
+            escuela=self.escuela,
+            activo=False)
+
+        data = {
+            'tabulador': BecaForm.CATORCE,
+            'porcentaje': '20'
+        }
+        response = self.client.post(reverse('becas:asignar_beca',
+                                            kwargs={'id_estudio': self.estudio.id}),
+                                    data=data)
+        self.assertRedirects(response, reverse('becas:asignar_beca',
+                                               kwargs={'id_estudio': self.estudio.id}))
+        beca = Beca.objects.filter(alumno=self.alumno)
+        self.assertEqual(len(beca), 1)
+        self.assertEqual(beca[0].monto, 1500. - 1500.*.2)
+        beca = Beca.objects.filter(alumno=alumno)
+        self.assertEqual(len(beca), 0)
+
+    def test_invalid_data(self):
+        """ Test that if the data sent is incorrect the scolarship
+        is not saved.
+        """
+        data = {
+            'tabulador': BecaForm.CATORCE,
+            'porcentaje': '-10101010101'
+        }
+        response = self.client.post(reverse('becas:asignar_beca',
+                                            kwargs={'id_estudio': self.estudio.id}),
+                                    data=data)
+        self.assertEqual(200, response.status_code)
+        beca = Beca.objects.filter(alumno=self.alumno)
+        self.assertEqual(len(beca), 0)
