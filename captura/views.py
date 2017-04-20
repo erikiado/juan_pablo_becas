@@ -638,7 +638,7 @@ def list_transacciones(request, id_familia):
 
 
 @login_required
-@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+@user_passes_test(is_capturista)
 def save_upload_study(request, id_estudio):
     """ Final view of where a capturista decides whether to upload a study for revision.
 

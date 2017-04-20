@@ -1,3 +1,4 @@
+{% load permissions_extras %}
 
 <div class="row">
     
@@ -132,7 +133,8 @@
             </div>
         </div>
     {% if not create %} </a> {% endif %}
-
+  
+  {% if not request.user|has_group:'Administrador' %}
     {% if not create %}
       {% if estudio %}
         <a href="{% url 'captura:save_upload_study' estudio.id %}"> 
@@ -154,6 +156,29 @@
             </div>
         </div>
     {% if not create %} </a> {% endif %}
+  {% else %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'estudios_socioeconomicos:focus_mode' estudio.id %}"> 
+      {% else %}
+        <a href="{% url 'estudios_socioeconomicos:focus_mode' familia.estudio.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_subir" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-archive"></i>
+              </div>
+              
+              <div class="count">6</div>
+
+              <h3>Focus Mode</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+  {% endif %}
 
 </div>
 
