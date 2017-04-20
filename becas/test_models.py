@@ -1,4 +1,3 @@
-import decimal
 from django.test import TestCase
 from administracion.models import Escuela
 from familias.models import Familia, Integrante, Alumno
@@ -31,4 +30,4 @@ class TestBeca(TestCase):
         of the object.
         """
         beca = Beca.objects.all()[0]
-        self.assertEqual(str(beca), '10% mensual')
+        self.assertEqual(str(beca), '10%')

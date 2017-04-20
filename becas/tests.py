@@ -96,7 +96,7 @@ class TestViewsBecas(TestCase):
                                                kwargs={'id_estudio': self.estudio.id}))
         beca = Beca.objects.filter(alumno=self.alumno)
         self.assertEqual(len(beca), 1)
-        self.assertEqual(beca[0].monto, 1500. - 1500.*.2)
+        self.assertEqual(beca[0].porcentaje, '20')
 
     def test_asignar_beca_multiple(self):
         """ Test that a beca is correctly assigned to more than one
@@ -128,7 +128,7 @@ class TestViewsBecas(TestCase):
         for alumno in alumnos + [self.alumno]:
             beca = Beca.objects.filter(alumno=alumno)
             self.assertEqual(len(beca), 1)
-            self.assertEqual(beca[0].monto, 1500. - 1500.*.33)
+            self.assertEqual(beca[0].porcentaje, '33')
 
     def test_asignar_beca_alumnos_activos(self):
         """ Tests that we only assign scolarships to active students.
@@ -158,7 +158,7 @@ class TestViewsBecas(TestCase):
                                                kwargs={'id_estudio': self.estudio.id}))
         beca = Beca.objects.filter(alumno=self.alumno)
         self.assertEqual(len(beca), 1)
-        self.assertEqual(beca[0].monto, 1500. - 1500.*.2)
+        self.assertEqual(beca[0].porcentaje, '20')
         beca = Beca.objects.filter(alumno=alumno)
         self.assertEqual(len(beca), 0)
 
