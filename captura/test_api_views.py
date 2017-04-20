@@ -97,7 +97,7 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Escuela.objects.all().count())
-        self.assertEqual(response.data[0]['nombre'], 'Juan Pablo')
+        self.assertEqual(response.data[0]['nombre'], 'San Juan Pablo II')
 
     def test_oficio_retrieval(self):
         """ Test that an authenticated user can recieve information
