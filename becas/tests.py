@@ -176,3 +176,28 @@ class TestViewsBecas(TestCase):
         self.assertEqual(200, response.status_code)
         beca = Beca.objects.filter(alumno=self.alumno)
         self.assertEqual(len(beca), 0)
+
+    def test_invalid_status(self):
+        """ Test we can't assign a scolarship to a family
+        who's status is not approved yet.
+        """
+        for status in filter(lambda x: x != Estudio.APROBADO,
+                             Estudio.get_options_status().values()):
+            familia = Familia.objects.create(
+                numero_hijos_diferentes_papas=3,
+                explicacion_solvencia='narco',
+                estado_civil='secreto',
+                localidad='otro')
+
+            estudio = Estudio.objects.create(
+                capturista=self.capturista,
+                familia=familia,
+                status=status)
+            data = {
+                'tabulador': BecaForm.CATORCE,
+                'porcentaje': '20'
+            }
+            response = self.client.post(reverse('becas:asignar_beca',
+                                                kwargs={'id_estudio': estudio.id}),
+                                        data=data)
+            self.assertEqual(404, response.status_code)

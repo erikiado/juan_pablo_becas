@@ -40,7 +40,7 @@
                   <tr>
                     <td>{{ integrante.nombres }}</td>
                     <td>{{ integrante.apellidos }}</td>
-                    <td>{{ integrante.nivel_estudios }}</td>
+                    <td>{{ integrante.get_nivel_estudios_display }}</td>
                     <td>{{ integrante.alumno_integrante.numero_sae }}</td>
                   </tr>                          
                 {% endfor %}

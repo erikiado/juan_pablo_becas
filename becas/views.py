@@ -31,7 +31,7 @@ def asignar_beca(request, id_estudio):
 
     TODO: ensure that the study is approved.
     """
-    estudio = get_object_or_404(Estudio, pk=id_estudio)
+    estudio = get_object_or_404(Estudio, pk=id_estudio, status=Estudio.APROBADO)
     fotos = Foto.objects.filter(estudio=id_estudio)
     integrantes = Integrante.objects.filter(familia__pk=estudio.familia.pk, activo=True)
     integrantes = filter(lambda x: hasattr(x, 'alumno_integrante'), integrantes)

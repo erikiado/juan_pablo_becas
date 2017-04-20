@@ -18,11 +18,11 @@
             <td>{{ integrante.apellidos }}</td>
             <td>{{ integrante.correo }}</td>
             <td>{{ integrante.telefono }}</td>
-            <td>{{ integrante.nivel_estudios }}</td>
+            <td>{{ integrante.get_nivel_estudios_display }}</td>
             <td>{{ integrante.fecha_de_nacimiento }}</td>
             <td>
                 {% if integrante.alumno_integrante %}
-                    
+
                     <br> Alumno <br>
                     Numero Sae: {{integrante.alumno_integrante.numero_sae}} <br>
                     Escuela: {{integrante.alumno_integrante.escuela}}
