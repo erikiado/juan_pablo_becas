@@ -1,5 +1,4 @@
 from django import forms
-from .utils import PORCENTAJE_A_MONTO
 
 
 class BecaForm(forms.Form):
@@ -11,7 +10,7 @@ class BecaForm(forms.Form):
     )
 
     OPCIONES_PORCENTAJE = [
-        (x, x) for x in sorted(PORCENTAJE_A_MONTO.keys(), key=lambda x: int(x[:-1]))
+        ('{}'.format(x), '{}%'.format(x)) for x in range(1, 101)
     ]
 
     tabulador = forms.ChoiceField(choices=OPCIONES_TABULADOR,

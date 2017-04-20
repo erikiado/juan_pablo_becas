@@ -43,7 +43,7 @@
 
                 <div class="form-group col-md-4 col-sm-12">
                   <label for="monto_beca">Aportación a Pagar</label>
-                  <p>
+                  <p id="id_monto">
                     1500$
                   </p>
                 </div>
@@ -66,5 +66,5 @@
 {% endblock %}
 
 {% block extra_page_js %}
-
+   <script type="text/javascript" src="{% static 'js/becas/asignar_beca.js' %}"></script>
 {% endblock %}
