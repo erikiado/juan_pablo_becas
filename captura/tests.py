@@ -402,7 +402,7 @@ class TestViewsFamilia(TestCase):
                                          estado_civil=estado_civil_inicial,
                                          localidad=localidad_inicial)
 
-        estudio = Estudio.objects.create(
+        Estudio.objects.create(
           capturista=self.capturista,
           familia=familia)
 
