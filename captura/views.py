@@ -30,7 +30,7 @@ from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_st
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def add_answer_study(request):
     """ View to create a new answer for a specific question in an existing study.
 
@@ -85,7 +85,7 @@ def add_answer_study(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def remove_answer_study(request):
     """ View to delete a specific answer to a question inside a study.
 
@@ -123,7 +123,7 @@ def remove_answer_study(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def capture_study(request, id_estudio, numero_seccion):
     """ View for filling the non statistic parts of a study.
 
@@ -236,7 +236,7 @@ def capturista_dashboard(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def create_estudio(request):
     """ This view creates the family, and estudio entities that are
     required for the creation and fullfillment of every piece of functionality
@@ -315,7 +315,7 @@ def estudio_delete(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def recover_estudios(request):
     """ View to list the studies that are deleted and can be recovered.
 
@@ -361,7 +361,7 @@ def estudio_recover(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def edit_familia(request, id_familia):
     """ This view allows a capturista to capture the information related
     to a specific family.
@@ -403,7 +403,7 @@ def edit_familia(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_integrantes(request, id_familia):
     """ This view allows a capturista to see all the information about the
     integrantes of a specific family, they are displayed inside a table,
@@ -426,7 +426,7 @@ def list_integrantes(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def create_edit_integrante(request, id_familia):
     """ View to create and edit integrantes.
 
@@ -454,7 +454,7 @@ def create_edit_integrante(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_edit_integrante(request, id_integrante):
     """ View that is called via ajax to render the partially
     loaded form to edit an integrante.
@@ -483,7 +483,7 @@ def get_form_edit_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_delete_integrante(request, id_integrante):
     """ View that is called via ajax to render the modal
     to confirm the deletion of an Integrante.
@@ -501,7 +501,7 @@ def get_form_delete_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def delete_integrante(request, id_integrante):
     """ This view receives the form to delete an integrante
     and redirects to the listing of integrantes.
@@ -516,7 +516,7 @@ def delete_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def update_create_transaccion(request, id_familia):
     """ This view allows any user to create a new transaccion
     regardless of it's type either ingreso or egreso.
@@ -555,7 +555,7 @@ def update_create_transaccion(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def update_transaccion_modal(request, id_transaccion):
     """ Returns a form that can be used to edit an existing
     transaccion.
@@ -575,7 +575,7 @@ def update_transaccion_modal(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_delete_transaccion(request, id_transaccion):
     """ View that is called via ajax to render the modal
     to confirm the deletion of a Transaccion.
@@ -593,7 +593,7 @@ def get_form_delete_transaccion(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def delete_transaccion(request, id_transaccion):
     """ This view soft deletes a transaccion from the family, so it can be
     ignored in caclulations about their current economic status, but a history
@@ -609,7 +609,7 @@ def delete_transaccion(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_transacciones(request, id_familia):
     """ This view allows a capturista to see all the financial information
     of a specific family, they are displayed inside a table, and this view is
@@ -671,7 +671,7 @@ def save_upload_study(request, id_estudio):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def upload_photo(request, id_estudio):
     """ Allows a capturista to upload a new photo of the house of
     the family, via a POST request.
@@ -692,7 +692,7 @@ def upload_photo(request, id_estudio):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_photos(request, id_estudio):
     """ This view allows a capturista to see all the photos of the house of a
     specific family.

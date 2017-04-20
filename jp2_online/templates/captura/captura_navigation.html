@@ -172,6 +172,37 @@
         background: rgb(220,220,220);
     }
 
+    {% if request.resolver_match.url_name == 'familia'%}
+    #navigation_familia .tile-stats h3{ color: white; } 
+    #navigation_familia .tile-stats .icon{ color: white; } 
+    #navigation_familia .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_integrantes'%}
+    #navigation_integrantes .tile-stats h3{ color: white; } 
+    #navigation_integrantes .tile-stats .icon{ color: white; } 
+    #navigation_integrantes .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_transacciones'%}
+    #navigation_transacciones .tile-stats h3{ color: white; } 
+    #navigation_transacciones .tile-stats .icon{ color: white; } 
+    #navigation_transacciones .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_photos'%}
+    #navigation_fotos .tile-stats h3{ color: white; } 
+    #navigation_fotos .tile-stats .icon{ color: white; } 
+    #navigation_fotos .tile-stats{
+    {% elif request.resolver_match.url_name == 'contestar_estudio'%}
+    #navigation_cuestionario .tile-stats h3{ color: white; } 
+    #navigation_cuestionario .tile-stats .icon{ color: white; }
+    #navigation_cuestionario .tile-stats p a{ color: white; } 
+    #navigation_cuestionario .tile-stats{
+    {% elif request.resolver_match.url_name == 'save_upload_study'%}
+    #navigation_subir .tile-stats h3{ color: white; } 
+    #navigation_subir .tile-stats .icon{ color: white; } 
+    #navigation_subir .tile-stats{
+    {% endif %}
+      background: rgb(132,132,132);
+      color: white;
+    }
+    
+    
 
 </style>
 
