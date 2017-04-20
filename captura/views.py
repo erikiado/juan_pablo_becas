@@ -414,8 +414,9 @@ def list_integrantes(request, id_familia):
     integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
 
-    if not user_can_modify_study(request.user, familia.estudio):
-        raise Http404()
+    if hasattr(familia, 'estudio'):
+        if not user_can_modify_study(request.user, familia.estudio):
+            raise Http404()
 
     context['integrantes'] = integrantes
     context['familia'] = familia
