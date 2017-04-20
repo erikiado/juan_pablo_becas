@@ -382,8 +382,9 @@ def edit_familia(request, id_familia):
     form = None
     instance = get_object_or_404(Familia, pk=id_familia)
 
-    if not user_can_modify_study(request.user, instance.estudio):
-        raise Http404()
+    if hasattr(instance, 'estudio'):
+        if not user_can_modify_study(request.user, instance.estudio):
+            raise Http404()
 
     if request.method == 'POST':
         form = FamiliaForm(request.POST, instance=instance)

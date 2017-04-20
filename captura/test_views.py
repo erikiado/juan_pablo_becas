@@ -61,7 +61,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         self.estudio = Estudio.objects.create(
             capturista=self.capturista,
             familia=self.familia,
-            status=Estudio.APROBADO)
+            status=Estudio.BORRADOR)
 
         self.estudio.save()
         self.familia.save()
