@@ -17,17 +17,23 @@
         {% endfor %}
         
         <div>
-            <h2>{{seccion}}</h2>
+            
         </div>
 
+        <div class="col-md-12 col-xs-12">
+          <div class='x_panel text-center'>
+            <h1>{{seccion}}</h1>
+          </div>
+          
+        <div>
         {% for subseccion in data %}
             
             <div class="col-md-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>
+                  <h3>
                     {{subseccion.nombre}} <small>Subsección</small>
-                </h2>
+                  </h3>
                
                   <div class="clearfix"></div>
                 </div>
@@ -42,21 +48,20 @@
                                 <div class='form-container'>
 
                                     {% if pregunta.opciones_respuesta.1 %}
-                                            
-                                        {{ respuesta.form.eleccion }}
-
+                                          {{ respuesta.form.eleccion }}
                                     {% else %}
 
                                         <div class="item form-group">
 
-                                            <div class="col-xs-12 col-md-11 col-sm-11 col-lg-11">
-                                                <div class="col-sm-12">
+
+                                            <div class="col-xs-9 col-sm-10 col-md-10 col-lg-10">
                                                    <p>{{ respuesta.form.respuesta }}</p>
-                                                </div>
                                             </div>
-                                            
-                                            <div class="col-xs-12 col-md-1 col-sm-1 col-lg-1">
-                                                <a id="delete-for-{{respuesta.id}}" class="btn btn-danger delete-answer" href="javascript:void(0)">-</a>
+
+                                            <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
+                                                <a id="delete-for-{{respuesta.id}}" class="btn btn-danger delete-answer" href="javascript:void(0)">
+                                                  <i class="glyphicon glyphicon-trash"></i> Borrar
+                                                </a>
                                             </div>
 
                                         </div>
@@ -73,9 +78,10 @@
                         </div>
 
                     {% if not pregunta.opciones_respuesta.1 %}
-                    <div style="padding-right: 30px;">
-                        <a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer pull-right" href="javascript:void(0)">
-                            +
+                    <div class='text-center' style="padding-right: 30px;">
+                        <a id="answer-for-{{pregunta.id}}" class="btn btn-success add-answer" href="javascript:void(0)">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            Agregar Otra Respuesta
                         </a>
                     </div>
                     <br><br><br>

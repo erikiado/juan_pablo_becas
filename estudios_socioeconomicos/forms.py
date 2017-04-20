@@ -36,7 +36,7 @@ class RespuestaForm(forms.ModelForm):
     eleccion = forms.ModelChoiceField(
         required=False,
         empty_label=None,
-        widget=forms.RadioSelect(attrs={'class': 'form-control'}),
+        widget=forms.RadioSelect(attrs={'class': ''}),
         queryset=[])  # Empty Queryset so questions with no options get nothing rendered.
 
     class Meta:
