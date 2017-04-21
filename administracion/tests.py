@@ -25,15 +25,6 @@ class TestAdministracionUrls(TestCase):
         administrators.user_set.add(thelma)
         self.client.login(username='thelma', password='junipero')
 
-    def test_view_main_dashboard(self):
-        """Unit Test: administracion.views.admin_main_dashboard.
-
-        """
-        test_url_name = 'administracion:main'
-        response = self.client.get(reverse(test_url_name), follow=True)
-        self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'administracion/dashboard_administrador.html')
-
     def test_view_users_dashboard(self):
         """Unit Test: administracion.views.admin_users_dashboard.
 

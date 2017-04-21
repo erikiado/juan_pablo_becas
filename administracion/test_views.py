@@ -48,20 +48,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.driver.close()
         self.browser.quit()
 
-    def test_main_dashboard(self):
-        """Test for url 'administracion:main'.
-
-        Visit the url of name 'administracion:main' and check it loads the
-        content of the main dashboard panel.
-        """
-        test_url_name = 'administracion:main'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
-
-        # Check for nav_bar partial
-        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        # Check for side_nav partial
-        # self.assertTrue(self.browser.is_text_present('Administración'))
-
     def test_users_dashboard(self):
         """Test for url 'administracion:users'.
 

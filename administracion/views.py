@@ -11,15 +11,6 @@ from becas.models import Beca
 
 @login_required
 @user_passes_test(is_administrador)
-def admin_main_dashboard(request):
-    """View to render the main control dashboard.
-
-    """
-    return render(request, 'administracion/dashboard_administrador.html')
-
-
-@login_required
-@user_passes_test(is_administrador)
 def admin_users_dashboard(request):
     """View to render the users control dashboard.
 
