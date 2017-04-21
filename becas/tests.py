@@ -131,7 +131,7 @@ class TestViewsBecas(TestCase):
             self.assertEqual(beca[0].porcentaje, '33')
 
     def test_asignar_beca_alumnos_activos(self):
-        """ Tests that we only assign scolarships to active students.
+        """ Tests that we only assign scholarships to active students.
 
         """
         integrante = Integrante.objects.create(
@@ -163,7 +163,7 @@ class TestViewsBecas(TestCase):
         self.assertEqual(len(beca), 0)
 
     def test_invalid_data(self):
-        """ Test that if the data sent is incorrect the scolarship
+        """ Test that if the data sent is incorrect the scholarship
         is not saved.
         """
         data = {
@@ -178,7 +178,7 @@ class TestViewsBecas(TestCase):
         self.assertEqual(len(beca), 0)
 
     def test_invalid_status(self):
-        """ Test we can't assign a scolarship to a family
+        """ Test we can't assign a scholarship to a family
         who's status is not approved yet.
         """
         for status in filter(lambda x: x != Estudio.APROBADO,

@@ -26,7 +26,7 @@ def estudios(request):
 @login_required
 @user_passes_test(is_administrador)
 def asignar_beca(request, id_estudio):
-    """ Renders the view where the admin assigns the scolarship
+    """ Renders the view where the admin assigns the scholarship
     to a family after approving a study.
 
     """
@@ -49,7 +49,7 @@ def asignar_beca(request, id_estudio):
         form = BecaForm(request.POST)
         if form.is_valid():
             percentage = form.cleaned_data['porcentaje']
-            # create scolarships for active students
+            # create scholarships for active students
             for integrante in integrantes:
                 Beca.objects.create(alumno=integrante.alumno_integrante,
                                     porcentaje=percentage)

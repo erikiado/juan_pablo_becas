@@ -2,10 +2,10 @@ from django import forms
 
 
 class BecaForm(forms.Form):
-    """ This form is used to assign a scolarship
+    """ This form is used to assign a scholarship
     to a set of students. It just has an option for
     the tabulador used, and a list of possible percentages
-    of scolarship.
+    of scholarship.
     """
     CATORCE = '14_percent'
     VEINTE = '20_percent'
