@@ -1,6 +1,7 @@
 import locale
 import os
 import string
+import decimal
 from datetime import date
 
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
@@ -11,6 +12,8 @@ from reportlab.lib.units import inch
 
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
+
+from administracion.models import Colegiatura
 
 
 def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
@@ -79,7 +82,8 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     ptext = '<font size=12>COSTO VALOR DE EDUCACIÓN EN NUESTRO INSTITUTO</font>'
     tbl.append([Paragraph(ptext, styles['Justify'])])
 
-    ptext = '<font size=12>$2000</font>'
+    colegiatura = Colegiatura.objects.all()[0]
+    ptext = '<font size=12>{}</font>'.format(colegiatura)
     tbl[0].append(Paragraph(ptext, styles['Center']))
 
     letter.append(Table(tbl, colWidths=colwidths))
@@ -93,7 +97,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     ptext = '<font size=12>PORCENTAJE DE BECA OTORGADO</font>'
     tbl.append([Paragraph(ptext, styles['Normal'])])
 
-    ptext = '<font size=12>%{}</font>'.format(porcentaje)
+    ptext = '<font size=12>{}</font>'.format(porcentaje)
     tbl[0].append(Paragraph(ptext, styles['Center']))
     letter.append(Table(tbl, colWidths=colwidths))
     letter.append(Spacer(1, 12))
@@ -102,7 +106,9 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     ptext = '<font size=12>APORTACIÓN MENSUAL</font>'
     tbl.append([Paragraph(ptext, styles['Normal'])])
 
-    ptext = '<font size=12>$1500</font>'
+    monto = colegiatura.monto
+    aportacion = monto - (monto*decimal.Decimal(porcentaje[:-1])/decimal.Decimal('100.0'))
+    ptext = '<font size=12>${}</font>'.format(aportacion)
     tbl[0].append(Paragraph(ptext, styles['Center']))
     letter.append(Table(tbl, colWidths=colwidths))
     letter.append(Spacer(1, 15))

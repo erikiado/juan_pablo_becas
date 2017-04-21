@@ -29,3 +29,16 @@ class BecaForm(forms.Form):
         super(BecaForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class CartaForm(forms.Form):
+
+    curso = forms.CharField(label='Curso', required=True)
+    ciclo = forms.CharField(label='Ciclo Escolar', required=True)
+    compromiso = forms.CharField(label='Compromiso de la Familia', required=True)
+
+    def __init__(self, *args, **kwargs):
+        # Add the class form-control to all of the fields
+        super(CartaForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

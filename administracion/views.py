@@ -2,11 +2,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 
-from .forms import UserForm, DeleteUserForm, FeedbackForm
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 from familias.models import Alumno
 from becas.models import Beca
+from becas.forms import CartaForm
+from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
 @login_required
@@ -152,6 +153,7 @@ def detail_student(request, id_alumno):
     becas = Beca.objects.filter(alumno=student).order_by('-fecha_de_asignacion')
     context = {
         'student': student,
-        'becas': becas
+        'becas': becas,
+        'form': CartaForm()
     }
     return render(request, 'administracion/detail_student.html', context)

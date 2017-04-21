@@ -22,4 +22,4 @@ class Colegiatura(models.Model):
         """ Print monto
 
         """
-        return '{:.2f}'.format(self.monto)
+        return '${:.2f}'.format(self.monto)

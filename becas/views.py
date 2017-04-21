@@ -4,11 +4,11 @@ from django.http.response import HttpResponseBadRequest
 from django.http import HttpResponse
 
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
-from familias.models import Integrante
+from familias.models import Integrante, Alumno
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio, Foto
 
-from .forms import BecaForm
+from .forms import BecaForm, CartaForm
 from .models import Beca
 from .utils import generate_letter
 
@@ -64,8 +64,26 @@ def asignar_beca(request, id_estudio):
     return HttpResponseBadRequest()
 
 
-def carta_beca(request):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-    generate_letter(response)
-    return response
+@login_required
+@user_passes_test(is_administrador)
+def genera_carta(request, id_alumno):
+    """ This view generates a letter of scholarship for a student.
+
+    It directly returns the pdf file for download.
+    """
+    if request.method != 'POST':
+        return HttpResponseBadRequest()
+    alumno = get_object_or_404(Alumno, pk=id_alumno, activo=True)
+    form = CartaForm(request.POST)
+    if form.is_valid():
+        response = HttpResponse(content_type='application/pdf')
+        filename = 'carta_beca_{}.pdf'.format(alumno)
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        beca_actual = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')[0]
+
+        generate_letter(response, nombre=str(alumno.integrante),
+                        ciclo=form.cleaned_data['ciclo'],
+                        curso=form.cleaned_data['curso'],
+                        porcentaje=str(beca_actual),
+                        compromiso=form.cleaned_data['compromiso'])
+        return response
