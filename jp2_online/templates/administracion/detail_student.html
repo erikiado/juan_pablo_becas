@@ -109,7 +109,7 @@
         </p>
 
         {% if becas %}
-          <form id="form-genera-carta" class="form-horizontal" method="POST" action="{% url 'becas:genera_carta' student.pk  %}">
+          <form id="form-genera-carta" class="form-horizontal" method="POST" action="{% url 'administracion:detail_student' student.pk  %}">
             {% csrf_token %}
             {% for field in form.visible_fields %}
               <div class="form-group">
