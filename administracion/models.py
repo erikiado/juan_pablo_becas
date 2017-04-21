@@ -8,3 +8,18 @@ class Escuela(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class Colegiatura(models.Model):
+    """ Model that will store the amount of money that is paid monthly
+    in the institution.
+
+    """
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        """ Print monto
+
+        """
+        return '{:.2f}'.format(self.monto)

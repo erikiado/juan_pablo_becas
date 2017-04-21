@@ -1,9 +1,9 @@
 from django.test import TestCase
-from .models import Escuela
+from .models import Escuela, Colegiatura
 
 
-class TestEscuela(TestCase):
-    """ Unit test suite for testing the Escuela model in .models
+class TestModels(TestCase):
+    """ Unit test suite for testing the models.
     """
 
     def setUp(self):
@@ -12,9 +12,16 @@ class TestEscuela(TestCase):
         """
         Escuela.objects.create(nombre='San Juan Pablo')
 
-    def test_str(self):
+    def test_str_escuela(self):
         """ Checks that this method __str__ method returns the name
         of the object.
         """
         escuela = Escuela.objects.get(nombre='San Juan Pablo')
         self.assertTrue(str(escuela) == 'San Juan Pablo')
+
+    def test_str_colegiatura(self):
+        """ check __str__ of Colegiatura
+
+        """
+        colegiatura = Colegiatura.objects.create(monto=1500.00)
+        self.assertEqual(str(colegiatura), '1500.00')
