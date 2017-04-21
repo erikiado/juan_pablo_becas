@@ -23,5 +23,13 @@ class TestModels(TestCase):
         """ check __str__ of Colegiatura
 
         """
-        colegiatura = Colegiatura.objects.create(monto=1500.00)
-        self.assertEqual(str(colegiatura), '1500.00')
+        colegiatura = Colegiatura.objects.create(monto=1700.00)
+        self.assertEqual(str(colegiatura), '1700.00')
+
+    def test_migration(self):
+        """  test that the migration is adding the element.
+
+        """
+        colegiatura = Colegiatura.objects.all()
+        self.assertEqual(len(colegiatura), 1)
+        self.assertEqual(str(colegiatura[0]), '1500.00')
