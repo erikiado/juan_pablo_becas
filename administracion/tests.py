@@ -79,6 +79,7 @@ class TestAdministracionUrls(TestCase):
 
     def test_view_generate_valid(self):
         """ Test that the view returns a pdf if we provide valid data.
+
         """
         escuela = Escuela.objects.create(nombre='Juan Pablo')
         familia = Familia.objects.create(
@@ -106,11 +107,11 @@ class TestAdministracionUrls(TestCase):
                                             kwargs={'id_alumno': alumno.pk}),
                                     data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content_type, 'application/pdf')
+        self.assertEqual(response.get('content-type'), 'application/pdf')
 
     def test_view_generate_invalid(self):
-        """ Test that the view doest not return a pdf if the data is invalid.
-        
+        """ Test that the view does not return a pdf if the data is invalid.
+
         """
         escuela = Escuela.objects.create(nombre='Juan Pablo')
         familia = Familia.objects.create(
@@ -138,7 +139,7 @@ class TestAdministracionUrls(TestCase):
                                             kwargs={'id_alumno': alumno.pk}),
                                     data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content_type, 'text/html')
+        self.assertEqual(response.get('content-type'), 'text/html; charset=utf-8')
 
 
 class TestUserForm(TestCase):
