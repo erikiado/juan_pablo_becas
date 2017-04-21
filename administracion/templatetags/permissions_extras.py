@@ -1,5 +1,7 @@
 from django import template
 
+from captura.utils import user_can_modify_study
+
 register = template.Library()
 
 
@@ -15,3 +17,13 @@ def has_group(user, group_name):
         folder called templatetags to add custom templatetags.
     """
     return user.groups.filter(name=group_name).exists()
+
+
+@register.filter(name='can_modify_study')
+def can_modify_study(user, study):
+    """ Function to check if a user can modify a study inside a template.
+
+        Registers a new template tag that checks if a user can modify a
+        study.
+    """
+    return user_can_modify_study(user, study)

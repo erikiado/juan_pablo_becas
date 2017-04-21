@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
+
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.urls import reverse
@@ -25,11 +26,11 @@ from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
 from indicadores.models import Transaccion, Ingreso, Oficio
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
-from .utils import SECTIONS_FLOW, get_study_info_for_section
+from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def add_answer_study(request):
     """ View to create a new answer for a specific question in an existing study.
 
@@ -84,7 +85,7 @@ def add_answer_study(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def remove_answer_study(request):
     """ View to delete a specific answer to a question inside a study.
 
@@ -122,7 +123,7 @@ def remove_answer_study(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def capture_study(request, id_estudio, numero_seccion):
     """ View for filling the non statistic parts of a study.
 
@@ -175,6 +176,9 @@ def capture_study(request, id_estudio, numero_seccion):
     estudio = get_object_or_404(Estudio, pk=id_estudio)
     seccion = get_object_or_404(Seccion, numero=numero_seccion)
 
+    if not user_can_modify_study(request.user, estudio):
+        raise Http404()
+
     (data, respuestas) = get_study_info_for_section(estudio, seccion)
 
     if request.method == 'POST':
@@ -188,6 +192,11 @@ def capture_study(request, id_estudio, numero_seccion):
             if form.is_valid():
                 form.save()
 
+        if request.POST.get('next') == 'next' and seccion.numero == 8:
+            return redirect(reverse(
+                'captura:save_upload_study',
+                kwargs={'id_estudio': id_estudio}))
+
         next_section = SECTIONS_FLOW.get(seccion.numero).get(request.POST.get('next', ''))
 
         if next_section:  # if anybody messes with JS it will return None
@@ -200,6 +209,7 @@ def capture_study(request, id_estudio, numero_seccion):
     context['data'] = data
     context['id_estudio'] = id_estudio
     context['seccion'] = seccion
+    context['estudio'] = estudio
 
     return render(request, 'captura/captura_estudio.html', context)
 
@@ -305,7 +315,7 @@ def estudio_delete(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def recover_estudios(request):
     """ View to list the studies that are deleted and can be recovered.
 
@@ -351,7 +361,7 @@ def estudio_recover(request):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def edit_familia(request, id_familia):
     """ This view allows a capturista to capture the information related
     to a specific family.
@@ -370,8 +380,12 @@ def edit_familia(request, id_familia):
         On error returns to the same form but with errors.
     """
     form = None
+    instance = get_object_or_404(Familia, pk=id_familia)
+
+    if not user_can_modify_study(request.user, instance.estudio):
+        raise Http404()
+
     if request.method == 'POST':
-        instance = get_object_or_404(Familia, pk=id_familia)
         form = FamiliaForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
@@ -388,7 +402,7 @@ def edit_familia(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_integrantes(request, id_familia):
     """ This view allows a capturista to see all the information about the
     integrantes of a specific family, they are displayed inside a table,
@@ -398,6 +412,10 @@ def list_integrantes(request, id_familia):
 
     integrantes = Integrante.objects.filter(familia__pk=id_familia, activo=True)
     familia = Familia.objects.get(pk=id_familia)
+
+    if not user_can_modify_study(request.user, familia.estudio):
+        raise Http404()
+
     context['integrantes'] = integrantes
     context['familia'] = familia
     context['create_integrante_form'] = IntegranteModelForm()
@@ -406,7 +424,7 @@ def list_integrantes(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def create_edit_integrante(request, id_familia):
     """ View to create and edit integrantes.
 
@@ -434,7 +452,7 @@ def create_edit_integrante(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_edit_integrante(request, id_integrante):
     """ View that is called via ajax to render the partially
     loaded form to edit an integrante.
@@ -463,7 +481,7 @@ def get_form_edit_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_delete_integrante(request, id_integrante):
     """ View that is called via ajax to render the modal
     to confirm the deletion of an Integrante.
@@ -481,7 +499,7 @@ def get_form_delete_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def delete_integrante(request, id_integrante):
     """ This view receives the form to delete an integrante
     and redirects to the listing of integrantes.
@@ -496,7 +514,7 @@ def delete_integrante(request, id_integrante):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def update_create_transaccion(request, id_familia):
     """ This view allows any user to create a new transaccion
     regardless of it's type either ingreso or egreso.
@@ -535,7 +553,7 @@ def update_create_transaccion(request, id_familia):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def update_transaccion_modal(request, id_transaccion):
     """ Returns a form that can be used to edit an existing
     transaccion.
@@ -555,7 +573,7 @@ def update_transaccion_modal(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_delete_transaccion(request, id_transaccion):
     """ View that is called via ajax to render the modal
     to confirm the deletion of a Transaccion.
@@ -573,7 +591,7 @@ def get_form_delete_transaccion(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def delete_transaccion(request, id_transaccion):
     """ This view soft deletes a transaccion from the family, so it can be
     ignored in caclulations about their current economic status, but a history
@@ -589,7 +607,7 @@ def delete_transaccion(request, id_transaccion):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_transacciones(request, id_familia):
     """ This view allows a capturista to see all the financial information
     of a specific family, they are displayed inside a table, and this view is
@@ -597,6 +615,10 @@ def list_transacciones(request, id_familia):
     """
     context = {}
     context['familia'] = get_object_or_404(Familia, pk=id_familia)
+
+    if not user_can_modify_study(request.user, context['familia'].estudio):
+        raise Http404()
+
     context['total_egresos_familia'] = total_egresos_familia(id_familia)
     context['total_ingresos_familia'] = total_ingresos_familia(id_familia)
     context['total_neto_familia'] = total_neto_familia(id_familia)
@@ -617,6 +639,37 @@ def list_transacciones(request, id_familia):
 
 @login_required
 @user_passes_test(is_capturista)
+def save_upload_study(request, id_estudio):
+    """ Final view of where a capturista decides whether to upload a study for revision.
+
+        This view allows a capturista user to upload a study for revision.
+        After uploading, the capturista is not allowed to modify the study.
+
+        @TODO: Check study is actually ready for upload?
+    """
+    context = {}
+    estudio = get_object_or_404(Estudio, pk=id_estudio)
+
+    if is_capturista(request.user):
+        get_object_or_404(Estudio, pk=id_estudio, capturista=request.user.capturista)
+
+    if not user_can_modify_study(request.user, estudio):
+        raise Http404()
+
+    if request.method == 'POST':
+
+        if is_capturista(request.user):  # Capturista can only save in revision mode
+            estudio.status = Estudio.REVISION
+            estudio.save()
+
+            return redirect('captura:estudios')
+
+    context['estudio'] = estudio
+    return render(request, 'captura/save_upload_study.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def upload_photo(request, id_estudio):
     """ Allows a capturista to upload a new photo of the house of
     the family, via a POST request.
@@ -637,7 +690,7 @@ def upload_photo(request, id_estudio):
 
 
 @login_required
-@user_passes_test(is_capturista)
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def list_photos(request, id_estudio):
     """ This view allows a capturista to see all the photos of the house of a
     specific family.

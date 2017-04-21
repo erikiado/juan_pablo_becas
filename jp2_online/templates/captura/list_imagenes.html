@@ -2,6 +2,9 @@
 {% load staticfiles %}
 
 {% block content %}
+
+{% include 'captura/captura_navigation.html'%}
+
 <div class="row">
   <div class="col-md-12">
     
@@ -23,10 +26,10 @@
 </div>
 
 <div class="text-center">
-  <a href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
+  <a id="previous_transacciones" href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
     <i class="glyphicon glyphicon-arrow-left"></i>Ingresos y Egresos 
   </a>
-  <a href="{% url 'captura:contestar_estudio' familia.estudio.id 1%}" class="btn btn-danger">
+  <a id="next_preguntas" href="{% url 'captura:contestar_estudio' familia.estudio.id 1%}" class="btn btn-danger">
     Preguntas <i class="glyphicon glyphicon-arrow-right"></i>
   </a>
 </div>

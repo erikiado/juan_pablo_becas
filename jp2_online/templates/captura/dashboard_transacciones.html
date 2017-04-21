@@ -2,6 +2,9 @@
 {% load staticfiles %}
 
 {% block content %}
+
+{% include 'captura/captura_navigation.html'%}
+
 <div class="row">
   <div class="col-md-12">
     
@@ -25,10 +28,10 @@
 </div>
 
 <div class="text-center">
-  <a href="{% url 'captura:list_integrantes' familia.id %}" class="btn btn-danger">
+  <a id="previous_integrantes" href="{% url 'captura:list_integrantes' familia.id %}" class="btn btn-danger">
     <i class="glyphicon glyphicon-arrow-left"></i> Integrantes
   </a>
-  <a href="{% url 'captura:list_photos' familia.estudio.id %}" class="btn btn-danger">
+  <a id="next_fotos" href="{% url 'captura:list_photos' familia.estudio.id %}" class="btn btn-danger">
     Fotos Vivienda <i class="glyphicon glyphicon-arrow-right"></i>
   </a>
 </div>

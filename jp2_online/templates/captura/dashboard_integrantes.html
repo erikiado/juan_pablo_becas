@@ -3,6 +3,7 @@
 
 {% block content %}
 
+{% include 'captura/captura_navigation.html'%}
 
 <div class="pull-right">
   <a id="btn_modal_create_integrante" class="mouseClick btn btn-primary pull-right" data-toggle="modal" data-target="#modal_create_integrante">
@@ -78,10 +79,10 @@
 </div>
 
 <div class="text-center">
-  <a href="{% url 'captura:familia' familia.id %}" class="btn btn-danger">
+  <a id="previous_familia" href="{% url 'captura:familia' familia.id %}" class="btn btn-danger">
     <i class="glyphicon glyphicon-arrow-left"></i> Datos Familia
   </a>
-  <a href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
+  <a id="next_ingresos_egresos" href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
     Ingresos y Egresos <i class="glyphicon glyphicon-arrow-right"></i>
   </a>
 </div>

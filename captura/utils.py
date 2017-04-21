@@ -1,7 +1,8 @@
-from estudios_socioeconomicos.models import Subseccion, Pregunta
+from estudios_socioeconomicos.models import Subseccion, Pregunta, Estudio
 from estudios_socioeconomicos.models import OpcionRespuesta, Respuesta, Seccion
 from estudios_socioeconomicos.forms import RespuestaForm
 
+from perfiles_usuario.utils import is_capturista, is_administrador
 """
     Mapping of next and previous section to fill in study.
 """
@@ -12,7 +13,33 @@ SECTIONS_FLOW = {
     3: {'next': 4, 'previous': 2},
     4: {'next': 6, 'previous': 3},
     6: {'next': 7, 'previous': 4},
-    7: {'next': 8, 'previous': 6}}
+    7: {'next': 8, 'previous': 6},
+    8: {'next': False, 'previous': 7}}
+
+
+def user_can_modify_study(user, estudio):
+    """ Checks whether a user can modify a given study. A capturista
+        user can only modify studies that are in borrador or rechazado
+        status, at the same time. A administrador can only modify studies
+        that are not in these status.
+
+        Returns
+        -------
+            True if user can modify.
+
+            False if user can not modify.
+    """
+    if is_capturista(user):
+        if estudio.status == Estudio.BORRADOR:
+            return True
+        if estudio.status == Estudio.RECHAZADO:
+            return True
+
+    if is_administrador(user):
+        if estudio.status != Estudio.BORRADOR and estudio.status != Estudio.RECHAZADO:
+            return True
+
+    return False
 
 
 def get_study_info(estudio):

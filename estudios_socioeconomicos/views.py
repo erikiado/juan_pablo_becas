@@ -37,7 +37,7 @@ def focus_mode(request, id_estudio):
     context['ingresos'] = Ingreso.objects.filter(transaccion__in=transacciones)
     context['egresos'] = Transaccion.objects.filter(es_ingreso=False, familia=estudio.familia)
     context['cuestionario'] = get_study_info(estudio)
-
+    context['status_options'] = Estudio.get_options_status()
     return render(
         request,
         'estudios_socioeconomicos/focus_mode.html',

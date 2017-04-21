@@ -15,6 +15,7 @@ from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Seccion, Pregunta, Respuesta
 from estudios_socioeconomicos.models import Subseccion, OpcionRespuesta, Foto
 from familias.models import Familia, Integrante, Alumno, Tutor
+from indicadores.models import Periodo
 from perfiles_usuario.models import Capturista
 from estudios_socioeconomicos.load import load_data
 from perfiles_usuario.utils import CAPTURISTA_GROUP
@@ -60,7 +61,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         self.estudio = Estudio.objects.create(
             capturista=self.capturista,
             familia=self.familia,
-            status=Estudio.APROBADO)
+            status=Estudio.BORRADOR)
 
         self.estudio.save()
         self.familia.save()
@@ -567,7 +568,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 class TestViewsFotos(StaticLiveServerTestCase):
     """ Integration test suite for testing the views in the app captura,
     that surround the creation of editing of the familia model.
-
     Attributes
     ----------
     client : Client
@@ -673,3 +673,302 @@ class TestViewsFotos(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present('Upload a valid image'))
         number_of_images_after = Foto.objects.filter(estudio=self.estudio1).count()
         self.assertEqual(number_of_images_before, number_of_images_after)
+
+
+class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
+    """
+    """
+    def setUp(self):
+        """
+        """
+        self.browser = Browser('chrome')
+        test_username = 'erikiano'
+        test_password = 'vacalalo'
+
+        elerik = User.objects.create_user(
+            username=test_username,
+            email='latelma@junipero.sas',
+            password=test_password,
+            first_name='telma',
+            last_name='suapellido')
+
+        self.capturista = Capturista.objects.create(user=elerik)
+        self.capturista.save()
+
+        load_data()
+
+        self.periodicidad1 = Periodo.objects.create(periodicidad='Semanal',
+                                                    factor='4',
+                                                    multiplica=True)
+
+        self.escuela = Escuela.objects.create(nombre='Juan Pablo')
+
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+
+    def tearDown(self):
+        self.browser.driver.close()
+        self.browser.quit()
+
+    def create_transactions(self, monto, observacion):
+        """
+        """
+        self.browser.find_by_id('btn_modal_create_user').click()
+        time.sleep(.3)
+        self.browser.find_by_id('id_monto').fill(monto)
+        self.browser.find_by_id('id_observacion').fill(observacion)
+        self.browser.select('periodicidad', '1')
+        self.browser.find_by_id('id_fecha').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.select('tipo', 'comprobable')
+        self.browser.find_by_id('btn_send_create_user').click()
+
+    def test_captura_complete_study(self):
+        """
+        """
+        self.browser.visit(self.live_server_url + reverse('captura:estudios'))
+        self.browser.find_by_id('create_estudio').click()
+        time.sleep(.1)
+
+        """ Create Family and Study
+        """
+        self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(2)
+        self.browser.select('estado_civil', 'casado_iglesia')
+        self.browser.select('localidad', 'poblado_jurica')
+        self.browser.find_by_id('submit_familia').click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
+            nombres='Juan',
+            apellidos='Perez',
+            telefono='4424567899',
+            correo='abc@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
+            nombres='Hector',
+            apellidos='Perez',
+            telefono='222222222',
+            correo='efg@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        TestViewsFamiliaLive.send_create_integrante_form(
+            self,
+            nombres='Laura',
+            apellidos='Perez',
+            telefono='4424567899',
+            correo='hij@abc.com')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+
+        self.browser.find_by_id('next_ingresos_egresos').click()
+        time.sleep(.1)
+
+        self.create_transactions(1000, 'Ninguna')
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        self.browser.find_by_id('next_fotos').click()
+
+        static_url = static('test_files/cocina.jpeg')[1:]
+        test_image = os.path.join(settings.BASE_DIR, static_url)
+        self.browser.find_by_id('btn_modal_upload_photo').click()
+        time.sleep(1)
+        self.browser.fill('file_name', 'prueba')
+        self.browser.fill('upload', test_image)
+        self.browser.find_by_id('btn_send_create_photo').click()
+        time.sleep(1)
+        self.assertTrue(self.browser.is_text_present('prueba'))
+        image = Foto.objects.filter(estudio=Estudio.objects.all().first()).last()
+        self.assertEqual('prueba', image.file_name)
+        image_url = image.upload.url[1:]
+        os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
+
+        self.browser.find_by_id('next_preguntas').click()  # Preguntas
+
+        secciones = Seccion.objects.all().order_by('numero')
+        random_texts = {}
+
+        for seccion in secciones:
+
+            subsecciones = Subseccion.objects.filter(seccion=seccion)
+            preguntas = Pregunta.objects.filter(subseccion__in=subsecciones)
+
+            for pregunta in preguntas:
+
+                respuestas = Respuesta.objects.filter(pregunta=pregunta)
+
+                for respuesta in respuestas:
+                    num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                    if num_opciones > 0:
+
+                        answer_input = self.browser.find_by_id(
+                            'id_respuesta-' + str(respuesta.id)
+                            + '-eleccion_' + str(num_opciones-1))
+
+                        answer_input.check()
+                    else:
+                        new_text = ''.join(
+                            random.choice(string.ascii_uppercase) for _ in range(12))
+
+                        answer_input = self.browser.find_by_id(
+                            'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                        answer_input.fill(new_text)
+
+                        random_texts[respuesta.id] = new_text
+
+            self.browser.find_by_id('next_section_button').first.click()
+
+        time.sleep(.1)
+        self.browser.find_by_id('previous_cuestionario').first.click()
+
+        secciones = Seccion.objects.all().order_by('-numero')
+
+        for seccion in secciones:
+
+            subsecciones = Subseccion.objects.filter(seccion=seccion)
+            preguntas = Pregunta.objects.filter(subseccion__in=subsecciones)
+
+            for pregunta in preguntas:
+                respuestas = Respuesta.objects.filter(pregunta=pregunta)
+
+                for respuesta in respuestas:
+                    num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                    if num_opciones > 0:
+                        answer_input = self.browser.find_by_id(
+                            'id_respuesta-' + str(respuesta.id)
+                            + '-eleccion_' + str(num_opciones-1))
+
+                        self.assertTrue(answer_input.checked)
+                    else:
+                        answer_input = self.browser.find_by_id(
+                            'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                        self.assertEqual(answer_input.value, random_texts[respuesta.id])
+
+            self.browser.find_by_id('previous_section_button').first.click()
+
+        # Now we JUMPT Between sections and add more info before we upload.
+
+        self.browser.find_by_id('navigation_familia').click()
+        hijos_bast = self.browser.find_by_id('id_numero_hijos_diferentes_papas').first.value
+        self.assertEqual(hijos_bast, '2')
+
+        self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(4)
+        self.browser.find_by_id('submit_familia').click()
+        time.sleep(.1)
+
+        self.browser.find_by_id('previous_familia').click()
+        hijos_bast = self.browser.find_by_id('id_numero_hijos_diferentes_papas').first.value
+        self.assertEqual(hijos_bast, '4')
+
+        self.browser.find_by_id('navigation_integrantes').click()
+
+        self.assertTrue(self.browser.is_text_present('Hector'))
+        self.assertTrue(self.browser.is_text_present('Laura'))
+        self.assertTrue(self.browser.is_text_present('Juan'))
+
+        # CREATE FATHER
+        self.browser.find_by_id('btn_modal_create_integrante').click()
+        time.sleep(0.3)
+        self.browser.find_by_id('id_nombres').first.fill('don')
+        self.browser.find_by_id('id_apellidos').first.fill('martines')
+        self.browser.find_by_id('id_telefono').first.fill('442343234234')
+        self.browser.find_by_id('id_correo').first.fill('abs@losabelosabe.com')
+        self.browser.select('nivel_estudios', '6_grado')
+        self.browser.find_by_id('id_fecha_de_nacimiento').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.select('rol', 'tutor')
+        self.browser.select('relacion', 'padre')
+
+        self.browser.find_by_id('btn_send_create_user').click()
+        time.sleep(.1)
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        # END CREATE FATHER
+
+        # CREATE MOTHER
+        self.browser.find_by_id('btn_modal_create_integrante').click()
+        time.sleep(0.3)
+        self.browser.find_by_id('id_nombres').first.fill('dona')
+        self.browser.find_by_id('id_apellidos').first.fill('martines')
+        self.browser.find_by_id('id_telefono').first.fill('442343234234')
+        self.browser.find_by_id('id_correo').first.fill('absb@losabelosabe.com')
+        self.browser.select('nivel_estudios', '6_grado')
+        self.browser.find_by_id('id_fecha_de_nacimiento').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.select('rol', 'tutor')
+        self.browser.select('relacion', 'madre')
+        self.browser.find_by_id('btn_send_create_user').click()
+        time.sleep(.1)
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        # END CREATE MOTHER
+
+        # CREATE SON
+        self.browser.find_by_id('btn_modal_create_integrante').click()
+        time.sleep(0.3)
+        self.browser.find_by_id('id_nombres').first.fill('junior')
+        self.browser.find_by_id('id_apellidos').first.fill('martines')
+        self.browser.find_by_id('id_telefono').first.fill('4423431234234')
+        self.browser.find_by_id('id_correo').first.fill('abssb@losabelosabe.com')
+        self.browser.select('nivel_estudios', '6_grado')
+        self.browser.find_by_id('id_fecha_de_nacimiento').first.click()
+        time.sleep(.2)
+        self.browser.find_by_css('.ui-datepicker-today').first.click()
+        self.browser.select('rol', 'alumno')
+        self.browser.select('escuela', '1')
+        self.browser.find_by_id('id_numero_sae').fill('123123')
+        self.browser.find_by_id('btn_send_create_user').click()
+        self.browser.find_by_css('.swal2-confirm').first.click()
+        # END CREATE SON
+        time.sleep(.1)
+
+        self.assertTrue(self.browser.is_text_present('don'))
+        self.assertTrue(self.browser.is_text_present('dona'))
+        self.assertTrue(self.browser.is_text_present('junior'))
+
+        self.browser.find_by_id('navigation_transacciones').click()
+        time.sleep(.1)
+        estudio = Estudio.objects.all().first()
+        desired_url = self.live_server_url + reverse(
+            'captura:list_transacciones',
+            kwargs={'id_familia': estudio.familia.id})
+
+        self.assertEqual(self.browser.url, desired_url)
+
+        self.browser.find_by_id('navigation_fotos').click()
+        desired_url = self.live_server_url + reverse(
+            'captura:list_photos',
+            kwargs={'id_estudio': estudio.id})
+
+        self.assertEqual(self.browser.url, desired_url)
+
+        self.browser.find_by_id('navigation_cuestionario').click()
+        desired_url = self.live_server_url + reverse(
+            'captura:contestar_estudio',
+            kwargs={'id_estudio': estudio.id, 'numero_seccion': 1})
+
+        self.assertEqual(self.browser.url, desired_url)
+
+        self.browser.find_by_css('.fa-file-text').first.click()
+        time.sleep(.1)
+
+        self.assertTrue(self.browser.is_text_present('Editar'))
+        self.browser.find_by_css('.glyphicon-pencil').first.click()
+        time.sleep(.1)
+
+        self.browser.find_by_id('navigation_subir').click()
+        time.sleep(.1)
+
+        self.browser.find_by_id('submit_estudio').click()
+        time.sleep(.1)
+
+        desired_url = self.live_server_url + reverse('captura:estudios')
+
+        self.assertEqual(self.browser.url, desired_url)
+        self.assertFalse(self.browser.is_text_present('Editar'))
+        estudio = Estudio.objects.all().first()
+        self.assertEqual(estudio.status, Estudio.REVISION)

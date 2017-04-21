@@ -8,7 +8,7 @@ from .views import capturista_dashboard, capture_study, add_answer_study, remove
                    get_form_delete_transaccion, delete_transaccion, list_transacciones, \
                    update_transaccion_modal, get_form_delete_integrante, delete_integrante, \
                    recover_estudios, estudio_recover_modal, estudio_recover, list_photos, \
-                   upload_photo
+                   upload_photo, save_upload_study
 
 app_name = 'captura'
 
@@ -75,4 +75,6 @@ urlpatterns = [
     url(r'^upload-photo/(?P<id_estudio>[0-9]+)',
         upload_photo,
         name='upload_photo'),
+    url(r'guardar-subir-estudio/(?P<id_estudio>[0-9]+)', save_upload_study,
+        name='save_upload_study'),
 ]

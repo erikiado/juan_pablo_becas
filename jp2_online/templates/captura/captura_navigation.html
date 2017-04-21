@@ -1,0 +1,242 @@
+{% load permissions_extras %}
+
+<div class="row">
+    
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:familia' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:familia' familia.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_familia" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats">
+              
+              <div class="icon">
+                <i class="fa fa-institution"></i>
+              </div>
+              
+              <div class="count">1</div>
+
+              <h3>Familia</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:list_integrantes' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:list_integrantes' familia.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_integrantes" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-users"></i>
+              </div>
+              
+              <div class="count">2</div>
+
+              <h3>Integrantes</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:list_transacciones' estudio.familia.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:list_transacciones' familia.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_transacciones" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-money"></i>
+              </div>
+              
+              <div class="count">3</div>
+
+              <h3>Ingresos y Egresos</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+    
+
+
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:list_photos' estudio.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:list_photos' familia.estudio.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_fotos" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-home"></i>
+              </div>
+              
+              <div class="count">4</div>
+
+              <h3>Vivienda</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+    
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:contestar_estudio' estudio.id  1%}"> 
+      {% else %}
+        <a href="{% url 'captura:contestar_estudio' familia.estudio.id  1 %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_cuestionario" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-question-circle"></i>
+              </div>
+              
+              <div class="count">5</div>
+
+              <h3>Preguntas</h3>
+              <p>
+              {% if not create %}
+                {% if estudio %}
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  1 %}">1</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  2 %}">2</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  3 %}">3</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  4 %}">4</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  6 %}">6</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  7 %}">7</a>
+                  <a href="{% url 'captura:contestar_estudio' estudio.id  8 %}">8</a>
+                {% else %}
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  1 %}">1</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  2 %}">2</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  3 %}">3</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  4 %}">4</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  6 %}">6</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  7 %}">7</a>
+                  <a href="{% url 'captura:contestar_estudio' familia.estudio.id  8 %}">8</a>
+                {% endif %}
+              {% endif%}
+              </p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+  
+  {% if not request.user|has_group:'Administrador' %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'captura:save_upload_study' estudio.id %}"> 
+      {% else %}
+        <a href="{% url 'captura:save_upload_study' familia.estudio.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_subir" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-cloud-upload"></i>
+              </div>
+              
+              <div class="count">6</div>
+
+              <h3>Subir</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+  {% else %}
+    {% if not create %}
+      {% if estudio %}
+        <a href="{% url 'estudios_socioeconomicos:focus_mode' estudio.id %}"> 
+      {% else %}
+        <a href="{% url 'estudios_socioeconomicos:focus_mode' familia.estudio.id %}">
+      {% endif %}
+    {% endif %}
+        <div id="navigation_subir" class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats {% if create %} inactive {% endif %}">
+              
+              <div class="icon">
+                <i class="fa fa-archive"></i>
+              </div>
+              
+              <div class="count">6</div>
+
+              <h3>Focus Mode</h3>
+              <p></p>
+            </div>
+        </div>
+    {% if not create %} </a> {% endif %}
+  {% endif %}
+
+</div>
+
+<style>
+    
+    .tile-stats{
+        min-height: 140px;
+    }
+
+    .tile-stats p {
+      text-align: center;
+    }
+
+    .tile-stats p a {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    h3{
+        margin-top: 8px !important;
+        text-align: center;
+    }
+
+    .inactive {
+        background: rgb(220,220,220);
+    }
+
+    {% if request.resolver_match.url_name == 'familia'%}
+    #navigation_familia .tile-stats h3{ color: white; } 
+    #navigation_familia .tile-stats .icon{ color: white; } 
+    #navigation_familia .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_integrantes'%}
+    #navigation_integrantes .tile-stats h3{ color: white; } 
+    #navigation_integrantes .tile-stats .icon{ color: white; } 
+    #navigation_integrantes .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_transacciones'%}
+    #navigation_transacciones .tile-stats h3{ color: white; } 
+    #navigation_transacciones .tile-stats .icon{ color: white; } 
+    #navigation_transacciones .tile-stats{
+    {% elif request.resolver_match.url_name == 'list_photos'%}
+    #navigation_fotos .tile-stats h3{ color: white; } 
+    #navigation_fotos .tile-stats .icon{ color: white; } 
+    #navigation_fotos .tile-stats{
+    {% elif request.resolver_match.url_name == 'contestar_estudio'%}
+    #navigation_cuestionario .tile-stats h3{ color: white; } 
+    #navigation_cuestionario .tile-stats .icon{ color: white; }
+    #navigation_cuestionario .tile-stats p a{ color: white; } 
+    #navigation_cuestionario .tile-stats{
+    {% elif request.resolver_match.url_name == 'save_upload_study'%}
+    #navigation_subir .tile-stats h3{ color: white; } 
+    #navigation_subir .tile-stats .icon{ color: white; } 
+    #navigation_subir .tile-stats{
+    {% endif %}
+      background: rgb(132,132,132);
+      color: white;
+    }
+    
+    
+
+</style>
+
