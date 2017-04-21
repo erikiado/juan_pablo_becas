@@ -151,6 +151,8 @@ def detail_student(request, id_alumno):
     """ View to show the complete information of a student, and to
     generate the letter of scholarship in case of POST.
 
+    GET: return information of student and form to generate letter
+    POST: validate information in form and return pdf
     """
     alumno = get_object_or_404(Alumno, pk=id_alumno, activo=True)
     becas = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')
@@ -178,4 +180,3 @@ def detail_student(request, id_alumno):
         else:
             context['form'] = form
     return render(request, 'administracion/detail_student.html', context)
-

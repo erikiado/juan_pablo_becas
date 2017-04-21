@@ -1,16 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http.response import HttpResponseBadRequest
-from django.http import HttpResponse
 
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
-from familias.models import Integrante, Alumno
+from familias.models import Integrante
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio, Foto
 
-from .forms import BecaForm, CartaForm
+from .forms import BecaForm
 from .models import Beca
-from .utils import generate_letter
 
 
 @login_required
