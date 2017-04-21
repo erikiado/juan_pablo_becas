@@ -1,12 +1,14 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponse
 
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 from familias.models import Alumno
 from becas.models import Beca
 from becas.forms import CartaForm
+from becas.utils import generate_letter
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
@@ -146,14 +148,34 @@ def search_students(request):
 @login_required
 @user_passes_test(is_administrador)
 def detail_student(request, id_alumno):
-    """ View to show the complete information of a student.
+    """ View to show the complete information of a student, and to
+    generate the letter of scholarship in case of POST.
 
     """
-    student = get_object_or_404(Alumno, pk=id_alumno)
-    becas = Beca.objects.filter(alumno=student).order_by('-fecha_de_asignacion')
+    alumno = get_object_or_404(Alumno, pk=id_alumno, activo=True)
+    becas = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')
     context = {
-        'student': student,
-        'becas': becas,
-        'form': CartaForm()
+        'student': alumno,
+        'becas': becas
     }
+    if request.method == 'GET':
+        context['form'] = CartaForm()
+    else:
+        form = CartaForm(request.POST)
+        if form.is_valid():
+            response = HttpResponse(content_type='application/pdf')
+            filename = 'carta_beca_{}.pdf'.format(alumno)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+            # obtain last scholarship
+            beca_actual = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')[0]
+
+            generate_letter(response, nombre=str(alumno.integrante),
+                            ciclo=form.cleaned_data['ciclo'],
+                            curso=form.cleaned_data['curso'],
+                            porcentaje=str(beca_actual),
+                            compromiso=form.cleaned_data['compromiso'])
+            return response
+        else:
+            context['form'] = form
     return render(request, 'administracion/detail_student.html', context)
+

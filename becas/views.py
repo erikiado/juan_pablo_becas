@@ -62,28 +62,3 @@ def asignar_beca(request, id_estudio):
             context['form'] = form
             return render(request, 'becas/asignar_beca.html', context)
     return HttpResponseBadRequest()
-
-
-@login_required
-@user_passes_test(is_administrador)
-def genera_carta(request, id_alumno):
-    """ This view generates a letter of scholarship for a student.
-
-    It directly returns the pdf file for download.
-    """
-    if request.method != 'POST':
-        return HttpResponseBadRequest()
-    alumno = get_object_or_404(Alumno, pk=id_alumno, activo=True)
-    form = CartaForm(request.POST)
-    if form.is_valid():
-        response = HttpResponse(content_type='application/pdf')
-        filename = 'carta_beca_{}.pdf'.format(alumno)
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
-        beca_actual = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')[0]
-
-        generate_letter(response, nombre=str(alumno.integrante),
-                        ciclo=form.cleaned_data['ciclo'],
-                        curso=form.cleaned_data['curso'],
-                        porcentaje=str(beca_actual),
-                        compromiso=form.cleaned_data['compromiso'])
-        return response
