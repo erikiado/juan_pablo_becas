@@ -1,65 +1,142 @@
-import time
-from reportlab.lib.enums import TA_JUSTIFY
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+import locale
+import os
+import string
+from datetime import date
+
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+from reportlab.lib import pagesizes
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
- 
-doc = SimpleDocTemplate("form_letter.pdf",pagesize=letter,
-                        rightMargin=72,leftMargin=72,
-                        topMargin=72,bottomMargin=18)
-Story=[]
-logo = "logo.png"
-magName = "Pythonista"
-issueNum = 12
-subPrice = "99.00"
-limitedDate = "03/05/2010"
-freeGift = "tin foil hat"
- 
-formatted_time = time.ctime()
-full_name = "Mike Driscoll"
-address_parts = ["411 State St.", "Marshalltown, IA 50158"]
- 
-im = Image(logo, 2*inch, 2*inch)
-Story.append(im)
- 
-styles=getSampleStyleSheet()
-styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
-ptext = '<font size=12>%s</font>' % formatted_time
- 
-Story.append(Paragraph(ptext, styles["Normal"]))
-Story.append(Spacer(1, 12))
- 
-# Create return address
-ptext = '<font size=12>%s</font>' % full_name
-Story.append(Paragraph(ptext, styles["Normal"]))       
-for part in address_parts:
-    ptext = '<font size=12>%s</font>' % part.strip()
-    Story.append(Paragraph(ptext, styles["Normal"]))   
- 
-Story.append(Spacer(1, 12))
-ptext = '<font size=12>Dear %s:</font>' % full_name.split()[0].strip()
-Story.append(Paragraph(ptext, styles["Normal"]))
-Story.append(Spacer(1, 12))
- 
-ptext = '<font size=12>We would like to welcome you to our subscriber base for %s Magazine! \
-        You will receive %s issues at the excellent introductory price of $%s. Please respond by\
-        %s to start receiving your subscription and get the following free gift: %s.</font>' % (magName, 
-                                                                                                issueNum,
-                                                                                                subPrice,
-                                                                                                limitedDate,
-                                                                                                freeGift)
-Story.append(Paragraph(ptext, styles["Justify"]))
-Story.append(Spacer(1, 12))
- 
- 
-ptext = '<font size=12>Thank you very much and we look forward to serving you.</font>'
-Story.append(Paragraph(ptext, styles["Justify"]))
-Story.append(Spacer(1, 12))
-ptext = '<font size=12>Sincerely,</font>'
-Story.append(Paragraph(ptext, styles["Normal"]))
-Story.append(Spacer(1, 48))
-ptext = '<font size=12>Ima Sucker</font>'
-Story.append(Paragraph(ptext, styles["Normal"]))
-Story.append(Spacer(1, 12))
-doc.build(Story)
+
+from django.conf import settings
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
+
+def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
+                    curso='2° Preescolar Nuevo Ingreso',
+                    porcentaje='15', compromiso='''La Madre de familia se compromete a realizar aseos de
+                    salones.\nComienza a realizar pago de la aportación mensual enero 2017'''):
+    """ This function receives an HttpResponse which has pdf as content type,
+    and builds the pdf for the letter.
+
+    Parameters:
+    - nombre: name of the student
+    - ciclo: year where the scholarship applies
+    - curso: which course will the student be in
+    - porcentaje: the percentage of scholarship
+    - compromiso: what the family will do for the scholarship
+
+    Check the default parameters for examples.
+    """
+
+    doc = SimpleDocTemplate(response, pagesize=pagesizes.letter,
+                            rightMargin=72, leftMargin=72,
+                            topMargin=72, bottomMargin=18)
+    letter = []
+    logo = os.path.join(settings.BASE_DIR, static('carta/logo.png')[1:])
+
+    locale.setlocale(locale.LC_TIME, 'es_ES')
+
+    formatted_time = '{} del {}'.format(
+                        string.capwords(date.today().strftime('%A %d %B')),
+                        date.today().strftime('%Y'))
+
+    im = Image(logo, 2*inch, 2*inch)
+    letter.append(im)
+
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+
+    ptext = '<font size=12>%s</font>' % formatted_time
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 12))
+
+    letter.append(Spacer(1, 12))
+    ptext = '<font size=12><b>Instituto San Juan Pablo II</b></font>'
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 12))
+
+    letter.append(Spacer(1, 12))
+    ptext = '<font size=12><b>Presente</b></font>'
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 12))
+
+    ptext = '''<font size=12> Por medio de la presente manifiesto a ustedes
+            mi pleno conocimiento y aceptación, respecto  a la APORTACIÓN (BECA)*
+            que esta Institución ha otorgado a mi hija (o) <b>{}</b>.</font>'''.format(nombre)
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 12))
+
+    ptext = '''<font size=12>Él (ella) se inscribirá en esta Institución y
+            cursará para el ciclo {} en <b>{}</b>.</font>'''.format(ciclo, curso)
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 12))
+
+    colwidths = [5*inch, 1.5*inch]
+    tbl = []
+    ptext = '<font size=12>COSTO VALOR DE EDUCACIÓN EN NUESTRO INSTITUTO</font>'
+    tbl.append([Paragraph(ptext, styles['Justify'])])
+
+    ptext = '<font size=12>$2000</font>'
+    tbl[0].append(Paragraph(ptext, styles['Center']))
+
+    letter.append(Table(tbl, colWidths=colwidths))
+    letter.append(Spacer(1, 15))
+
+    ptext = '<font size=12>Dicha beca se integra de la siguiente manera:</font>'
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 12))
+
+    tbl = []
+    ptext = '<font size=12>PORCENTAJE DE BECA OTORGADO</font>'
+    tbl.append([Paragraph(ptext, styles['Normal'])])
+
+    ptext = '<font size=12>%{}</font>'.format(porcentaje)
+    tbl[0].append(Paragraph(ptext, styles['Center']))
+    letter.append(Table(tbl, colWidths=colwidths))
+    letter.append(Spacer(1, 12))
+
+    tbl = []
+    ptext = '<font size=12>APORTACIÓN MENSUAL</font>'
+    tbl.append([Paragraph(ptext, styles['Normal'])])
+
+    ptext = '<font size=12>$1500</font>'
+    tbl[0].append(Paragraph(ptext, styles['Center']))
+    letter.append(Table(tbl, colWidths=colwidths))
+    letter.append(Spacer(1, 15))
+
+    ptext = '''<font size=12>Comité de Becas autoriza, revisa y califica los
+            Estudios Socioeconómico. </font>'''
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 30))
+
+    ptext = '''<font size=12>Igualmente estoy consciente y acepto las
+            condiciones del Reglamento Escolar de la Institución.</font>'''
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 12))
+
+    ptext = '''<font size=12><b>{}</b></font>'''.format(compromiso)
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 12))
+
+    ptext = '<font size=12>Atentamente</font>'
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 20))
+
+    ptext = '<font size=12>___________________</font>'
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 12))
+
+    ptext = '<font size=11>Nombre y firma del padre, madre y/o tutor</font>'
+    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Spacer(1, 17))
+
+    ptext = '''<font size=11><b>*La aportación-beca está sujeta a cambios y a
+            revisión por el Instituto de Educación Integral IAP y el Comité de Becas,
+            en caso de encontrar algún dato falso, la escuela cancelará la beca
+            otorgada.</b></font>'''
+    letter.append(Paragraph(ptext, styles['Normal']))
+
+    doc.build(letter)
