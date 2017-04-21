@@ -26,9 +26,11 @@ def estudios(request):
 @login_required
 @user_passes_test(is_administrador)
 def asignar_beca(request, id_estudio):
-    """ Renders the view where the admin assigns the scholarship
+    """ GET: Renders the view where the admin assigns the scholarship
     to a family after approving a study.
 
+    POST: Validates the form and creates scholarships for all
+    students associated to the study.
     """
     estudio = get_object_or_404(Estudio, pk=id_estudio, status=Estudio.APROBADO)
     fotos = Foto.objects.filter(estudio=id_estudio)
@@ -53,7 +55,7 @@ def asignar_beca(request, id_estudio):
             for integrante in integrantes:
                 Beca.objects.create(alumno=integrante.alumno_integrante,
                                     porcentaje=percentage)
-            return redirect('becas:asignar_beca', id_estudio=id_estudio)
+            return redirect('estudios_socioeconomicos:focus_mode', id_estudio=id_estudio)
         else:
             context['form'] = form
             return render(request, 'becas/asignar_beca.html', context)

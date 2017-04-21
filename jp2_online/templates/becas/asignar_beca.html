@@ -33,6 +33,7 @@
                 <th>Apellidos</th>
                 <th>Nivel de Estudios</th>
                 <th>Número Sae</th>
+                <th>Ver Detalle</th>
               </tr>
             </thead>
             <tbody>
@@ -42,6 +43,11 @@
                     <td>{{ integrante.apellidos }}</td>
                     <td>{{ integrante.get_nivel_estudios_display }}</td>
                     <td>{{ integrante.alumno_integrante.numero_sae }}</td>
+                    <td>
+                      <a class="btn btn-success btn-circle-sm" href="{% url 'administracion:detail_student' integrante.alumno_integrante.pk %}">
+                        <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                      </a>
+                    </td>
                   </tr>                          
                 {% endfor %}
             </tbody>
