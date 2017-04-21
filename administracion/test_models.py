@@ -24,7 +24,7 @@ class TestModels(TestCase):
 
         """
         colegiatura = Colegiatura.objects.create(monto=1700.00)
-        self.assertEqual(str(colegiatura), '1700.00')
+        self.assertEqual(str(colegiatura), '$1700.00')
 
     def test_migration(self):
         """  test that the migration is adding the element.
@@ -32,4 +32,4 @@ class TestModels(TestCase):
         """
         colegiatura = Colegiatura.objects.all()
         self.assertEqual(len(colegiatura), 1)
-        self.assertEqual(str(colegiatura[0]), '1500.00')
+        self.assertEqual(str(colegiatura[0]), '$1500.00')
