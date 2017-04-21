@@ -92,7 +92,7 @@ class TestViewsBecas(TestCase):
         response = self.client.post(reverse('becas:asignar_beca',
                                             kwargs={'id_estudio': self.estudio.id}),
                                     data=data)
-        self.assertRedirects(response, reverse('becas:asignar_beca',
+        self.assertRedirects(response, reverse('estudios_socioeconomicos:focus_mode',
                                                kwargs={'id_estudio': self.estudio.id}))
         beca = Beca.objects.filter(alumno=self.alumno)
         self.assertEqual(len(beca), 1)
@@ -122,7 +122,7 @@ class TestViewsBecas(TestCase):
         response = self.client.post(reverse('becas:asignar_beca',
                                             kwargs={'id_estudio': self.estudio.id}),
                                     data=data)
-        self.assertRedirects(response, reverse('becas:asignar_beca',
+        self.assertRedirects(response, reverse('estudios_socioeconomicos:focus_mode',
                                                kwargs={'id_estudio': self.estudio.id}))
 
         for alumno in alumnos + [self.alumno]:
@@ -154,7 +154,7 @@ class TestViewsBecas(TestCase):
         response = self.client.post(reverse('becas:asignar_beca',
                                             kwargs={'id_estudio': self.estudio.id}),
                                     data=data)
-        self.assertRedirects(response, reverse('becas:asignar_beca',
+        self.assertRedirects(response, reverse('estudios_socioeconomicos:focus_mode',
                                                kwargs={'id_estudio': self.estudio.id}))
         beca = Beca.objects.filter(alumno=self.alumno)
         self.assertEqual(len(beca), 1)
