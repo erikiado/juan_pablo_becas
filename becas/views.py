@@ -29,7 +29,6 @@ def asignar_beca(request, id_estudio):
     """ Renders the view where the admin assigns the scolarship
     to a family after approving a study.
 
-    TODO: ensure that the study is approved.
     """
     estudio = get_object_or_404(Estudio, pk=id_estudio, status=Estudio.APROBADO)
     fotos = Foto.objects.filter(estudio=id_estudio)
