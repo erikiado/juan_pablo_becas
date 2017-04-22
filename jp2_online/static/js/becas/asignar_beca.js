@@ -1,13 +1,14 @@
 $(document).ready(function() {
-  recalculate();
+  recalculateFromTabulador();
+  $('#id_tabulador option')['7'].disabled = true; // disable option 'fuera_rango'
 });
 
 $('#id_tabulador').change(function() {
-  recalculate();
+  recalculateFromTabulador();
 });
 
 $('#id_porcentaje').change(function() {
-  setAportacion(parseFloat($(this).val()));
+  recalculateFromPercentage(parseFloat($(this).val()));
 });
 
 
@@ -22,92 +23,43 @@ function setPercentage(val) {
 
 /*
 this function sets the percentage and amount to pay
-given the current tabulador, according to the
-table provided.
+given the current tabulador.
 */
-function recalculate() {
-  var tabulador;
-  if ($('#id_tabulador').val() == '20_percent') {
-    tabulador = tabuladorVeinte;
-  }
-  else if ($('#id_tabulador').val() == '14_percent') {
-    tabulador = tabuladorCatorce;
-  }
-  var ingreso = parseFloat($('#id_ingresos').html());
-  for (var i = 0; i < tabulador.length; i++) {
-    if (ingreso < tabulador[i].upperLim) {
-      setAportacion(tabulador[i].percentage);
-      setPercentage(tabulador[i].percentage);
-      break;
-    }
-  }
+function recalculateFromTabulador() {
+  var tabulador = parseFloat($('#id_tabulador').val());
+  var num_alumnos = $('#tabla_alumnos tr').length - 1;
+  var income = parseFloat($('#id_ingresos').html());
+  var should_pay = income * tabulador / 100. / num_alumnos;
+  var perc = Math.floor((1500.-should_pay) / 1500. * 100);
+  setPercentage(perc);
+  setAportacion(perc);
 }
 
 /*
-helper function to construct a custom object
-to represent the table of ranges. we save the upper limit
-of the current range, and the percentage given for
-that range, according to the Excel provided.
+this function sets the tabulador and amount to pay
+given the percentage
 */
-function createRange(lim, perc) {
-  return {
-    'upperLim': lim,
-    'percentage': perc
-  };
+function recalculateFromPercentage(perc) {
+  var to_pay = 1500. * (100-perc) / 100.;
+  var num_alumnos = $('#tabla_alumnos tr').length - 1;
+  var total_paying = num_alumnos * to_pay;
+  var income = parseFloat($('#id_ingresos').html());
+  var perc_from_income = Math.floor(total_paying / income * 100);
+  if (perc_from_income >= 14 && perc_from_income <= 20) {
+    $('#id_tabulador').val(perc_from_income.toString());
+  }
+  else {
+    $('#id_tabulador').val('fuera_rango');
+  }
+  setAportacion(perc);
 }
 
-// tabulador for 14%
-var tabuladorCatorce = [
-  createRange(750, 100),
-  createRange(900, 93),
-  createRange(1200, 90),
-  createRange(1500, 87),
-  createRange(1900, 83),
-  createRange(2300, 80),
-  createRange(2600, 77),
-  createRange(3000, 73),
-  createRange(3300, 70),
-  createRange(3700, 67),
-  createRange(4100, 63),
-  createRange(4400, 60),
-  createRange(4800, 57),
-  createRange(5100, 53),
-  createRange(5400, 50),
-  createRange(5800, 47),
-  createRange(6200, 43),
-  createRange(6600, 40),
-  createRange(7300, 33),
-  createRange(8000, 27),
-  createRange(8300, 20),
-  createRange(9400, 13),
-  createRange(10000, 7),
-  createRange(10000000000000, 0) // dummy infinity for convenience
-]
-
-// tabulador for 20%
-var tabuladorVeinte = [
-  createRange(500, 100),
-  createRange(750, 93),
-  createRange(850, 90),
-  createRange(1100, 87),
-  createRange(1300, 83),
-  createRange(1550, 80),
-  createRange(1800, 77),
-  createRange(2050, 73),
-  createRange(2300, 70),
-  createRange(2550, 67),
-  createRange(2800, 63),
-  createRange(3050, 60),
-  createRange(3300, 57),
-  createRange(3550, 53),
-  createRange(3800, 50),
-  createRange(4050, 47),
-  createRange(4300, 43),
-  createRange(4550, 40),
-  createRange(5050, 33),
-  createRange(5550, 27),
-  createRange(6050, 20),
-  createRange(6550, 13),
-  createRange(7050, 7),
-  createRange(10000000000000, 0) // dummy infinity for convenience
-]
+/*
+since the option for fuera de rango is disabled, it does not get sent when submitting.
+thus, we enable it before doing so, so django does not complain
+*/
+jQuery(function ($) {        
+  $('form').bind('submit', function () {
+    $('#id_tabulador option')['7'].disabled = false;
+  });
+});

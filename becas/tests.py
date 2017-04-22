@@ -9,7 +9,6 @@ from estudios_socioeconomicos.models import Estudio
 from familias.models import Familia, Integrante, Alumno
 
 from .models import Beca
-from .forms import BecaForm
 
 
 class TestViewsBecas(TestCase):
@@ -86,7 +85,7 @@ class TestViewsBecas(TestCase):
 
         """
         data = {
-            'tabulador': BecaForm.CATORCE,
+            'tabulador': '17',
             'porcentaje': '20'
         }
         response = self.client.post(reverse('becas:asignar_beca',
@@ -116,7 +115,7 @@ class TestViewsBecas(TestCase):
             alumnos.append(alumno)
 
         data = {
-            'tabulador': BecaForm.CATORCE,
+            'tabulador': '14',
             'porcentaje': '33'
         }
         response = self.client.post(reverse('becas:asignar_beca',
@@ -148,7 +147,7 @@ class TestViewsBecas(TestCase):
             activo=False)
 
         data = {
-            'tabulador': BecaForm.CATORCE,
+            'tabulador': 'fuera_rango',
             'porcentaje': '20'
         }
         response = self.client.post(reverse('becas:asignar_beca',
@@ -167,7 +166,7 @@ class TestViewsBecas(TestCase):
         is not saved.
         """
         data = {
-            'tabulador': BecaForm.CATORCE,
+            'tabulador': 'fuera_rango',
             'porcentaje': '-10101010101'
         }
         response = self.client.post(reverse('becas:asignar_beca',
@@ -194,7 +193,7 @@ class TestViewsBecas(TestCase):
                 familia=familia,
                 status=status)
             data = {
-                'tabulador': BecaForm.CATORCE,
+                'tabulador': '17',
                 'porcentaje': '20'
             }
             response = self.client.post(reverse('becas:asignar_beca',

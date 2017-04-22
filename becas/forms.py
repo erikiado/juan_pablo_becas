@@ -7,12 +7,12 @@ class BecaForm(forms.Form):
     the tabulador used, and a list of possible percentages
     of scholarship.
     """
-    CATORCE = '14_percent'
-    VEINTE = '20_percent'
-    OPCIONES_TABULADOR = (
-        (CATORCE, 'Asignar 14%'),
-        (VEINTE, 'Asignar 20%')
-    )
+
+    OPCIONES_TABULADOR = [
+        (x, 'Asignar {}%'.format(x)) for x in map(lambda x: str(x), range(14, 21))
+    ]
+
+    OPCIONES_TABULADOR += [('fuera_rango', 'Fuera del rango')]
 
     OPCIONES_PORCENTAJE = [
         (x, x + '%') for x in map(lambda x: str(x), range(1, 101))
@@ -21,7 +21,8 @@ class BecaForm(forms.Form):
     tabulador = forms.ChoiceField(choices=OPCIONES_TABULADOR,
                                   required=True)
 
-    porcentaje = forms.ChoiceField(choices=OPCIONES_PORCENTAJE)
+    porcentaje = forms.ChoiceField(choices=OPCIONES_PORCENTAJE,
+                                   required=True)
 
     def __init__(self, *args, **kwargs):
         # Add the class form-control to all of the fields
