@@ -618,7 +618,7 @@
 #         numero_hijos_inicial = 3
 #         estado_civil_inicial = 'soltero'
 #         localidad_inicial = 'salitre'
-#         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
+#        self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
 #                                                estado_civil=estado_civil_inicial,
 #                                                localidad=localidad_inicial)
 
