@@ -158,7 +158,7 @@ def detail_student(request, id_alumno):
     becas = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')
     context = {
         'student': alumno,
-        'becas': becas,
+        'becas': becas
     }
     if request.method == 'GET':
         context['form'] = CartaForm()
