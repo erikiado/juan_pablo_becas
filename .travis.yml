@@ -24,7 +24,8 @@ before_install:
   - sudo chmod u+x chromedriver
   - sudo mv chromedriver /usr/bin/
   - export CHROME_BIN=chromium-browser
-  - export LC_ALL=C
+  - sudo apt-get install language-pack-es-base
+  - sudo dpkg-reconfigure locales
 
 install: 
   - pip install -r requirements/CI.txt
