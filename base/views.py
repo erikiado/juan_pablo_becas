@@ -23,7 +23,20 @@ def home(request):
         return redirect('becas:services')
     raise Http404()
 
+@login_required
+def documentation(request):
+    """ DUMMY VIEW.
+
+    This functions is currently just being used to test the redirect
+    from base.
+
+    TODO: name properly and implement everything
+    """
+    return render(request, 'base/help.html')
 
 def base_files(request, filename):
+    """ This view serves basic files that are standard for every
+    single website.
+    """
     location = 'base/' + filename
     return render(request, location, {}, content_type='text/plain')
