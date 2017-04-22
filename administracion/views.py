@@ -175,7 +175,8 @@ def detail_student(request, id_alumno):
                             ciclo=form.cleaned_data['ciclo'],
                             curso=form.cleaned_data['curso'],
                             porcentaje=str(beca_actual),
-                            compromiso=form.cleaned_data['compromiso'])
+                            compromiso=form.cleaned_data['compromiso'],
+                            a_partir=form.cleaned_data['a_partir'])
             return response
         else:
             context['form'] = form

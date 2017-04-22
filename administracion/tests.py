@@ -101,7 +101,8 @@ class TestAdministracionUrls(TestCase):
         data = {
             'curso': 'Primero de primaria',
             'ciclo': '2016-2017',
-            'compromiso': 'La familia se compromete a lavar el piso'
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
         }
         response = self.client.post(reverse(test_url_name,
                                             kwargs={'id_alumno': alumno.pk}),
@@ -133,7 +134,8 @@ class TestAdministracionUrls(TestCase):
         data = {
             'curso': '',
             'ciclo': '2016-2017',
-            'compromiso': 'La familia se compromete a lavar el piso'
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
         }
         response = self.client.post(reverse(test_url_name,
                                             kwargs={'id_alumno': alumno.pk}),

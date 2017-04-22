@@ -1,25 +1,22 @@
 import locale
-import os
 import string
 import decimal
 from datetime import date
 
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib import pagesizes
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-
-from django.conf import settings
-from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from administracion.models import Colegiatura
 
 
 def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
-                    curso='2° Preescolar Nuevo Ingreso',
-                    porcentaje='15', compromiso='''La Madre de familia se compromete a realizar aseos de
-                    salones.\nComienza a realizar pago de la aportación mensual enero 2017'''):
+                    curso='2° Preescolar Nuevo Ingreso', porcentaje='15',
+                    compromiso='''La Madre de familia se compromete a realizar aseos
+                    de salones.''', a_partir='''Comienza a realizar pago de la aportación
+                    mensual enero 2017'''):
     """ This function receives an HttpResponse which has pdf as content type,
     and builds the pdf for the letter.
 
@@ -29,6 +26,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     - curso: which course will the student be in
     - porcentaje: the percentage of scholarship
     - compromiso: what the family will do for the scholarship
+    - a_partir: from when does the family start paying.
 
     Check the default parameters for examples.
     """
@@ -37,16 +35,11 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
                             rightMargin=72, leftMargin=72,
                             topMargin=72, bottomMargin=18)
     letter = []
-    logo = os.path.join(settings.BASE_DIR, static('carta/logo.png')[1:])
-
     locale.setlocale(locale.LC_TIME, 'es_ES')
 
     formatted_time = '{} del {}'.format(
                         string.capwords(date.today().strftime('%A %d %B')),
                         date.today().strftime('%Y'))
-
-    im = Image(logo, 2*inch, 2*inch)
-    letter.append(im)
 
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -126,6 +119,10 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     ptext = '''<font size=12><b>{}</b></font>'''.format(compromiso)
     letter.append(Paragraph(ptext, styles['Justify']))
     letter.append(Spacer(1, 12))
+
+    ptext = '''<font size=12><b>{}</b></font>'''.format(a_partir)
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 23))
 
     ptext = '<font size=12>Atentamente</font>'
     letter.append(Paragraph(ptext, styles['Normal']))
