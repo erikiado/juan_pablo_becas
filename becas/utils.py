@@ -35,7 +35,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
                             rightMargin=72, leftMargin=72,
                             topMargin=72, bottomMargin=18)
     letter = []
-    locale.setlocale(locale.LC_TIME, 'es_ES')
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
     formatted_time = '{} del {}'.format(
                         string.capwords(date.today().strftime('%A %d %B')),
