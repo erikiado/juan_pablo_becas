@@ -76,14 +76,14 @@
             <thead>
               <tr>
                 <th>Fecha de Asignación</th>
-                <th>Monto</th>
+                <th>Porcentaje</th>
               </tr>
             </thead>
             <tbody>
               {% for beca in becas %}
                 <tr>
                   <td> {{beca.fecha_de_asignacion}} </td>
-                  <td> {{beca.monto}} </td>
+                  <td> {{beca}} </td>
                 </tr>
               {% endfor %}
             </tbody>
