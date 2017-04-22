@@ -128,7 +128,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     letter.append(Paragraph(ptext, styles['Normal']))
     letter.append(Spacer(1, 20))
 
-    ptext = '<font size=12>___________________</font>'
+    ptext = '<font size=12>_______________________________</font>'
     letter.append(Paragraph(ptext, styles['Normal']))
     letter.append(Spacer(1, 12))
 
