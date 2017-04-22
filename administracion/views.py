@@ -158,7 +158,7 @@ def detail_student(request, id_alumno):
     becas = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')
     context = {
         'student': alumno,
-        'becas': becas
+        'becas': becas,
     }
     if request.method == 'GET':
         context['form'] = CartaForm()
@@ -173,7 +173,7 @@ def detail_student(request, id_alumno):
 
             generate_letter(response, nombre=str(alumno.integrante),
                             ciclo=form.cleaned_data['ciclo'],
-                            curso=form.cleaned_data['curso'],
+                            grado=form.cleaned_data['grado'],
                             porcentaje=str(beca_actual),
                             compromiso=form.cleaned_data['compromiso'],
                             a_partir=form.cleaned_data['a_partir'])

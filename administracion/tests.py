@@ -99,7 +99,7 @@ class TestAdministracionUrls(TestCase):
 
         test_url_name = 'administracion:detail_student'
         data = {
-            'curso': 'Primero de primaria',
+            'grado': 'Primero de primaria',
             'ciclo': '2016-2017',
             'compromiso': 'La familia se compromete a lavar el piso',
             'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
@@ -132,7 +132,7 @@ class TestAdministracionUrls(TestCase):
 
         test_url_name = 'administracion:detail_student'
         data = {
-            'curso': '',
+            'grado': '',
             'ciclo': '2016-2017',
             'compromiso': 'La familia se compromete a lavar el piso',
             'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'

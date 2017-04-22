@@ -6,6 +6,7 @@ from familias.utils import total_egresos_familia, total_ingresos_familia, total_
 from familias.models import Integrante
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio, Foto
+from administracion.models import Colegiatura
 
 from .forms import BecaForm
 from .models import Beca
@@ -36,13 +37,15 @@ def asignar_beca(request, id_estudio):
     fotos = Foto.objects.filter(estudio=id_estudio)
     integrantes = Integrante.objects.filter(familia__pk=estudio.familia.pk, activo=True)
     integrantes = filter(lambda x: hasattr(x, 'alumno_integrante'), integrantes)
+    colegiatura = Colegiatura.objects.all()[0]
     context = {
         'estudio': estudio,
         'total_egresos_familia': total_egresos_familia(estudio.familia.id),
         'total_ingresos_familia': total_ingresos_familia(estudio.familia.id),
         'total_neto_familia': total_neto_familia(estudio.familia.id),
         'fotos': fotos,
-        'integrantes': integrantes
+        'integrantes': integrantes,
+        'colegiatura': colegiatura.monto
     }
     if request.method == 'GET':
         context['form'] = BecaForm()

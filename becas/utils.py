@@ -13,7 +13,7 @@ from administracion.models import Colegiatura
 
 
 def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
-                    curso='2° Preescolar Nuevo Ingreso', porcentaje='15',
+                    grado='2° Preescolar Nuevo Ingreso', porcentaje='15',
                     compromiso='''La Madre de familia se compromete a realizar aseos
                     de salones.''', a_partir='''Comienza a realizar pago de la aportación
                     mensual enero 2017'''):
@@ -23,7 +23,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     Parameters:
     - nombre: name of the student
     - ciclo: year where the scholarship applies
-    - curso: which course will the student be in
+    - grado: which course will the student be in
     - porcentaje: the percentage of scholarship
     - compromiso: what the family will do for the scholarship
     - a_partir: from when does the family start paying.
@@ -57,7 +57,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     letter.append(Spacer(1, 12))
     ptext = '<font size=12><b>Presente</b></font>'
     letter.append(Paragraph(ptext, styles['Normal']))
-    letter.append(Spacer(1, 12))
+    letter.append(Spacer(1, 35))
 
     ptext = '''<font size=12> Por medio de la presente manifiesto a ustedes
             mi pleno conocimiento y aceptación, respecto  a la APORTACIÓN (BECA)*
@@ -66,32 +66,32 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     letter.append(Spacer(1, 12))
 
     ptext = '''<font size=12>Él (ella) se inscribirá en esta Institución y
-            cursará para el ciclo {} en <b>{}</b>.</font>'''.format(ciclo, curso)
+            cursará para el ciclo {} en <b>{}</b>.</font>'''.format(ciclo, grado)
     letter.append(Paragraph(ptext, styles['Justify']))
     letter.append(Spacer(1, 12))
 
-    colwidths = [5*inch, 1.5*inch]
+    ptext = '<font size=12>Dicha beca se integra de la siguiente manera:</font>'
+    letter.append(Paragraph(ptext, styles['Justify']))
+    letter.append(Spacer(1, 20))
+
+    colwidths = [5.2*inch, 1.3*inch]
     tbl = []
     ptext = '<font size=12>COSTO VALOR DE EDUCACIÓN EN NUESTRO INSTITUTO</font>'
     tbl.append([Paragraph(ptext, styles['Justify'])])
 
     colegiatura = Colegiatura.objects.all()[0]
     ptext = '<font size=12>{}</font>'.format(colegiatura)
-    tbl[0].append(Paragraph(ptext, styles['Center']))
+    tbl[0].append(Paragraph(ptext, styles['Normal']))
 
     letter.append(Table(tbl, colWidths=colwidths))
     letter.append(Spacer(1, 15))
 
-    ptext = '<font size=12>Dicha beca se integra de la siguiente manera:</font>'
-    letter.append(Paragraph(ptext, styles['Justify']))
-    letter.append(Spacer(1, 12))
-
     tbl = []
     ptext = '<font size=12>PORCENTAJE DE BECA OTORGADO</font>'
-    tbl.append([Paragraph(ptext, styles['Normal'])])
+    tbl.append([Paragraph(ptext, styles['Justify'])])
 
     ptext = '<font size=12>{}</font>'.format(porcentaje)
-    tbl[0].append(Paragraph(ptext, styles['Center']))
+    tbl[0].append(Paragraph(ptext, styles['Normal']))
     letter.append(Table(tbl, colWidths=colwidths))
     letter.append(Spacer(1, 12))
 
@@ -102,7 +102,7 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     monto = colegiatura.monto
     aportacion = monto - (monto*decimal.Decimal(porcentaje[:-1])/decimal.Decimal('100.0'))
     ptext = '<font size=12>${}</font>'.format(aportacion)
-    tbl[0].append(Paragraph(ptext, styles['Center']))
+    tbl[0].append(Paragraph(ptext, styles['Normal']))
     letter.append(Table(tbl, colWidths=colwidths))
     letter.append(Spacer(1, 15))
 
@@ -136,10 +136,10 @@ def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
     letter.append(Paragraph(ptext, styles['Normal']))
     letter.append(Spacer(1, 17))
 
-    ptext = '''<font size=11><b>*La aportación-beca está sujeta a cambios y a
+    ptext = '''<font size=11>*La aportación-beca está sujeta a cambios y a
             revisión por el Instituto de Educación Integral IAP y el Comité de Becas,
             en caso de encontrar algún dato falso, la escuela cancelará la beca
-            otorgada.</b></font>'''
+            otorgada.</font>'''
     letter.append(Paragraph(ptext, styles['Normal']))
 
     doc.build(letter)
