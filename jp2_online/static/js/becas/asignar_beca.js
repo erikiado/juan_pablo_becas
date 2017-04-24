@@ -1,19 +1,6 @@
-$(document).ready(function() {
-  recalculateFromTabulador();
-  $('#id_tabulador option')['7'].disabled = true; // disable option 'fuera_rango'
-});
 
-$('#id_tabulador').change(function() {
-  recalculateFromTabulador();
-});
-
-$('#id_porcentaje').change(function() {
-  recalculateFromPercentage(parseFloat($(this).val()));
-});
-
-
-function setAportacion(percentage) {
-  var aportacion = (1500. - 1500.*percentage/100.).toFixed(2);
+function setAportacion(percentage, colegiatura) {
+  var aportacion = (colegiatura - colegiatura*percentage/100.).toFixed(2);
   $('#id_monto').html(aportacion);
 }
 
@@ -25,22 +12,22 @@ function setPercentage(val) {
 this function sets the percentage and amount to pay
 given the current tabulador.
 */
-function recalculateFromTabulador() {
+function recalculateFromTabulador(colegiatura) {
   var tabulador = parseFloat($('#id_tabulador').val());
   var num_alumnos = $('#tabla_alumnos tr').length - 1;
   var income = parseFloat($('#id_ingresos').html());
   var should_pay = income * tabulador / 100. / num_alumnos;
-  var perc = Math.floor((1500.-should_pay) / 1500. * 100);
+  var perc = Math.floor((colegiatura-should_pay) / colegiatura * 100);
   setPercentage(perc);
-  setAportacion(perc);
+  setAportacion(perc, colegiatura);
 }
 
 /*
 this function sets the tabulador and amount to pay
 given the percentage
 */
-function recalculateFromPercentage(perc) {
-  var to_pay = 1500. * (100-perc) / 100.;
+function recalculateFromPercentage(perc, colegiatura) {
+  var to_pay = colegiatura * (100-perc) / 100.;
   var num_alumnos = $('#tabla_alumnos tr').length - 1;
   var total_paying = num_alumnos * to_pay;
   var income = parseFloat($('#id_ingresos').html());
@@ -51,7 +38,7 @@ function recalculateFromPercentage(perc) {
   else {
     $('#id_tabulador').val('fuera_rango');
   }
-  setAportacion(perc);
+  setAportacion(perc, colegiatura);
 }
 
 /*

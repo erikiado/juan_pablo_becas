@@ -8,3 +8,4 @@ sphinx-rtd-theme==0.1.9
 djangorestframework==3.5.4
 django-cors-headers==2.0.2
 Pillow==4.1.0
+reportlab==3.4.0

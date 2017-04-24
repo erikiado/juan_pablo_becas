@@ -6,6 +6,7 @@ from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
 from familias.models import Familia, Integrante, Alumno
 from estudios_socioeconomicos.models import Estudio
+from becas.models import Beca
 from .models import Escuela
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 
@@ -75,6 +76,72 @@ class TestAdministracionUrls(TestCase):
         response = self.client.get(reverse(test_url_name,
                                            kwargs={'id_alumno': 33}))
         self.assertEqual(404, response.status_code)
+
+    def test_view_generate_valid(self):
+        """ Test that the view returns a pdf if we provide valid data.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        Beca.objects.create(alumno=alumno, porcentaje='20')
+
+        test_url_name = 'administracion:detail_student'
+        data = {
+            'grado': 'Primero de primaria',
+            'ciclo': '2016-2017',
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
+        }
+        response = self.client.post(reverse(test_url_name,
+                                            kwargs={'id_alumno': alumno.pk}),
+                                    data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('content-type'), 'application/pdf')
+
+    def test_view_generate_invalid(self):
+        """ Test that the view does not return a pdf if the data is invalid.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        Beca.objects.create(alumno=alumno, porcentaje='20')
+
+        test_url_name = 'administracion:detail_student'
+        data = {
+            'grado': '',
+            'ciclo': '2016-2017',
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
+        }
+        response = self.client.post(reverse(test_url_name,
+                                            kwargs={'id_alumno': alumno.pk}),
+                                    data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('content-type'), 'text/html; charset=utf-8')
 
 
 class TestUserForm(TestCase):
