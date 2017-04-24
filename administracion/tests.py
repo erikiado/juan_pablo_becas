@@ -1,11 +1,13 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Group
-
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.models import Capturista
-from familias.models import Familia
+from familias.models import Familia, Integrante, Alumno
 from estudios_socioeconomicos.models import Estudio
+from becas.models import Beca
+from .models import Escuela
 from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
@@ -24,15 +26,6 @@ class TestAdministracionUrls(TestCase):
         administrators.user_set.add(thelma)
         self.client.login(username='thelma', password='junipero')
 
-    def test_view_main_dashboard(self):
-        """Unit Test: administracion.views.admin_main_dashboard.
-
-        """
-        test_url_name = 'administracion:main'
-        response = self.client.get(reverse(test_url_name), follow=True)
-        self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'administracion/dashboard_main.html')
-
     def test_view_users_dashboard(self):
         """Unit Test: administracion.views.admin_users_dashboard.
 
@@ -40,7 +33,115 @@ class TestAdministracionUrls(TestCase):
         test_url_name = 'administracion:users'
         response = self.client.get(reverse(test_url_name), follow=True)
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'administracion/dashboard_users.html')
+        self.assertTemplateUsed(response, 'administracion/crud_users.html')
+
+    def test_view_search_students(self):
+        """ Test we can access the search_students view.
+
+        """
+        test_url_name = 'administracion:search_students'
+        response = self.client.get(reverse(test_url_name), follow=True)
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'administracion/search_students.html')
+
+    def test_view_detail_student(self):
+        """ Test we can access the view for details of a student.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        test_url_name = 'administracion:detail_student'
+        response = self.client.get(reverse(test_url_name,
+                                           kwargs={'id_alumno': alumno.pk}))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'administracion/detail_student.html')
+
+    def test_view_invalid_detail_student(self):
+        """ Test we can't access to the details of an inexistent student.
+
+        """
+        test_url_name = 'administracion:detail_student'
+        response = self.client.get(reverse(test_url_name,
+                                           kwargs={'id_alumno': 33}))
+        self.assertEqual(404, response.status_code)
+
+    def test_view_generate_valid(self):
+        """ Test that the view returns a pdf if we provide valid data.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        Beca.objects.create(alumno=alumno, porcentaje='20')
+
+        test_url_name = 'administracion:detail_student'
+        data = {
+            'grado': 'Primero de primaria',
+            'ciclo': '2016-2017',
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
+        }
+        response = self.client.post(reverse(test_url_name,
+                                            kwargs={'id_alumno': alumno.pk}),
+                                    data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('content-type'), 'application/pdf')
+
+    def test_view_generate_invalid(self):
+        """ Test that the view does not return a pdf if the data is invalid.
+
+        """
+        escuela = Escuela.objects.create(nombre='Juan Pablo')
+        familia = Familia.objects.create(
+                              numero_hijos_diferentes_papas=2,
+                              estado_civil='soltero',
+                              localidad='salitre')
+        integrante = Integrante.objects.create(familia=familia,
+                                               nombres='Elver',
+                                               apellidos='Ga',
+                                               nivel_estudios='doctorado',
+                                               fecha_de_nacimiento='1996-02-26')
+        alumno = Alumno.objects.create(integrante=integrante,
+                                       numero_sae='5876',
+                                       escuela=escuela)
+
+        Beca.objects.create(alumno=alumno, porcentaje='20')
+
+        test_url_name = 'administracion:detail_student'
+        data = {
+            'grado': '',
+            'ciclo': '2016-2017',
+            'compromiso': 'La familia se compromete a lavar el piso',
+            'a_partir': 'Comienza a realizar pago de la aportación mensual agosto 2017'
+        }
+        response = self.client.post(reverse(test_url_name,
+                                            kwargs={'id_alumno': alumno.pk}),
+                                    data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('content-type'), 'text/html; charset=utf-8')
 
 
 class TestUserForm(TestCase):
@@ -60,6 +161,7 @@ class TestUserForm(TestCase):
         """Setup the dictionary with data for feeding the form.
 
         """
+        self.factory = RequestFactory()
         self.valid_data_form = {
             'username': 'raul',
             'first_name': 'raul',
@@ -79,9 +181,10 @@ class TestUserForm(TestCase):
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = ADMINISTRADOR_GROUP
+        request = self.factory.get('administracion:users')
         form = UserForm(data_form)
         self.assertTrue(form.is_valid())
-        user = form.save()
+        user = form.save(request=request)
         self.assertTrue(user.groups.filter(name=ADMINISTRADOR_GROUP).exists())
 
     def test_valid_data_capturista(self):
@@ -92,9 +195,10 @@ class TestUserForm(TestCase):
         """
         data_form = self.valid_data_form.copy()
         data_form['rol_usuario'] = CAPTURISTA_GROUP
+        request = self.factory.get('administracion:users')
         form = UserForm(data_form)
         self.assertTrue(form.is_valid())
-        user = form.save()
+        user = form.save(request=request)
         self.assertTrue(user.groups.filter(name=CAPTURISTA_GROUP).exists())
         self.assertTrue(Capturista.objects.filter(user=user).exists())
 

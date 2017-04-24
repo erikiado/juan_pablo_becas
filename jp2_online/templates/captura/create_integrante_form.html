@@ -1,0 +1,31 @@
+
+<form class="form-horizontal form-create-integrante" method="POST" action="{% url 'captura:create_integrante' id_familia %}">
+  {% csrf_token %}
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Creación de Integrante<small> Datos Generales</small></h4>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" name="id_integrante" value="{{ id_integrante }}">
+    {{ create_integrante_form.errors }}
+    {% for hidden in create_integrante_form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    {% for field in create_integrante_form.visible_fields %}
+      <div class="form-group" id="_{{field.id_for_label}}">
+        <div class="col-sm-offset-1 col-sm-3">
+          {{ field.errors }}
+          <strong>{{field.label}}:</strong>
+        </div>
+        <div class="col-sm-offset-1 col-sm-7">
+          {{field}}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary" id="btn_send_create_user">Guardar usuario</button>
+  </div>
+</form>
+

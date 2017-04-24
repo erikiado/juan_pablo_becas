@@ -1,5 +1,5 @@
 {
-  "name": "djangoTemplate",
+  "name": "jp",
   "version": "1.0.0",
   "description": "This is a template for starting a django project",
   "main": "index.js",
@@ -12,8 +12,12 @@
   },
   "author": "[tosp]",
   "license": "MIT",
-  "bugs": {
-    "url": ""
+  "homepage": "",
+  "directories": {
+    "doc": "docs"
   },
-  "homepage": ""
+  "dependencies": {
+    "gentelella": "^1.3.0",
+    "sweetalert2": "^6.5.5"
+  }
 }

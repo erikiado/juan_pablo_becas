@@ -1,0 +1,73 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% include 'captura/captura_navigation.html'%}
+
+<div class="row">
+  <div class="col-md-12">
+    
+    <div>
+      <h1 class="">Egresos e Ingresos Familiares</h1>
+    </div>
+
+    <div class="row">
+              
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_content">
+            {% include "captura/tabla_economic_status.html" %}
+            {% include "captura/tabla_ingresos.html" %}
+            {% include "captura/tabla_egresos.html" %}
+          </div>
+        </div>
+      </div>                
+    </div>
+  </div>
+</div>
+
+<div class="text-center">
+  <a id="previous_integrantes" href="{% url 'captura:list_integrantes' familia.id %}" class="btn btn-danger">
+    <i class="glyphicon glyphicon-arrow-left"></i> Integrantes
+  </a>
+  <a id="next_fotos" href="{% url 'captura:list_photos' familia.estudio.id %}" class="btn btn-danger">
+    Fotos Vivienda <i class="glyphicon glyphicon-arrow-right"></i>
+  </a>
+</div>
+
+<div class="row">
+    <div class="col-md-12 panel-warning">
+        <div class="content-box-large">
+         
+        </div>
+    </div>
+</div>
+
+{% include "captura/create_ingreso_modal.html" %}
+{% include "captura/create_egreso_modal.html" %}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_update_transaccion">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_update_transaccion_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_transaccion">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_transaccion_content">
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}
+
+
+{% block extra_page_js %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src={% static 'js/captura/captura_transaccion.js' %}> </script>
+{% endblock %}

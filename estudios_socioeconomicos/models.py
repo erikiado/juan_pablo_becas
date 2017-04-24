@@ -28,26 +28,54 @@ class Estudio(models.Model):
         id for studies (refer to the sample study provided by the stakeholder).
     """
     APROBADO = 'aprobado'
-    RECHAZADO = 'rechazado'
-    BORRADOR = 'borrador'
-    REVISION = 'revision'
-    ELIMINADO = 'eliminado'
+    RECHAZADO = 'rechazado'  # rejected from the POV of the admin
+    BORRADOR = 'borrador'  # draft of a capturista
+    REVISION = 'revision'  # the admin has to check it
+    ELIMINADO_CAPTURISTA = 'eliminado_capturista'  # deleted by capturista
+    ELIMINADO_ADMIN = 'eliminado_administrador'  # deleted by admin
     OPCIONES_STATUS = ((APROBADO, 'Aprobado'),
                        (RECHAZADO, 'Rechazado'),
                        (BORRADOR, 'Borrador'),
                        (REVISION, 'Revisión'),
-                       (ELIMINADO, 'Eliminado'))
+                       (ELIMINADO_CAPTURISTA, 'Eliminado'),
+                       (ELIMINADO_ADMIN, 'Eliminado'))
 
     capturista = models.ForeignKey(Capturista)
     familia = models.OneToOneField(Familia)
-
     status = models.TextField(choices=OPCIONES_STATUS, default=BORRADOR)
-    numero_sae = models.TextField(blank=True)
 
     def __str__(self):
-        return '{familia} status: {status}'.format(
-                                familia=self.familia.__str__(),
-                                status=self.status)
+        return '{familia}'.format(familia=self.familia.__str__())
+
+    @staticmethod
+    def get_options_status():
+        """ Returns a dictionary with the options for status to be used in the templates.
+
+        """
+        return {
+            'APROBADO': Estudio.APROBADO,
+            'BORRADOR': Estudio.BORRADOR,
+            'ELIMINADO_CAPTURISTA': Estudio.ELIMINADO_CAPTURISTA,
+            'ELIMINADO_ADMIN': Estudio.ELIMINADO_ADMIN,
+            'REVISION': Estudio.REVISION,
+            'RECHAZADO': Estudio.RECHAZADO
+        }
+
+
+class Foto(models.Model):
+    """ The model that represents an image for a Estudio.
+
+        Attributes:
+        -----------
+        file_name: The name the file should have on sercer.
+        upload: Path to the image
+        is_active: boolean indicating if model is active.
+    """
+    estudio = models.ForeignKey(Estudio, on_delete=models.CASCADE)
+
+    file_name = models.CharField(max_length=300)
+    upload = models.FileField(upload_to='')
+    is_active = models.BooleanField(default=True)
 
 
 @receiver(post_save, sender=Estudio)
@@ -59,6 +87,10 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
     in the database, we want to populate all the answers to query them and display
     them to the user.
 
+    When we create a study through a REST endpoint for an offline client we dont
+    want to create all answers (the client will already providing them). We can skip
+    this trigger using .save_base(raw=True) on a estudio object.
+
     Parameters:
     -----------
       instance : estudios_socioeconomicos.models.Estudio
@@ -67,8 +99,12 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
       created : BooleanField
           A value indicating if this instance is being created for the first time. Or if set
           to false if it is being edited.
+
+      kwargs['raw']: BooleanField
+        A value indicating us if we can skip the trigger.
     """
-    if created:
+    raw = kwargs['raw']
+    if created and not raw:
         preguntas = Pregunta.objects.all()
         for pregunta in preguntas:
             Respuesta.objects.create(estudio=instance, pregunta=pregunta)
@@ -177,8 +213,8 @@ class Respuesta(models.Model):
     respuesta : TextField
         If the answer needs to have text, it will be stored in this attribute.
     """
-    estudio = models.ForeignKey(Estudio)
-    pregunta = models.ForeignKey(Pregunta)
+    estudio = models.ForeignKey(Estudio, related_name='respuesta_estudio')
+    pregunta = models.ForeignKey(Pregunta, related_name='respuesta_pregunta')
     eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 

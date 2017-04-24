@@ -1,6 +1,6 @@
 from django.db import models
 from core.validators import PHONE_REGEX
-# from administracion.models import Escuela
+from administracion.models import Escuela
 
 
 class Familia(models.Model):
@@ -64,10 +64,26 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
-    numero_hijos_diferentes_papas = models.IntegerField(default=0)
+    numero_hijos_diferentes_papas = models.IntegerField()
+
     explicacion_solvencia = models.TextField(blank=True)
-    estado_civil = models.TextField(choices=OPCIONES_ESTADO_CIVIL, default=OPCION_ESTADO_SOLTERO)
-    localidad = models.TextField(choices=OPCIONES_LOCALIDAD, default=OPCION_LOCALIDAD_JURICA)
+    estado_civil = models.CharField(max_length=100,
+                                    choices=OPCIONES_ESTADO_CIVIL)
+    localidad = models.CharField(max_length=100,
+                                 choices=OPCIONES_LOCALIDAD)
+
+    def __str__(self):
+        """ Prints the apellido of one of the students of the family,
+        in case the family has no related students the legend
+        "Aún no se crean alumnos en el estudio" will appear.
+        """
+        integrantes = Integrante.objects.filter(familia=self).values_list('id', flat=True)
+        alumnos = Alumno.objects.filter(integrante__in=integrantes)
+        if alumnos:
+            alumno = alumnos[0]
+            return alumno.integrante.apellidos
+        else:
+            return 'Aún no se crean alumnos en el estudio'
 
 
 class Comentario(models.Model):
@@ -92,7 +108,7 @@ class Comentario(models.Model):
     - Determine if this model should have a relationship with an user model.
     """
 
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='comentario_familia')
     fecha = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     texto = models.TextField()
 
@@ -168,12 +184,13 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),
                                (OPCION_ESTUDIOS_MAESTRIA, 'Maestría'),
                                (OPCION_ESTUDIOS_DOCTORADO, 'Doctorado'))
-    familia = models.ForeignKey(Familia)
-    nombres = models.TextField()
-    apellidos = models.TextField()
+    familia = models.ForeignKey(Familia, related_name='integrante_familia')
+    nombres = models.CharField(max_length=200)
+    apellidos = models.CharField(max_length=200)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
-    nivel_estudios = models.TextField(choices=OPCIONES_NIVEL_ESTUDIOS)
+    nivel_estudios = models.CharField(max_length=200,
+                                      choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
     activo = models.BooleanField(default=True)
 
@@ -210,9 +227,10 @@ class Alumno(models.Model):
     administracion app.
     """
 
-    integrante = models.OneToOneField(Integrante)
+    integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
-    # escuela = models.ForeignKey(Escuela)
+    numero_sae = models.CharField(max_length=30)
+    escuela = models.ForeignKey(Escuela, related_name='escuela_alumno')
 
     def __str__(self):
         """ Returns the name of the student
@@ -243,8 +261,9 @@ class Tutor(models.Model):
     OPCIONES_RELACION = ((OPCION_RELACION_MADRE, 'Madre'),
                          (OPCION_RELACION_PADRE, 'Padre'),
                          (OPCION_RELACION_TUTOR, 'Tutor'))
-    integrante = models.OneToOneField(Integrante)
-    relacion = models.TextField(choices=OPCIONES_RELACION)
+
+    integrante = models.OneToOneField(Integrante, related_name='tutor_integrante')
+    relacion = models.CharField(max_length=75, choices=OPCIONES_RELACION)
 
     def __str__(self):
         """ Return the name of the tutor.

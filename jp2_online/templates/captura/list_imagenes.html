@@ -1,0 +1,60 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+{% include 'captura/captura_navigation.html'%}
+
+<div class="row">
+  <div class="col-md-12">
+    
+    <div>
+      <h1 class="">Fotos de la Vivienda</h1>
+    </div>
+
+    <div class="row">
+              
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_content">
+            {% include "captura/panel_fotos.html" %}
+          </div>
+        </div>
+      </div>                
+    </div>
+  </div>
+</div>
+
+<div class="text-center">
+  <a id="previous_transacciones" href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
+    <i class="glyphicon glyphicon-arrow-left"></i>Ingresos y Egresos 
+  </a>
+  <a id="next_preguntas" href="{% url 'captura:contestar_estudio' familia.estudio.id 1%}" class="btn btn-danger">
+    Preguntas <i class="glyphicon glyphicon-arrow-right"></i>
+  </a>
+</div>
+
+<div class="row">
+    <div class="col-md-12 panel-warning">
+        <div class="content-box-large">
+         
+        </div>
+    </div>
+</div>
+
+{% include "captura/foto_form.html" %}
+
+
+
+{% endblock %}
+
+{{ form.non_field_errors}}
+{% block extra_page_js %}
+
+<script type="text/javascript">
+  {% if form.errors %}
+    $('#modal_upload_foto').modal('show');
+    swal("Error", '', "error");
+  {% endif %}
+</script>
+{% endblock %}

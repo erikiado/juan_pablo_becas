@@ -39,16 +39,16 @@ class TestPeriodo(TestCase):
         self.periodicidad = 'Anual'
         self.factor = 1.0
         self.multiplica = True
-        Periodo.objects.create(periodicidad=self.periodicidad,
-                               factor=self.factor,
-                               multiplica=self.multiplica)
+        self.periodo1 = Periodo.objects.create(periodicidad=self.periodicidad,
+                                               factor=self.factor,
+                                               multiplica=self.multiplica)
 
     def test_str(self):
         """ Test for the periodo __str__ method.
 
         This tests that it returns the peridicidad of the oficio.
         """
-        periodo = Periodo.objects.get(periodicidad=self.periodicidad)
+        periodo = Periodo.objects.get(pk=self.periodo1.pk)
         self.assertEqual(str(periodo), self.periodicidad)
 
 
@@ -63,15 +63,17 @@ class TestTransacciones(TestCase):
         will be linked, and mock periods to add to the transactions,
         as well as the transaction itself.
         """
-        familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         self.factor_anual = decimal.Decimal('12')
-        periodo_anual = Periodo.objects.create(periodicidad='Anual',
-                                               factor=self.factor_anual,
-                                               multiplica=False)
+        self.periodo_anual = Periodo.objects.create(periodicidad='Anual',
+                                                    factor=self.factor_anual,
+                                                    multiplica=False)
         Transaccion.objects.create(familia=familia,
                                    activo=True,
                                    monto=1200,
-                                   periodicidad=periodo_anual,
+                                   periodicidad=self.periodo_anual,
                                    es_ingreso=True)
 
     def test_obtener_valor_de_transaccion(self):
@@ -103,11 +105,11 @@ class TestTransacciones(TestCase):
         self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('0.0'))
 
         # Casos when multiplica is True
-        periodo = Periodo.objects.get(periodicidad='Anual')
+        periodo = Periodo.objects.get(pk=self.periodo_anual.pk)
         periodo.factor = decimal.Decimal('10.0')
         periodo.multiplica = True
         periodo.save()
-        periodo = Periodo.objects.get(periodicidad='Anual')
+        periodo = Periodo.objects.get(pk=self.periodo_anual.pk)
         transaccion = Transaccion.objects.get(monto=1200)
         self.assertEqual(transaccion.obtener_valor_mensual(), decimal.Decimal('12000.0'))
         transaccion.es_ingreso = False
@@ -136,7 +138,9 @@ class TestIngreso(TestCase):
         will be linked, and mock periods to add to the ingreso, a transaction, and
         the ingreso as well.
         """
-        familia = Familia.objects.create(estado_civil='soltero', localidad='Nabo')
+        familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+                                         estado_civil='soltero',
+                                         localidad='Nabo')
         periodo_anual = Periodo.objects.create(periodicidad='Anual',
                                                factor=decimal.Decimal('12'),
                                                multiplica=False)

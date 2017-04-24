@@ -45,21 +45,8 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         """At the end of tests, close the browser.
 
         """
+        self.browser.driver.close()
         self.browser.quit()
-
-    def test_main_dashboard(self):
-        """Test for url 'administracion:main'.
-
-        Visit the url of name 'administracion:main' and check it loads the
-        content of the main dashboard panel.
-        """
-        test_url_name = 'administracion:main'
-        self.browser.visit(self.live_server_url + reverse(test_url_name))
-
-        # Check for nav_bar partial
-        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_users_dashboard(self):
         """Test for url 'administracion:users'.
@@ -249,7 +236,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 
         # Check the user effectively logged in.
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        self.assertTrue(self.browser.is_text_present('Administración'))
+        # self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_delete_user_dashboard(self):
         """ Test for delete user from dashboard form.
@@ -333,6 +320,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
     def tearDown(self):
         """ At the end of tests, close the browser.
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     def test_if_not_exist_any_studies_rejected(self):
@@ -353,10 +341,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
+        self.assertFalse(self.browser.is_text_present('Número'))
         self.assertFalse(self.browser.is_text_present('Id Familia'))
-        self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        # self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_rejected_appears_for_user_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'rechazado' argument.
@@ -383,10 +371,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.RECHAZADO, numero_sae=1)
+                     status=Estudio.RECHAZADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.RECHAZADO, numero_sae=2)
+                     status=Estudio.RECHAZADO)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -400,16 +388,12 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-        self.assertFalse(self.browser.is_text_present('aprobado'))
-        self.assertFalse(self.browser.is_text_present('borrador'))
-        self.assertFalse(self.browser.is_text_present('Pendiente'))
-        self.assertFalse(self.browser.is_text_present('eliminado'))
         # Check that the following texts are present in the dashboard
-        self.assertTrue(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertTrue(self.browser.is_text_present('Id Familia'))
+        self.assertTrue(self.browser.is_text_present('Número'))
+        self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('En revisión'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
+        self.assertTrue(self.browser.is_text_present('Rechazado'))
 
     def test_if_not_exist_any_studies_as_pending(self):
         """ Test for url 'administracion:main_estudios' with the 'revision' parameter.
@@ -430,10 +414,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertFalse(self.browser.is_text_present('Id Familia'))
+        self.assertFalse(self.browser.is_text_present('Número'))
+        self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_as_pending_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'revision' parameter.
@@ -460,10 +444,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.REVISION, numero_sae=1)
+                     status=Estudio.REVISION)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.REVISION, numero_sae=2)
+                     status=Estudio.REVISION)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -477,15 +461,11 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-        self.assertFalse(self.browser.is_text_present('aprobado'))
-        self.assertFalse(self.browser.is_text_present('borrador'))
-        self.assertFalse(self.browser.is_text_present('En revisión'))
-        self.assertFalse(self.browser.is_text_present('eliminado'))
         # Check that the following texts aren present in the dashboard
-        self.assertTrue(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertTrue(self.browser.is_text_present('Id Familia'))
+        self.assertTrue(self.browser.is_text_present('Número'))
+        self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
         self.assertTrue(self.browser.is_text_present('Pendiente'))
 
     def test_if_not_exist_any_studies_approved(self):
@@ -507,10 +487,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertFalse(self.browser.is_text_present('Id Familia'))
+        self.assertFalse(self.browser.is_text_present('Número'))
+        self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_approved_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'aprobado' parameter.
@@ -537,10 +517,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.APROBADO, numero_sae=1)
+                     status=Estudio.APROBADO)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.APROBADO, numero_sae=2)
+                     status=Estudio.APROBADO)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -554,16 +534,13 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-        self.assertFalse(self.browser.is_text_present('Pendiente'))
-        self.assertFalse(self.browser.is_text_present('borrador'))
-        self.assertFalse(self.browser.is_text_present('En revisión'))
-        self.assertFalse(self.browser.is_text_present('eliminado'))
+
         # Check that the following texts are present in the dashboard
-        self.assertTrue(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertTrue(self.browser.is_text_present('Id Familia'))
+        self.assertTrue(self.browser.is_text_present('Número'))
+        self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('aprobado'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
+        self.assertTrue(self.browser.is_text_present('Aprobado'))
 
     def test_if_not_exist_any_draft_studies(self):
         """ Test for url 'administracion:main_estudios' with the 'borrador' parameter.
@@ -584,10 +561,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertFalse(self.browser.is_text_present('Id Familia'))
+        self.assertFalse(self.browser.is_text_present('Número'))
+        self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_draft_studies_appears_for_admin(self):
         """ Test for url 'administracion:main_estudios' with the 'borrador' parameter.
@@ -614,10 +591,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.BORRADOR, numero_sae=1)
+                     status=Estudio.BORRADOR)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.BORRADOR, numero_sae=2)
+                     status=Estudio.BORRADOR)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
@@ -631,26 +608,23 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-        self.assertFalse(self.browser.is_text_present('Pendiente'))
-        self.assertFalse(self.browser.is_text_present('aprobado'))
-        self.assertFalse(self.browser.is_text_present('En revisión'))
-        self.assertFalse(self.browser.is_text_present('eliminado'))
-        # Check that the following texts are present in the dashboard
-        self.assertTrue(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertTrue(self.browser.is_text_present('Id Familia'))
+
+        self.assertTrue(self.browser.is_text_present('Número'))
+        self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('borrador'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
+        self.assertTrue(self.browser.is_text_present('Borrador'))
 
     def test_if_not_exist_any_studies_deleted(self):
-        """ Test for url 'administracion:main_estudios' with the 'eliminado' parameter.
+        """ Test for url 'administracion:main_estudios' with the 'eliminado_admin' parameter.
 
             Visit the url of name 'administracion:main_estudios' and check if loads the
             empty page with the rigth message.
         """
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name,
+                                                          args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
@@ -660,13 +634,13 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.assertTrue(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
         # Check that the following texts aren't present in the dashboard
-        self.assertFalse(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertFalse(self.browser.is_text_present('Id Familia'))
+        self.assertFalse(self.browser.is_text_present('Número'))
+        self.assertFalse(self.browser.is_text_present('Familia'))
         self.assertFalse(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertFalse(self.browser.is_text_present('Ver'))
+        self.assertFalse(self.browser.is_text_present('Acciones'))
 
     def test_studies_deleted_appears_for_admin(self):
-        """ Test for url 'administracion:main_estudios' with the 'eliminado' parameter.
+        """ Test for url 'administracion:main_estudios' with the 'eliminado_admin' parameter.
 
             Visit the url of name 'administracion:main_estudios' and check it loads the
             content of the socio-economic studies deleted in the dashboard panel.
@@ -690,15 +664,16 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         f2.save()
 
         e1 = Estudio(capturista_id=capturist.id, familia_id=f1.id,
-                     status=Estudio.ELIMINADO, numero_sae=1)
+                     status=Estudio.ELIMINADO_ADMIN)
         e1.save()
         e2 = Estudio(capturista_id=capturist.id, familia_id=f2.id,
-                     status=Estudio.ELIMINADO, numero_sae=2)
+                     status=Estudio.ELIMINADO_ADMIN)
         e2.save()
 
         test_url_name = 'administracion:main_estudios'
 
-        self.browser.visit(self.live_server_url + reverse(test_url_name, args=['eliminado']))
+        self.browser.visit(self.live_server_url + reverse(test_url_name,
+                                                          args=['eliminado_administrador']))
         # Check for nav_bar partial
         self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
@@ -707,13 +682,10 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
-        self.assertFalse(self.browser.is_text_present('Pendiente'))
-        self.assertFalse(self.browser.is_text_present('aprobado'))
-        self.assertFalse(self.browser.is_text_present('En revisión'))
-        self.assertFalse(self.browser.is_text_present('borrador'))
+
         # Check that the following texts are present in the dashboard
-        self.assertTrue(self.browser.is_text_present('Numero de Estudio Socioeconómico'))
-        self.assertTrue(self.browser.is_text_present('Id Familia'))
+        self.assertTrue(self.browser.is_text_present('Número'))
+        self.assertTrue(self.browser.is_text_present('Familia'))
         self.assertTrue(self.browser.is_text_present('Nombre del Capturista'))
-        self.assertTrue(self.browser.is_text_present('Ver'))
-        self.assertTrue(self.browser.is_text_present('eliminado'))
+        self.assertTrue(self.browser.is_text_present('Acciones'))
+        self.assertTrue(self.browser.is_text_present('Eliminado'))

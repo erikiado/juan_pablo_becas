@@ -1,0 +1,12 @@
+{% for foto in fotos %}             
+  <div class="col-md-55">
+      <div class="thumbnail">
+        <div class="image view view-first">
+          <img style="width: 100%; display: block;" src="{{MEDIA_URL}}{{ foto.upload }}" alt="image" />
+        </div>
+        <div class="caption">
+          <p>{{foto.file_name}}</p>
+        </div>
+      </div>
+  </div>
+{% endfor %}

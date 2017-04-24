@@ -31,6 +31,7 @@ class EstudioTestCase(TestCase):
                                     password='some_pass')
         self.capturista = Capturista.objects.create(user=self.user)
         self.familia = Familia.objects.create(
+                                numero_hijos_diferentes_papas=2,
                                 explicacion_solvencia='aaa',
                                 estado_civil='soltero',
                                 localidad='otro')
@@ -44,9 +45,7 @@ class EstudioTestCase(TestCase):
 
         TODO: fill __str__ method of familia.
         """
-        expected = '{familia} status: {status}'.format(
-                                            familia=str(self.familia),
-                                            status=self.estudio.status)
+        expected = '{familia}'.format(familia=str(self.familia))
         self.assertEqual(str(self.estudio), expected)
 
     def test_anwser_generation_for_study(self):
@@ -57,6 +56,18 @@ class EstudioTestCase(TestCase):
         preguntas = Pregunta.objects.all()
 
         self.assertEqual(respuestas.count(), preguntas.count())
+
+    def test_get_status(self):
+        """ Test whether the static method to return a dict with status options works correctly.
+
+        """
+        options = Estudio.get_options_status()
+        self.assertEqual(options['APROBADO'], Estudio.APROBADO)
+        self.assertEqual(options['RECHAZADO'], Estudio.RECHAZADO)
+        self.assertEqual(options['BORRADOR'], Estudio.BORRADOR)
+        self.assertEqual(options['REVISION'], Estudio.REVISION)
+        self.assertEqual(options['ELIMINADO_CAPTURISTA'], Estudio.ELIMINADO_CAPTURISTA)
+        self.assertEqual(options['ELIMINADO_ADMIN'], Estudio.ELIMINADO_ADMIN)
 
 
 class SeccionTestCase(TestCase):
@@ -218,6 +229,7 @@ class RespuestaTestCase(TestCase):
                                     password='some_pass')
         self.capturista = Capturista.objects.create(user=self.user)
         self.familia = Familia.objects.create(
+                                numero_hijos_diferentes_papas=2,
                                 explicacion_solvencia='aaa',
                                 estado_civil='soltero',
                                 localidad='otro')

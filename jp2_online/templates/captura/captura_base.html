@@ -1,0 +1,39 @@
+{% extends "layouts/basic.html" %}
+{% load staticfiles %}
+{% block page_title %}Captura{% endblock %}
+
+
+
+{% block content %}
+
+{% include 'captura/captura_navigation.html'%}
+
+<div class="page-content container">
+    <div class="row text-center">
+      <div class="col-md-6 col-md-offset-3">
+          {% include form_view %}
+      </div>
+  </div>
+</div>
+
+{% endblock %}
+
+<style>
+  .tile-stats{
+    background: rgb(0,0,0) !important;
+  }
+</style>
+
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#id_fecha_de_nacimiento').datepicker({
+        changeMonth: true,
+        changeYear: true}
+      );
+    });
+
+  </script>
+{% endblock %}

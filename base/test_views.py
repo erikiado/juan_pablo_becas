@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 from splinter import Browser
 
+
+from estudios_socioeconomicos.models import Estudio
 from perfiles_usuario.utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP, DIRECTIVO_GROUP, \
                                    SERVICIOS_ESCOLARES_GROUP
 from perfiles_usuario.models import Capturista
@@ -29,6 +31,7 @@ class TestBaseViews(StaticLiveServerTestCase):
     def tearDown(self):
         """At the end of tests, close the browser
         """
+        self.browser.driver.close()
         self.browser.quit()
 
     # def test_home(self):
@@ -103,7 +106,8 @@ class TestRedirects(TestCase):
         self.create_group(ADMINISTRADOR_GROUP)
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('administracion:main'))
+        self.assertRedirects(response, reverse('administracion:main_estudios',
+                                               kwargs={'status_study': Estudio.REVISION}))
 
     def test_redirect_capturista(self):
         """ Test that the capturista is redirected to its dashboard.
@@ -132,3 +136,16 @@ class TestRedirects(TestCase):
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('becas:services'))
+
+    def test_redirect_login(self):
+        """ Test that a logged user gets redirected to home.
+
+        """
+        self.create_group(CAPTURISTA_GROUP)
+        self.capturista = Capturista.objects.create(user=self.user)
+        self.create_group(CAPTURISTA_GROUP)
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('captura:estudios'))
+        response = self.client.get(reverse('tosp_auth:login'))
+        self.assertRedirects(response, reverse('home'), target_status_code=302)

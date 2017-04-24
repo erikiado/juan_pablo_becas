@@ -3,7 +3,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .utils import is_member
 from .utils import ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 

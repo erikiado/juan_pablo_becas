@@ -88,7 +88,7 @@ class Transaccion(models.Model):
         This field indicates whether a certain transaction is an income
         or an expense.
     """
-    familia = models.ForeignKey(Familia)
+    familia = models.ForeignKey(Familia, related_name='transacciones')
     activo = models.BooleanField(default=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
@@ -156,8 +156,8 @@ class Ingreso(models.Model):
                      (OPCION_COMPROBABLE, 'Comprobable'))
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
-    tipo = models.TextField(choices=OPCIONES_TIPO)
-    tutor = models.ForeignKey(Tutor, null=True)
+    tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
+    tutor = models.ForeignKey(Tutor, null=True, blank=True, related_name='tutor_ingresos')
 
     def __str__(self):
         """ This function returns the __str__ method of the parent transaction.

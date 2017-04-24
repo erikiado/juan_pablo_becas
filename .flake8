@@ -4,5 +4,6 @@ exclude =
     __pycache__,
     */settings/*,
     */migrations/*,
+    ./jp2_online/static/*,
    	./manage.py
 max-line-length=99
