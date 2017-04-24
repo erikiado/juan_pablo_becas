@@ -12,7 +12,7 @@ from reportlab.lib.units import inch
 from administracion.models import Colegiatura
 
 
-def generate_letter(response, nombre='Elver Ga', ciclo='2016-2017',
+def generate_letter(response, nombre='Juan Perez', ciclo='2016-2017',
                     grado='2° Preescolar Nuevo Ingreso', porcentaje='15',
                     compromiso='''La Madre de familia se compromete a realizar aseos
                     de salones.''', a_partir='''Comienza a realizar pago de la aportación
