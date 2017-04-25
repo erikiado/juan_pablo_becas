@@ -135,9 +135,14 @@ class FeedbackForm(forms.ModelForm):
     creating this form.
     """
 
+    descripcion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Retroalimentacion
         fields = ['estudio', 'usuario', 'descripcion']
+
         widgets = {
             'estudio': forms.HiddenInput(),
             'usuario': forms.HiddenInput()
