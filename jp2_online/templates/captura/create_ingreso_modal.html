@@ -8,21 +8,6 @@
           <h4 class="modal-title">Creacion de Ingreso</h4>
         </div>
         <div class="modal-body">
-          {{ create_transaccion_form.errors }}
-          {% for field in create_transaccion_form.visible_fields %}
-          <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-3">
-              {{ field.errors }}
-              <strong>{{field.label}}:</strong>
-            </div>
-            <div class="col-sm-offset-1 col-sm-7">
-              {{field}}
-            </div>
-          </div>
-          {% endfor %}
-          {% for field in create_transaccion_form.hidden_fields %}
-            {{ field }}
-          {% endfor %}
           {{ create_ingreso_form.errors }}
           {% for field in create_ingreso_form.visible_fields %}
           <div class="form-group">
@@ -36,6 +21,21 @@
           </div>
           {% endfor %}
           {% for field in create_ingreso_form.hidden_fields %}
+            {{ field }}
+          {% endfor %}
+          {{ create_transaccion_form.errors }}
+          {% for field in create_transaccion_form.visible_fields %}
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-3">
+              {{ field.errors }}
+              <strong>{{field.label}}:</strong>
+            </div>
+            <div class="col-sm-offset-1 col-sm-7">
+              {{field}}
+            </div>
+          </div>
+          {% endfor %}
+          {% for field in create_transaccion_form.hidden_fields %}
             {{ field }}
           {% endfor %}
         </div>

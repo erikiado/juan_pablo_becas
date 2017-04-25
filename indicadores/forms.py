@@ -40,9 +40,9 @@ class IngresoForm(ModelForm):
 
     class Meta:
         model = Ingreso
-        fields = ('fecha',
-                  'tipo',
-                  'tutor')
+        fields = ('tutor',
+                  'fecha',
+                  'tipo')
         labels = {
             'fecha': '¿Desde cuándo recibe el ingreso?'
         }
