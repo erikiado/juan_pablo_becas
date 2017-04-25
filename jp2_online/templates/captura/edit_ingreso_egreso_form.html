@@ -6,21 +6,6 @@
   <h4 class="modal-title">Edición de Ingresos y Egresos</h4>
 </div>
 <div class="modal-body">
-  {{ transaccion_form.errors }}
-  {% for field in transaccion_form.visible_fields %}
-  <div class="form-group">
-    <div class="col-sm-offset-1 col-sm-3">
-      {{ field.errors }}
-      <strong>{{field.label}}:</strong>
-    </div>
-    <div class="col-sm-offset-1 col-sm-7">
-      {{field}}
-    </div>
-  </div>
-  {% endfor %}
-  {% for field in transaccion_form.hidden_fields %}
-    {{ field }}
-  {% endfor %}
   {% if ingreso_form %}
     {{ ingreso_form.errors }}
     {% for field in ingreso_form.visible_fields %}
@@ -38,6 +23,21 @@
       {{ field }}
     {% endfor %}
   {% endif %}
+  {{ transaccion_form.errors }}
+  {% for field in transaccion_form.visible_fields %}
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-3">
+      {{ field.errors }}
+      <strong>{{field.label}}:</strong>
+    </div>
+    <div class="col-sm-offset-1 col-sm-7">
+      {{field}}
+    </div>
+  </div>
+  {% endfor %}
+  {% for field in transaccion_form.hidden_fields %}
+    {{ field }}
+  {% endfor %}
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>

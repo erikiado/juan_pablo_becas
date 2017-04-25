@@ -19,12 +19,12 @@ from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.forms import FotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
-from familias.models import Familia, Integrante
+from familias.models import Familia, Integrante, Oficio
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
 from familias.serializers import EscuelaSerializer
 from indicadores.serializers import OficioSerializer
-from indicadores.models import Transaccion, Ingreso, Oficio
+from indicadores.models import Transaccion, Ingreso
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
 

@@ -3,28 +3,6 @@ from django.db import models
 from familias.models import Familia, Tutor
 
 
-class Oficio(models.Model):
-    """ This model stores the list of all possible jobs.
-
-    This list of jobs stores the information related to a family
-    member, this model is used directly for the presentation and
-    creation of the indicators related to the jobs of tutors.
-
-    Attributes:
-    -----------
-    nombre : TextField
-        This field stores the name of a job.
-    """
-
-    nombre = models.TextField()
-
-    def __str__(self):
-        """ This returns the name of the Oficio
-
-        """
-        return '{}'.format(self.nombre)
-
-
 class Periodo(models.Model):
     """ This model serves to mark how often an event happens.
 

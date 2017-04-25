@@ -11,7 +11,8 @@ class FamiliaForm(ModelForm):
     """
     class Meta:
         model = Familia
-        fields = ('numero_hijos_diferentes_papas',
+        fields = ('nombre_familiar',
+                  'numero_hijos_diferentes_papas',
                   'estado_civil',
                   'localidad')
 
@@ -29,21 +30,31 @@ class IntegranteForm(ModelForm):
     OPCION_ROL_NINGUNO = 'ninguno'
     OPCION_ROL_TUTOR = 'tutor'
     OPCION_ROL_ALUMNO = 'alumno'
+    OPCION_ROL_HERMANO = 'hermano'
+    OPCION_ROL_ABUELO = 'abuelo'
+    OPCION_ROL_TIO = 'tio'
     OPCIONES_ROL = ((OPCION_ROL_NINGUNO, 'Ninguno'),
                     (OPCION_ROL_TUTOR, 'Tutor'),
-                    (OPCION_ROL_ALUMNO, 'Alumno'))
+                    (OPCION_ROL_ALUMNO, 'Alumno'),
+                    (OPCION_ROL_HERMANO, 'Hermano/a'),
+                    (OPCION_ROL_ABUELO, 'Abuelo/a'),
+                    (OPCION_ROL_TIO, 'Tío/a'))
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
 
     class Meta:
         model = Integrante
-        fields = ('familia',
+        fields = ('rol',
+                  'familia',
                   'nombres',
                   'apellidos',
+                  'oficio',
                   'telefono',
                   'correo',
                   'nivel_estudios',
-                  'fecha_de_nacimiento')
+                  'fecha_de_nacimiento',
+                  'sacramentos_faltantes',
+                  'historial_terapia')
         widgets = {
             'familia': HiddenInput()
         }
@@ -97,7 +108,8 @@ class IntegranteModelForm(IntegranteForm):
                 raise ValidationError('El tutor no tiene número sae ni escuela')
             return cleaned_data
 
-        if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_NINGUNO:
+        if cleaned_data['rol'] != IntegranteForm.OPCION_ROL_ALUMNO and \
+           cleaned_data['rol'] != IntegranteForm.OPCION_ROL_TUTOR:
             if cleaned_data['numero_sae'] or cleaned_data['escuela'] or cleaned_data['relacion']:
                 raise ValidationError('El integrante no tiene número sae, escuela o relación')
             return cleaned_data
