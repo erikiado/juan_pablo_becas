@@ -217,10 +217,10 @@ class Integrante(models.Model):
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
-    sacramentos = 'Sacramentos que le falten… bautizo, comunion, confirmación, matrimnio iglesia'
+    sacramentos = 'SACRAMENTOS QUE LE FALTEN… BAUTIZO, COMUNION, CONFIRMACIÓN, MATRIMONIO IGLESIA'
     sacramentos_faltantes = models.TextField(blank=True,
                                              verbose_name=sacramentos)
-    hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
+    hist = '¿ASISTE O ASISTÍO A TERAPIA POR ALGUNA SITUACIÓN DE AA, PSICOLOGÍA, PSIQUIATRA, ETC.?'
     historial_terapia = models.TextField(blank=True, verbose_name=hist)
     activo = models.BooleanField(default=True)
     rol = models.CharField(max_length=150, verbose_name='Relación en la familia')
