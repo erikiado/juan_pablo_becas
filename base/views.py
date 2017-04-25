@@ -24,6 +24,7 @@ def home(request):
         return redirect('becas:services')
     raise Http404()
 
+
 @login_required
 def documentation(request):
     """ This view displays all of the tutorial created for the page.
@@ -34,10 +35,10 @@ def documentation(request):
     context['tutorials'] = Tutorial.objects.all()
     return render(request, 'base/help.html', context)
 
+
 def base_files(request, filename):
     """ This view serves basic files that are standard for every
     single website.
     """
-    
     location = 'base/' + filename
     return render(request, location, {}, content_type='text/plain')

@@ -16,7 +16,7 @@ class Tutorial(models.Model):
                        (CAPTURISTA_SECTION, 'Captura'),
                        (DIRECTIVO_SECTION, 'Dirección'),
                        (SERVICIOS_ESCOLARES_SECTION, 'Servicios Esolares'))
-    
+
     titulo = models.CharField(max_length=80, null=False)
     descripcion = models.TextField()
     video = models.URLField()

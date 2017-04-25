@@ -69,6 +69,7 @@ class TestBaseViews(StaticLiveServerTestCase):
         self.browser.find_by_id('help_button').click()
         self.assertTrue(self.browser.is_text_present('Página de ayuda'))
 
+
 class TestHelp(TestCase):
     """ Suite to test that the help page can be accessed.
     """
@@ -90,8 +91,8 @@ class TestHelp(TestCase):
         """
         response = self.client.get(reverse('ayuda'))
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, 'base/help.html') 
-     
+        self.assertTemplateUsed(response, 'base/help.html')
+
 
 class TestRedirects(TestCase):
     """ Suite to test the redirection from base to the corresponding dashboards.
