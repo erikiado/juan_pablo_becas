@@ -69,6 +69,11 @@
                   <li role="presentation" class=""><a href="#tab_content4" role="tab" data-toggle="tab" aria-expanded="false">Información Adicional</a>
                   </li>
 
+                  {% if estudio.status == status_options.REVISION %}
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" data-toggle="tab" aria-expanded="false">Revisión</a>
+                    </li>
+                  {% endif %}
+
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
@@ -96,6 +101,15 @@
                     {% include 'estudios_socioeconomicos/focus_mode_seccion_cuestionario.html' %}
                   </div>
                   <!-- END SECCION PREGUNTAS -->
+                  
+                  <!-- SECCION REVISION -->
+                
+                  {% if estudio.status == status_options.REVISION %}
+                  <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
+                    {% include 'estudios_socioeconomicos/focus_mode_seccion_revision.html' %}
+                   </div>
+                  {% endif %}
+                  <!-- END SECCION REVISION -->
 
                 </div>
               </div>
