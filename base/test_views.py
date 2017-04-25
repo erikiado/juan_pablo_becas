@@ -32,14 +32,6 @@ class TestBaseViews(StaticLiveServerTestCase):
         self.browser.driver.close()
         self.browser.quit()
 
-    # def test_home(self):
-    #     """Test for url 'base:home'.
-
-    #     Visit the url of name 'home' and check it loads the content
-    #     """
-    #     self.browser.visit(self.live_server_url + reverse('home'))
-    #     self.assertTrue(self.browser.is_text_present('Hello, world!'))
-
     def test_robots(self):
         """Test for url 'base:base_files(robots.txt)'.
 
@@ -58,6 +50,48 @@ class TestBaseViews(StaticLiveServerTestCase):
                            kwargs={'filename': 'humans.txt'}))
         self.assertTrue(self.browser.is_text_present('humanstxt'))
 
+    def test_access_to_help(self):
+        """ Test that help is accesible via de help button
+        """
+        test_username = 'thelma'
+        test_password = 'junipero'
+        self.thelma = get_user_model().objects.create_user(
+            username=test_username, email='juan@pablo.com', password=test_password,
+            first_name='Thelma', last_name='Thelmapellido')
+        administrators = Group.objects.get_or_create(name=ADMINISTRADOR_GROUP)[0]
+        administrators.user_set.add(self.thelma)
+        administrators.save()
+        self.browser.visit(self.live_server_url + reverse('tosp_auth:login'))
+        self.browser.fill('username', test_username)
+        self.browser.fill('password', test_password)
+        self.browser.find_by_id('login-submit').click()
+        self.browser.find_by_id('my-account-btn').click()
+        self.browser.find_by_id('help_button').click()
+        self.assertTrue(self.browser.is_text_present('Página de ayuda'))
+
+class TestHelp(TestCase):
+    """ Suite to test that the help page can be accessed.
+    """
+
+    def setUp(self):
+        """ Create the necessary elements
+        """
+        self.username = 'Eugenio420'
+        self.password = 'pugnotpug'
+        self.user = get_user_model().objects.create_user(
+                                            username=self.username,
+                                            password=self.password)
+        self.client.login(username=self.username, password=self.password)
+
+    def test_help(self):
+        """ Test for url 'base:ayuda'.
+
+        Visits the url of help.html and checks if it loads the correct template.
+        """
+        response = self.client.get(reverse('ayuda'))
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, 'base/help.html') 
+     
 
 class TestRedirects(TestCase):
     """ Suite to test the redirection from base to the corresponding dashboards.

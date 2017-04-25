@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from perfiles_usuario.utils import is_administrador, is_capturista,\
                                  is_directivo, is_servicios_escolares
+from .models import Tutorial
 
 
 @login_required
@@ -25,18 +26,18 @@ def home(request):
 
 @login_required
 def documentation(request):
-    """ DUMMY VIEW.
+    """ This view displays all of the tutorial created for the page.
 
-    This functions is currently just being used to test the redirect
-    from base.
-
-    TODO: name properly and implement everything
     """
-    return render(request, 'base/help.html')
+    context = {}
+    context['sections'] = Tutorial.SECTION_OPTIONS
+    context['tutorials'] = Tutorial.objects.all()
+    return render(request, 'base/help.html', context)
 
 def base_files(request, filename):
     """ This view serves basic files that are standard for every
     single website.
     """
+    
     location = 'base/' + filename
     return render(request, location, {}, content_type='text/plain')
