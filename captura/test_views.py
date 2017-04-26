@@ -562,7 +562,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('No hay registro'))
         # Check that the following texts are present if exists any socio-economic study
         self.assertTrue(self.browser.is_text_present('Editar'))
-        self.assertTrue(self.browser.is_text_present('Ver Retroalimentación'))
 
 
 class TestViewsFotos(StaticLiveServerTestCase):

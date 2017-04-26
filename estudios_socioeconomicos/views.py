@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from administracion.forms import FeedbackForm
 from captura.utils import get_study_info
+from captura.models import Retroalimentacion
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP,\
     CAPTURISTA_GROUP, is_administrador
 from familias.models import Integrante
@@ -46,7 +47,8 @@ def focus_mode(request, id_estudio):
                                               'usuario': request.user})
         context['feedback_form'] = feedback_form
 
-    # if estudio.status == Estudio.RECHAZADO:
+    if estudio.status == Estudio.RECHAZADO:
+        context['retroalimentacion'] = Retroalimentacion.objects.filter(estudio=estudio)
 
     return render(
         request,
@@ -70,7 +72,7 @@ def reject_study(request):
 @login_required
 @user_passes_test(is_administrador)
 def accept_study(request, id_estudio):
-    """
+    """ View to accept a study.
     """
     if request.method == "POST":
         estudio = Estudio.objects.get(pk=id_estudio)
