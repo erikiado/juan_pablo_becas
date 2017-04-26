@@ -78,4 +78,5 @@ def accept_study(request, id_estudio):
         estudio = Estudio.objects.get(pk=id_estudio)
         if estudio.status == Estudio.REVISION:
             estudio.status = Estudio.APROBADO
+            estudio.save()
             return redirect('administracion:main_estudios', Estudio.APROBADO)
