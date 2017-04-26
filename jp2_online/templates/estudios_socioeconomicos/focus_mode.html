@@ -68,11 +68,18 @@
 
                   <li role="presentation" class=""><a href="#tab_content4" role="tab" data-toggle="tab" aria-expanded="false">Información Adicional</a>
                   </li>
-
+                
+                {% if request.user|has_group:'Administrador' %}
                   {% if estudio.status == status_options.REVISION %}
                     <li role="presentation" class=""><a href="#tab_content5" role="tab" data-toggle="tab" aria-expanded="false">Revisión</a>
                     </li>
                   {% endif %}
+                {% else %}
+                  {% if estudio.status == status_options.RECHAZADO %}
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" data-toggle="tab" aria-expanded="false">Retroalimentación</a>
+                    </li>
+                  {% endif %}
+                {% endif %}
 
                 </ul>
 
@@ -102,14 +109,26 @@
                   </div>
                   <!-- END SECCION PREGUNTAS -->
                   
+                  
                   <!-- SECCION REVISION -->
-                
-                  {% if estudio.status == status_options.REVISION %}
-                  <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
-                    {% include 'estudios_socioeconomicos/focus_mode_seccion_revision.html' %}
-                   </div>
+                  {% if request.user|has_group:'Administrador' %}
+                    {% if estudio.status == status_options.REVISION %}
+                      <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
+                      {% include 'estudios_socioeconomicos/focus_mode_seccion_revision.html' %}
+                     </div>
+                    {% endif %}
                   {% endif %}
                   <!-- END SECCION REVISION -->
+
+                  <!-- SECCION RETROALIMENTACION -->
+                  {% if request.user|has_group:'Capturista' %}
+                    {% if estudio.status == status_options.RECHAZADO %}
+                      <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
+                      {% include 'estudios_socioeconomicos/focus_mode_seccion_rechazado.html' %}
+                     </div>
+                    {% endif %}
+                  {% endif %}
+                  <!-- END SECCION RETROALIMENTACION -->
 
                 </div>
               </div>

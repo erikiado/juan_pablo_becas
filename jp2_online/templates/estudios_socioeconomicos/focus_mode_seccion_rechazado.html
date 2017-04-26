@@ -1,0 +1,41 @@
+<div id="retro_container">
+    {% for retro in retroalimentacion %}
+        <div class="retro">
+            <h4>Usuario: {{retro.usuario}}</h4>
+            <p class="descripcion">
+                {{retro.descripcion}}
+            </p>
+            <p class="fecha pull-right">
+                {{retro.fecha}}
+            </p>
+        </div>
+    {% endfor %}
+</div>
+
+
+<style>
+
+    #retro_container {
+        padding: 50px;
+    }
+
+    .retro {
+        border: solid;
+        border-width: 1px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    h4 {
+        text-align: center;
+        border-bottom: solid;
+        border-width: 1px;
+        padding-bottom: 10px;
+    }
+
+    .descripcion {
+       padding-bottom: 15px;
+       padding-top: 15px; 
+    }
+
+</style>
