@@ -51,9 +51,9 @@ def load_data(name='estudios_socioeconomicos/preguntas.pkl'):
         'Datos y Relación Familiar de Todos los Integrantes de la Vivienda': 2,
         'Situación Económica': 3,
         'Vivienda y Entorno Social': 4,
-        'Investigación Laboral': 6,
-        'Personalidad': 7,
-        'Otros Aspectos': 8
+        'Investigación Laboral': 5,
+        'Personalidad': 6,
+        'Otros Aspectos': 7
     }
     # delete everything first
     Pregunta.objects.all().delete()
