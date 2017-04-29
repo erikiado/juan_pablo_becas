@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from familias.serializers import FamiliaSerializer
 from familias.models import Familia
-from captura.models import Retroalimentacion
 from captura.serializers import RetroalimentacionSerializer
 
 from .models import Pregunta, Subseccion, Seccion, OpcionRespuesta
@@ -105,7 +104,10 @@ class EstudioSerializer(serializers.ModelSerializer):
         to submit information.
     """
     respuesta_estudio = RespuestaSerializer(many=True, allow_null=True)
-    retroalimentacion_estudio = RetroalimentacionSerializer(many=True, allow_null=True, read_only=True)
+    retroalimentacion_estudio = RetroalimentacionSerializer(
+        many=True,
+        allow_null=True,
+        read_only=True)
     familia = FamiliaSerializer()
 
     class Meta:
