@@ -214,6 +214,7 @@ class Integrante(models.Model):
     offline_id = models.TextField(blank=True)
     especificacion_oficio = models.TextField(blank=True)
     especificacion_estudio = models.TextField(blank=True)
+
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()

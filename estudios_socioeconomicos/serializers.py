@@ -108,6 +108,7 @@ class EstudioSerializer(serializers.ModelSerializer):
         many=True,
         allow_null=True,
         read_only=True)
+
     familia = FamiliaSerializer()
 
     class Meta:

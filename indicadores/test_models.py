@@ -1,7 +1,7 @@
 import decimal
 from django.test import TestCase
 
-from familias.models import Familia
+from familias.models import Familia, Oficio
 from .models import Periodo, Transaccion, Ingreso
 
 
