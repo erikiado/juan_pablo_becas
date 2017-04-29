@@ -11,10 +11,10 @@ SECTIONS_FLOW = {
     1: {'next': 2, 'previous': False},
     2: {'next': 3, 'previous': 1},
     3: {'next': 4, 'previous': 2},
-    4: {'next': 6, 'previous': 3},
-    6: {'next': 7, 'previous': 4},
-    7: {'next': 8, 'previous': 6},
-    8: {'next': False, 'previous': 7}}
+    4: {'next': 5, 'previous': 3},
+    5: {'next':6, 'previous':4},
+    6: {'next': 7, 'previous': 5},
+    7: {'next': False, 'previous': 6}}
 
 
 def user_can_modify_study(user, estudio):
