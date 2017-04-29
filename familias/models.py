@@ -44,6 +44,10 @@ class Familia(models.Model):
         The content of this field needs to be clarified with the stakeholder, whether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
+    nombre_familiar: TextField
+        This field will be used as an alias for the capturista to easily find the family.
+    direccion: TextField
+        This field should be filed with the home address for the family.
     explicacion_solvencia : TextField
         This field should be filled in their net mensual income is negative. It serves as an
         explanation on how the family deals with the deficit.
@@ -89,6 +93,7 @@ class Familia(models.Model):
     numero_hijos_diferentes_papas = models.IntegerField()
     nombre_familiar = models.CharField(max_length=300)
     explicacion_solvencia = models.TextField(blank=True)
+    direccion = models.TextField(blank=True)
     estado_civil = models.CharField(max_length=100,
                                     choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
@@ -206,6 +211,7 @@ class Integrante(models.Model):
     oficio = models.ForeignKey(Oficio, null=True, blank=True)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
+    offline_id = models.IntegerField(blank=True, default=0)
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()

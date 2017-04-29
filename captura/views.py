@@ -22,8 +22,7 @@ from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, Del
 from familias.models import Familia, Integrante, Oficio
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
-from familias.serializers import EscuelaSerializer
-from indicadores.serializers import OficioSerializer
+from familias.serializers import EscuelaSerializer, OficioSerializer
 from indicadores.models import Transaccion, Ingreso
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
@@ -857,6 +856,29 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             return Response(EstudioSerializer(update).data)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        """ Soft deletes a specific instance of a Study.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If the study does not exist or it does not belong to the capturista.
+
+            Returns
+            -------
+            On Success
+                Response 200
+            On Error
+                Response 404
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        estudio = get_object_or_404(queryset, pk=pk)
+
+        if estudio.status == Estudio.BORRADOR:
+            estudio.status = Estudio.ELIMINADO_CAPTURISTA
+            estudio.save()
+            return Response('', status.HTTP_200_OK)
 
 
 class APIUploadRetrieveImages(viewsets.ViewSet):

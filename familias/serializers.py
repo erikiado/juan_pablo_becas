@@ -6,7 +6,17 @@ from administracion.serializers import EscuelaSerializer
 from indicadores.serializers import TransaccionSerializer, IngresoSerializer
 from indicadores.models import Transaccion, Ingreso
 
-from .models import Familia, Comentario, Integrante, Alumno, Tutor
+from .models import Familia, Comentario, Integrante, Alumno, Tutor, Oficio
+
+
+class OficioSerializer(serializers.ModelSerializer):
+    """ Serializer to represent a .models.Oficio instance
+        through a REST endpoint for the offline application
+        to submit information.
+    """
+    class Meta:
+        model = Oficio
+        fields = ('id', 'nombre')
 
 
 class ComentarioSerializer(serializers.ModelSerializer):
@@ -55,7 +65,7 @@ class AlumnoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Alumno
-        fields = ('id', 'activo', 'escuela')
+        fields = ('id', 'activo', 'escuela', 'numero_sae')
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
     def create(self, integrante):
@@ -151,6 +161,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
     """
     alumno_integrante = AlumnoSerializer(allow_null=True)
     tutor_integrante = TutorSerializer(allow_null=True)
+    oficio = OficioSerializer(allow_null=True, read_only=True)
 
     class Meta:
         model = Integrante
@@ -160,8 +171,13 @@ class IntegranteSerializer(serializers.ModelSerializer):
             'apellidos',
             'telefono',
             'correo',
+            'historial_terapia',
+            'rol',
+            'offline_id',
+            'sacramentos_faltantes',
             'nivel_estudios',
             'fecha_de_nacimiento',
+            'oficio',
             'alumno_integrante',
             'tutor_integrante',
             'activo')
@@ -238,7 +254,9 @@ class FamiliaSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'numero_hijos_diferentes_papas',
+            'nombre_familiar',
             'explicacion_solvencia',
+            'direccion',
             'estado_civil',
             'localidad',
             'comentario_familia',
