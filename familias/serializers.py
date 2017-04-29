@@ -175,6 +175,8 @@ class IntegranteSerializer(serializers.ModelSerializer):
             'rol',
             'offline_id',
             'sacramentos_faltantes',
+            'especificacion_oficio',
+            'especificacion_estudio',
             'nivel_estudios',
             'fecha_de_nacimiento',
             'oficio',

@@ -1055,11 +1055,11 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             key=lambda x: x['offline_id'])
 
         for i in range(len(integrantes)):
-            self.assertEqual(integrantes[i]['offline_id'], i)
+            self.assertEqual(int(integrantes[i]['offline_id']), i)
 
         transacciones = sorted(
             study['familia']['transacciones'],
             key=lambda x: x['offline_id'])
 
         for i in range(len(transacciones)):
-            self.assertEqual(transacciones[i]['offline_id'], i)
+            self.assertEqual(int(transacciones[i]['offline_id']), i)

@@ -211,7 +211,9 @@ class Integrante(models.Model):
     oficio = models.ForeignKey(Oficio, null=True, blank=True)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
-    offline_id = models.IntegerField(blank=True, default=0)
+    offline_id = models.TextField(blank=True)
+    especificacion_oficio = models.TextField(blank=True)
+    especificacion_estudio = models.TextField(blank=True)
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
