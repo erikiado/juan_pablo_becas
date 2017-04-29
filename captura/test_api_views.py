@@ -1025,13 +1025,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
 
-<<<<<<< 87f817df66e516ff1912dea048e0d4a1d3283412
         self.assertEqual(
             len(response.data[0]['retroalimentacion_estudio']),
             Retroalimentacion.objects.all().count())
-=======
-        self.assertEqual(len(response.data[0]['retroalimentacion_estudio']) , Retroalimentacion.objects.all().count())
->>>>>>> Add all the API stufff
+
         retro = response.data[0]['retroalimentacion_estudio'][0]
         self.assertEqual(retro['descripcion'], base_retro.descripcion)
 
@@ -1040,11 +1037,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         """
         study = self.create_base_study().data
         integrantes = study['familia']['integrante_familia']
-<<<<<<< 87f817df66e516ff1912dea048e0d4a1d3283412
 
-=======
-        
->>>>>>> Add all the API stufff
         for i in range(len(integrantes)):
             integrantes[i]['offline_id'] = i
 
@@ -1063,22 +1056,11 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             key=lambda x: x['offline_id'])
 
         for i in range(len(integrantes)):
-<<<<<<< 87f817df66e516ff1912dea048e0d4a1d3283412
             self.assertEqual(int(integrantes[i]['offline_id']), i)
-=======
-            self.assertEqual(integrantes[i]['offline_id'], i)
->>>>>>> Add all the API stufff
 
         transacciones = sorted(
             study['familia']['transacciones'],
             key=lambda x: x['offline_id'])
-<<<<<<< 87f817df66e516ff1912dea048e0d4a1d3283412
 
         for i in range(len(transacciones)):
             self.assertEqual(int(transacciones[i]['offline_id']), i)
-=======
-        
-        for i in range(len(transacciones)):
-            self.assertEqual(transacciones[i]['offline_id'], i)
-
->>>>>>> Add all the API stufff
