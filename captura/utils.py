@@ -12,7 +12,7 @@ SECTIONS_FLOW = {
     2: {'next': 3, 'previous': 1},
     3: {'next': 4, 'previous': 2},
     4: {'next': 5, 'previous': 3},
-    5: {'next':6, 'previous':4},
+    5: {'next': 6, 'previous': 4},
     6: {'next': 7, 'previous': 5},
     7: {'next': False, 'previous': 6}}
 
