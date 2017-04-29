@@ -620,7 +620,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.browser.visit(self.live_server_url + reverse(test_url_name))
 
         # Check for nav_bar partial
-        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
+        # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the folling texts are present in the dashboard
         self.assertTrue(self.browser.is_text_present('Mis estudios socioeconómicos'))
