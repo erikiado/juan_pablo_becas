@@ -978,7 +978,9 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
 
-        self.assertEqual(len(response.data[0]['retroalimentacion_estudio']) , Retroalimentacion.objects.all().count())
+        self.assertEqual(
+            len(response.data[0]['retroalimentacion_estudio']),
+            Retroalimentacion.objects.all().count())
         retro = response.data[0]['retroalimentacion_estudio'][0]
         self.assertEqual(retro['descripcion'], base_retro.descripcion)
 
@@ -987,7 +989,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         """
         study = self.create_base_study().data
         integrantes = study['familia']['integrante_familia']
-        
+
         for i in range(len(integrantes)):
             integrantes[i]['offline_id'] = i
 
@@ -1011,7 +1013,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         transacciones = sorted(
             study['familia']['transacciones'],
             key=lambda x: x['offline_id'])
-        
+
         for i in range(len(transacciones)):
             self.assertEqual(transacciones[i]['offline_id'], i)
-

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Retroalimentacion
 
+
 class RetroalimentacionSerializer(serializers.ModelSerializer):
     """ Serializer to represent a Retroalimentacion object
         through a REST endpoint.
