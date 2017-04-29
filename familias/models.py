@@ -203,16 +203,16 @@ class Integrante(models.Model):
     familia = models.ForeignKey(Familia, related_name='integrante_familia')
     nombres = models.CharField(max_length=200)
     apellidos = models.CharField(max_length=200)
-    oficio = models.ForeignKey(Oficio, null=True)
+    oficio = models.ForeignKey(Oficio, null=True, blank=True)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
-    sacramentos = 'SACRAMENTOS QUE LE FALTEN… BAUTIZO, COMUNION, CONFIRMACIÓN, MATRIMONIO IGLESIA'
+    sacramentos = 'Sacramentos que le falten… bautizo, comunion, confirmación, matrimnio iglesia'
     sacramentos_faltantes = models.TextField(blank=True,
                                              verbose_name=sacramentos)
-    hist = '¿ASISTE O ASISTÍO A TERAPIA POR ALGUNA SITUACIÓN DE AA, PSICOLOGÍA, PSIQUIATRA, ETC.?'
+    hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
     historial_terapia = models.TextField(blank=True, verbose_name=hist)
     activo = models.BooleanField(default=True)
     rol = models.CharField(max_length=150, verbose_name='Relación en la familia')

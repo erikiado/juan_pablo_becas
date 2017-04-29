@@ -9,8 +9,8 @@ def forwards_func(apps, schema_editor):
     Escuela = apps.get_model('administracion', 'Escuela')
     db_alias = schema_editor.connection.alias
     Escuela.objects.using(db_alias).bulk_create([
-        Escuela(nombre='San Juan Pablo II'),
-        Escuela(nombre='Fray Luis de León'),
+        Escuela(nombre='Plantel Jurica'),
+        Escuela(nombre='Plantel Buenavista'),
     ])
 
 def reverse_func(apps, schema_editor):
@@ -18,8 +18,8 @@ def reverse_func(apps, schema_editor):
     # so reverse_func() should delete them.
     Escuela = apps.get_model('indicadores', 'Escuela')
     db_alias = schema_editor.connection.alias
-    Escuela.objects.using(db_alias).filter(nombre='San Juan Pablo II').delete()
-    Escuela.objects.using(db_alias).filter(nombre='Fray Luis de León').delete()
+    Escuela.objects.using(db_alias).filter(nombre='Plantel Jurica').delete()
+    Escuela.objects.using(db_alias).filter(nombre='Plantel Buenavista').delete()
 
 class Migration(migrations.Migration):
 
