@@ -848,6 +848,7 @@ class TestViewsCapturaEstudioCompleto(StaticLiveServerTestCase):
         """ Create Family and Study
         """
         self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(2)
+        self.browser.find_by_id('id_nombre_familiar').fill('Pérez')
         self.browser.select('estado_civil', 'casado_iglesia')
         self.browser.select('localidad', 'poblado_jurica')
         self.browser.find_by_id('submit_familia').click()
