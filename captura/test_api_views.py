@@ -9,11 +9,11 @@ from rest_framework import status
 
 from jp2_online.settings.base import MEDIA_ROOT
 from administracion.models import Escuela
+from captura.models import Retroalimentacion
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
 from estudios_socioeconomicos.models import Respuesta, Foto
 from estudios_socioeconomicos.load import load_data
-from familias.models import Familia, Comentario, Integrante
-from indicadores.models import Oficio
+from familias.models import Familia, Comentario, Integrante, Oficio
 from perfiles_usuario.models import Capturista
 from indicadores.models import Ingreso
 
@@ -97,7 +97,6 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Escuela.objects.all().count())
-        self.assertEqual(response.data[0]['nombre'], 'San Juan Pablo II')
 
     def test_oficio_retrieval(self):
         """ Test that an authenticated user can recieve information
@@ -107,7 +106,6 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Oficio.objects.all().count())
-        self.assertEqual(response.data[0]['nombre'], 'Maistro')
 
 
 class TestAPIUploadRetrieveStudy(APITestCase):
@@ -185,17 +183,23 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                 'get': 'list',
                 'post': 'create',
                 'put': 'update',
+                'delete': 'delete',
                 })
 
         load_data()
+
+        self.oficio = Oficio.objects.all().first()
 
         self.escuela = Escuela.objects.create(nombre='El ITESM')
 
         self.study_data = {
             'familia': {
+                'nombre_familiar': 'los hernandovatos',
+                'direccion': 'avenida siemprevia',
                 'numero_hijos_diferentes_papas': 10,
                 'explicacion_solvencia': 'Trabajando Duro',
                 'estado_civil': 'soltero',
+                'retroalimentacion_estudio': [],
                 'localidad': 'poblado_jurica',
                 'comentario_familia': [
                     {
@@ -210,13 +214,18 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                 'integrante_familia': [
                     {
                         'nombres': 'Lao',
+                        'historial_terapia': '',
+                        'rol': 'na',
+                        'sacramentos_faltantes': '',
                         'apellidos': 'Tse',
+                        'oficio': self.oficio.id,
                         'telefono': '',
                         'correo': '',
                         'nivel_estudios': '5_grado',
                         'fecha_de_nacimiento': '2003-03-19',
                         'alumno_integrante': {
                             'activo': True,
+                            'numero_sae': '123',
                             'escuela': {
                                 'id': self.escuela.id,
                                 'nombre': self.escuela.nombre
@@ -227,6 +236,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                     {
                         'nombres': 'Telma',
                         'apellidos': 'Ibarra',
+                        'historial_terapia': '',
+                        'oficio': self.oficio.id,
+                        'rol': 'gandul',
+                        'sacramentos_faltantes': '',
                         'telefono': '',
                         'correo': '',
                         'nivel_estudios': 'universidad',
@@ -240,6 +253,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                     {
                         'nombres': 'Herman',
                         'apellidos': 'Hesse',
+                        'historial_terapia': '',
+                        'oficio': self.oficio.id,
+                        'rol': 'gandulean',
+                        'sacramentos_faltantes': '',
                         'telefono': '',
                         'correo': '',
                         'nivel_estudios': 'doctorado',
@@ -426,6 +443,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             {
                 'nombres': 'juan',
                 'apellidos': 'rulfo',
+                'historial_terapia': '',
+                'rol': 'amigero',
+                'oficio': self.oficio.id,
+                'sacramentos_faltantes': '',
                 'telefono': '',
                 'correo': '',
                 'nivel_estudios': '4_grado',
@@ -439,6 +460,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             {
                 'nombres': 'Conchita',
                 'apellidos': 'Felix',
+                'historial_terapia': '',
+                'oficio': self.oficio.id,
+                'rol': 'amigero',
+                'sacramentos_faltantes': '',
                 'telefono': '',
                 'correo': '',
                 'nivel_estudios': 'doctorado',
@@ -474,6 +499,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         integrante_nuevo = {
             'nombres': 'Juan',
             'apellidos': 'Rulfo',
+            'historial_terapia': '',
+            'rol': 'pos asi',
+            'sacramentos_faltantes': '',
+            'oficio': self.oficio.id,
             'telefono': '',
             'correo': '',
             'nivel_estudios': 'doctorado',
@@ -899,3 +928,90 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         response = view(request, id_study)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_deleting_study(self):
+        """ Test that a capturista can delete a study that is in borrador
+            status.
+        """
+        study_data = self.create_base_study().data
+
+        url = reverse('{}-detail'.format(self.test_url_name), kwargs={'pk': study_data['id']})
+        request = self.factory.delete(url)
+        force_authenticate(request, user=self.user, token=self.token)
+        self.view(request, study_data['id'])
+        self.assertEqual(
+            Estudio.objects.get(pk=study_data['id']).status,
+            Estudio.ELIMINADO_CAPTURISTA)
+
+    def test_non_owner_delete_study(self):
+        """ Test that a capturista can't delete a study that does
+            not belong to him.
+        """
+        study = self.create_base_study().data
+
+        data = {'username': 'elbukok', 'password': 'vacalalo'}
+
+        response = self.client.post(
+            reverse('perfiles_usuario:obtain_auth_token'),
+            data,
+            format='json')
+
+        url = reverse('{}-detail'.format(self.test_url_name), kwargs={'pk': study['id']})
+        request = self.factory.delete(url)
+        force_authenticate(request, user=self.unauthorized_user, token=response.data['token'])
+        response = self.view(request, study['id'])
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_retroalimentacion(self):
+        """ Tests that an offline client can obtain retroalimentación
+            through rest endpoint.
+        """
+        study = self.create_base_study().data
+
+        base_retro = Retroalimentacion.objects.create(
+            estudio=Estudio.objects.get(pk=study['id']),
+            usuario=self.user,
+            fecha='2017-03-19T19:18:48.158466Z',
+            descripcion='desastrosasmente')
+
+        request = self.factory.get(reverse('{}-list'.format(self.test_url_name)))
+        force_authenticate(request, user=self.user, token=self.token)
+        response = self.view(request)
+
+        self.assertEqual(len(response.data[0]['retroalimentacion_estudio']) , Retroalimentacion.objects.all().count())
+        retro = response.data[0]['retroalimentacion_estudio'][0]
+        self.assertEqual(retro['descripcion'], base_retro.descripcion)
+
+    def test_offline_id(self):
+        """ Test that an offline client can store it's ids in the API
+        """
+        study = self.create_base_study().data
+        integrantes = study['familia']['integrante_familia']
+        
+        for i in range(len(integrantes)):
+            integrantes[i]['offline_id'] = i
+
+        study['familia']['integrante_familia'] = integrantes
+
+        transacciones = study['familia']['transacciones']
+        for i in range(len(transacciones)):
+            transacciones[i]['offline_id'] = i
+
+        study['familia']['transacciones'] = transacciones
+
+        response = self.update_existing_study(study, study['id'])
+
+        integrantes = sorted(
+            response.data['familia']['integrante_familia'],
+            key=lambda x: x['offline_id'])
+
+        for i in range(len(integrantes)):
+            self.assertEqual(integrantes[i]['offline_id'], i)
+
+        transacciones = sorted(
+            study['familia']['transacciones'],
+            key=lambda x: x['offline_id'])
+        
+        for i in range(len(transacciones)):
+            self.assertEqual(transacciones[i]['offline_id'], i)
+

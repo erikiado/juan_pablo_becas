@@ -70,6 +70,7 @@ class Transaccion(models.Model):
     activo = models.BooleanField(default=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
+    offline_id = models.IntegerField(blank=True, default=0)
     observacion = models.TextField()
     es_ingreso = models.BooleanField()
 
@@ -134,6 +135,7 @@ class Ingreso(models.Model):
                      (OPCION_COMPROBABLE, 'Comprobable'))
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
+    offline_id = models.IntegerField(blank=True, default=0)
     tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
     tutor = models.ForeignKey(Tutor, null=True, blank=True, related_name='tutor_ingresos')
 
