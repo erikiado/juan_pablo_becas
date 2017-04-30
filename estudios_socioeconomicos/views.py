@@ -1,12 +1,6 @@
-import csv
-import json
-from collections import OrderedDict
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
 
-from rest_framework.response import Response
 import django_excel as excel
 
 from administracion.models import Escuela, Colegiatura
@@ -15,12 +9,11 @@ from captura.utils import get_study_info
 from captura.models import Retroalimentacion
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.utils import is_administrador
-from familias.models import Integrante, Familia, Comentario, Integrante, Alumno, Tutor
+from familias.models import Integrante, Familia, Comentario, Alumno, Tutor
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from indicadores.models import Transaccion, Ingreso, Oficio, Periodo
 
 from .models import Estudio, Foto, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta
-from .serializers import EstudioSerializer
 
 
 @login_required
@@ -31,16 +24,16 @@ def download_studies(request):
         document.
     """
     return excel.make_response_from_tables(
-        [ 
-            Transaccion, Ingreso, Oficio, Periodo, 
-            Integrante, Familia, Comentario, Integrante, Alumno, Tutor,
+        [
+            Transaccion, Ingreso, Oficio, Periodo,
+            Integrante, Familia, Comentario, Alumno, Tutor,
             Estudio, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta,
             Retroalimentacion, Beca, Escuela, Colegiatura
 
         ],
         'xls',
         file_name="JP2_ESTUDIOS_SOCIOECONOMICOS")
-    
+
 
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
