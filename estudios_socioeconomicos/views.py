@@ -7,16 +7,19 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 
 from rest_framework.response import Response
+import django_excel as excel
 
-
+from administracion.models import Escuela, Colegiatura
+from becas.models import Beca
 from captura.utils import get_study_info
+from captura.models import Retroalimentacion
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
 from perfiles_usuario.utils import is_administrador
-from familias.models import Integrante
+from familias.models import Integrante, Familia, Comentario, Integrante, Alumno, Tutor
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
-from indicadores.models import Transaccion, Ingreso
+from indicadores.models import Transaccion, Ingreso, Oficio, Periodo
 
-from .models import Estudio, Foto
+from .models import Estudio, Foto, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta
 from .serializers import EstudioSerializer
 
 
@@ -24,19 +27,20 @@ from .serializers import EstudioSerializer
 
 @login_required
 @user_passes_test(is_administrador)
-def download_studies(request, id_estudio=None):
+def download_studies(request):
     """
     """
-    serializer = EstudioSerializer(Estudio.objects.all(), many=True)
+    return excel.make_response_from_tables(
+        [ 
+            Transaccion, Ingreso, Oficio, Periodo, 
+            Integrante, Familia, Comentario, Integrante, Alumno, Tutor,
+            Estudio, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta,
+            Retroalimentacion, Beca, Escuela, Colegiatura
 
-    response = HttpResponse(serializer.data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+        ],
+        'xls',
+        file_name="book")
     
-    writer = csv.writer(response)
-    
-    
-    return response 
 
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
