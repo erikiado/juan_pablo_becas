@@ -1,13 +1,42 @@
+import csv
+import json
+from collections import OrderedDict
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponse
+
+from rest_framework.response import Response
+
 
 from captura.utils import get_study_info
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
+from perfiles_usuario.utils import is_administrador
 from familias.models import Integrante
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from indicadores.models import Transaccion, Ingreso
-from .models import Estudio, Foto
 
+from .models import Estudio, Foto
+from .serializers import EstudioSerializer
+
+
+                
+
+@login_required
+@user_passes_test(is_administrador)
+def download_studies(request, id_estudio=None):
+    """
+    """
+    serializer = EstudioSerializer(Estudio.objects.all(), many=True)
+
+    response = HttpResponse(serializer.data, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    
+    writer = csv.writer(response)
+    
+    
+    return response 
 
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
