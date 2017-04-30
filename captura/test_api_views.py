@@ -1063,3 +1063,32 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         for i in range(len(transacciones)):
             self.assertEqual(int(transacciones[i]['offline_id']), i)
+
+    def test_add_preguntas_opciones(self):
+        """ test answering all the questions with options
+        """
+        study = self.create_base_study().data
+        opciones = OpcionRespuesta.objects.all()
+        preguntas_nuevas = []
+        preguntas_respondidas = []
+
+        for opcion in opciones:
+            preguntas_nuevas.append({
+                'pregunta': opcion.pregunta.id,
+                'eleccion': opcion.id,
+                'respuesta': ''})
+            preguntas_respondidas.append(opcion.pregunta.id)
+
+        preguntas_por_responder = Pregunta.objects.exclude(id__in=preguntas_respondidas)
+
+        for pregunta in preguntas_por_responder:
+            preguntas_nuevas.append({
+                'pregunta': pregunta.id,
+                'eleccion': None,
+                'respuesta': 'sastreseldesastres'})
+
+        study['respuesta_estudio'] = preguntas_nuevas
+        response = self.update_existing_study(study, study['id'])
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['respuesta_estudio']), Respuesta.objects.all().count())
