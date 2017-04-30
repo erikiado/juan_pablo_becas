@@ -126,7 +126,7 @@
 
                   {% for i in "xxxxxxxx" %}  
                     {% if forloop.counter0 > 0%} 
-                    <a href="{% url 'captura:contestar_estudio' familiaestudio.id forloop.counter0   %}">
+                    <a href="{% url 'captura:contestar_estudio' familia.estudio.id forloop.counter0   %}">
                       {{ forloop.counter0 }}
                     </a>
                     {% endif %}
