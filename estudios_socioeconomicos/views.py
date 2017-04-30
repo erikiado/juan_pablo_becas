@@ -23,12 +23,12 @@ from .models import Estudio, Foto, Seccion, Subseccion, Pregunta, OpcionRespuest
 from .serializers import EstudioSerializer
 
 
-                
-
 @login_required
 @user_passes_test(is_administrador)
 def download_studies(request):
-    """
+    """ View for an administrator to make a database dump into an excell
+        sheet. Each table will be emptied to a page inside the excell
+        document.
     """
     return excel.make_response_from_tables(
         [ 
@@ -39,7 +39,7 @@ def download_studies(request):
 
         ],
         'xls',
-        file_name="book")
+        file_name="JP2_ESTUDIOS_SOCIOECONOMICOS")
     
 
 @login_required
