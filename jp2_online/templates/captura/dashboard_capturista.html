@@ -45,6 +45,7 @@
                   </td>
 
                   <td>
+
                     {% if estudio.status != status_options.REVISION %}
                       <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
                         <i class="glyphicon glyphicon-trash"></i> Borrar

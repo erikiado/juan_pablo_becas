@@ -244,6 +244,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                             'id': self.oficio.id,
                             'nombre': self.oficio.nombre
                         },
+
                         'rol': 'gandul',
                         'sacramentos_faltantes': '',
                         'telefono': '',
@@ -264,6 +265,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                             'id': self.oficio.id,
                             'nombre': self.oficio.nombre
                         },
+
                         'rol': 'gandulean',
                         'sacramentos_faltantes': '',
                         'telefono': '',
