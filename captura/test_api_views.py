@@ -1090,6 +1090,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         study['respuesta_estudio'] = preguntas_nuevas
         response = self.update_existing_study(study, study['id'])
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['respuesta_estudio']), Respuesta.objects.all().count())
