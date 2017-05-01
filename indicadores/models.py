@@ -65,13 +65,60 @@ class Transaccion(models.Model):
     es_ingreso : BooleanField
         This field indicates whether a certain transaction is an income
         or an expense.
+    tipo : CharField()
+        This field indicates the type of expense of a transaccion.
     """
+    OPCION_ALIMENTACION = 'Alimentacion'
+    OPCION_ABARROTES = 'Abarrotes'
+    OPCION_COLEGIATURAS = 'Colegiaturas'
+    OPCION_GAS = 'Gas'
+    OPCION_TELEFONO = 'Telefono'
+    OPCION_LUZ = 'Luz'
+    OPCION_AGUA = 'Agua'
+    OPCION_AUTO = 'Auto'
+    OPCION_CABLE = 'Cable'
+    OPCION_PASAJES = 'Pasajes'
+    OPCION_GASOLINA = 'Gasolina'
+    OPCION_RENTA = 'Renta'
+    OPCION_ROPA = 'Vestido'
+    OPCION_RECREACION = 'Recreacion'
+    OPCION_REFRESCOS = 'Refresco'
+    OPCION_FESTIVIDADES = 'Festividades'
+    OPCION_VACACIONES = 'Vacaciones'
+    OPCION_DEUDAS = 'Deudas'
+    OPCION_CONSTRUCCION = 'Construccion'
+    OPCION_SALUD = 'Salud'
+    OPCION_OTRO = 'Otro'
+
+    OPCIONES_TIPO = ((OPCION_ALIMENTACION, 'Alimentación (Frutas, Carne)'),
+                     (OPCION_ABARROTES, 'Abarrotes (super, jabón, etc.)'),
+                     (OPCION_COLEGIATURAS, 'Colegiaturas/Estudian'),
+                     (OPCION_GAS, 'Gas'),
+                     (OPCION_TELEFONO, 'Teléfono (Fijo y Cel)'),
+                     (OPCION_LUZ, 'Luz'),
+                     (OPCION_AGUA, 'Agua'),
+                     (OPCION_AUTO, 'Mantenimiento del auto o financiamiento'),
+                     (OPCION_CABLE, 'Cable/Internet'),
+                     (OPCION_PASAJES, 'Pasajes'),
+                     (OPCION_GASOLINA, 'Gasolina'),
+                     (OPCION_RENTA, 'Renta'),
+                     (OPCION_ROPA, 'Vestido, calzado, uniformes'),
+                     (OPCION_RECREACION, 'Recreación, Salidas, etc.'),
+                     (OPCION_REFRESCOS, 'Refrescos, golosinas, etc.'),
+                     (OPCION_FESTIVIDADES, 'Festividades / 6 Enero'),
+                     (OPCION_VACACIONES, 'Vacaciones'),
+                     (OPCION_DEUDAS, 'Deudas'),
+                     (OPCION_CONSTRUCCION, 'Construcción'),
+                     (OPCION_SALUD, 'Salud'),
+                     (OPCION_OTRO, 'Otro'))
+
     familia = models.ForeignKey(Familia, related_name='transacciones')
     activo = models.BooleanField(default=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
     observacion = models.TextField()
     es_ingreso = models.BooleanField()
+    tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
 
     def obtener_valor_de_transaccion(self):
         """ If a transaction is an expense, returns a negative value
