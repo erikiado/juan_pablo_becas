@@ -23,19 +23,16 @@ def download_studies(request):
         sheet. Each table will be emptied to a page inside the excell
         document.
     """
-    # return excel.make_response_from_tables(
-    #     [
-    #         Transaccion, Ingreso, Oficio, Periodo,
-    #         Integrante, Familia, Comentario, Alumno, Tutor,
-    #         Estudio, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta,
-    #         Retroalimentacion, Beca, Escuela, Colegiatura
+    return excel.make_response_from_tables(
+        [
+            Transaccion, Ingreso, Oficio, Periodo,
+            Integrante, Familia, Comentario, Alumno, Tutor,
+            Estudio, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta,
+            Retroalimentacion, Beca, Escuela, Colegiatura
 
-    #     ],
-    #     'xls',
-    #     file_name="JP2_ESTUDIOS_SOCIOECONOMICOS")
-    estudios = Estudio.objects.all()
-    alumnos = Alumno.objects.all()
-    return excel.make_response_from_query_sets([estudios,alumnos] ['id'], 'xls', file_name='JP2_ESTUDIOS_SOCIOECONOMICOS')
+        ],
+        'xls',
+        file_name="JP2_ESTUDIOS_SOCIOECONOMICOS")
 
 
 @login_required
