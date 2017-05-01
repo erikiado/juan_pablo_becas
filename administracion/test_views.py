@@ -377,7 +377,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
 
         self.browser.visit(self.live_server_url + reverse(test_url_name, args=['rechazado']))
         # Check for side_nav partial
-        ## self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
@@ -400,7 +400,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         self.browser.visit(self.live_server_url + reverse(test_url_name, args=['revision']))
 
         # Check for side_nav partial
-        ## self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -655,11 +655,12 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         test_url_name = 'administracion:main_estudios'
 
         self.browser.visit(self.live_server_url + reverse(test_url_name,
+                                                          args=['eliminado_administrador']))
 
         # Check for side_nav partial
         # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
-        # Check that the following texts aren't present in the dashboard
+
         self.assertFalse(self.browser.is_text_present(
                         'No existen registros de este tipo de estudios para mostrar'))
 
