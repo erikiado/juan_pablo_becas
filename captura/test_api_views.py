@@ -328,7 +328,6 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         response = self.view(request)
         # print(response.data)
         self.assertEqual(Estudio.objects.all().count(), self.initial_studies+1)
-        self.initial_studies += 1
         return response
 
     def update_existing_study(self, data, pk):
@@ -930,6 +929,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['respuesta_estudio']), Respuesta.objects.all().count())
 
+        self.initial_studies += 1
         new_study = self.create_base_study().data
         preguntas_nuevas = []
 
