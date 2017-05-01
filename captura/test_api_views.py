@@ -900,9 +900,9 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_two_studies_with_opcion(self):
-        """ test answering all the questions with options
+        """ test answering two different studies filling all questions that
+            have options.
         """
         study = self.create_base_study().data
         opciones = OpcionRespuesta.objects.all()
@@ -926,7 +926,7 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         study['respuesta_estudio'] = preguntas_nuevas
         response = self.update_existing_study(study, study['id'])
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['respuesta_estudio']), Respuesta.objects.all().count())
 
@@ -941,6 +941,8 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         new_study['respuesta_estudio'] = preguntas_nuevas
         response = self.update_existing_study(new_study, new_study['id'])
-        
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['respuesta_estudio']), OpcionRespuesta.objects.all().count())
+        self.assertEqual(
+            len(response.data['respuesta_estudio']),
+            OpcionRespuesta.objects.all().count())
