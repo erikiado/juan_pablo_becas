@@ -124,19 +124,6 @@ def focus_mode(request, study_id):
 
 @login_required
 @user_passes_test(is_administrador)
-def reject_study(request):
-    """ View to reject a study.
-
-    """
-    if request.method == 'POST':
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return redirect('administracion:main_estudios', Estudio.RECHAZADO)
-
-
-@login_required
-@user_passes_test(is_administrador)
 def search_students(request):
     """ View to list all active students.
 

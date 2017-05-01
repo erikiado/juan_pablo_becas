@@ -266,6 +266,119 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
 
         self.assertEqual(answer_input.value, new_text)
 
+    def test_submitting_two_studies(self):
+        """ Test that answers generated dynamically are being saved after submission.
+        """
+        secciones = Seccion.objects.all().order_by('numero')
+        subsecciones = Subseccion.objects.filter(seccion=secciones[0])
+        preguntas = Pregunta.objects.filter(subseccion__in=subsecciones)
+        respuestas = Respuesta.objects.filter(pregunta__in=preguntas)
+
+        self.browser.visit(
+            self.live_server_url + reverse(
+                self.test_url_name,
+                kwargs={'id_estudio': self.estudio.id, 'numero_seccion': secciones[0].numero}))
+
+        random_texts = {}
+
+        for pregunta in preguntas:
+            respuestas = Respuesta.objects.filter(pregunta=pregunta)
+
+            for respuesta in respuestas:
+                num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                if num_opciones > 0:
+
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
+                    answer_input.check()
+                else:
+                    new_text = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                    answer_input.fill(new_text)
+                    random_texts[respuesta.id] = new_text
+
+        self.browser.find_by_id('next_section_button').first.click()
+        time.sleep(.1)
+        self.browser.find_by_id('previous_section_button').first.click()
+        time.sleep(.1)
+
+        for pregunta in preguntas:
+            respuestas = Respuesta.objects.filter(pregunta=pregunta)
+
+            for respuesta in respuestas:
+                num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                if num_opciones > 0:
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
+                    self.assertTrue(answer_input.checked)
+                else:
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                    self.assertEqual(answer_input.value, random_texts[respuesta.id])
+
+        self.browser.find_by_css('.fa-file-text').first.click()
+        time.sleep(.1)
+        self.browser.find_by_id('create_estudio').click()
+        time.sleep(.1)
+
+        self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(2)
+        self.browser.select('estado_civil', 'casado_iglesia')
+        self.browser.select('localidad', 'poblado_jurica')
+        self.browser.find_by_id('submit_familia').click()
+        time.sleep(.1)
+
+        new_study = Estudio.objects.all()[1]
+
+        self.browser.find_by_id('navigation_cuestionario').click()
+        time.sleep(.1)
+
+        random_texts = {}
+
+        for pregunta in preguntas:
+            respuestas = Respuesta.objects.filter(pregunta=pregunta, estudio=new_study)
+
+            for respuesta in respuestas:
+                num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                if num_opciones > 0:
+
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
+                    answer_input.check()
+                else:
+                    new_text = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                    answer_input.fill(new_text)
+                    random_texts[respuesta.id] = new_text
+
+        self.browser.find_by_id('next_section_button').first.click()
+        time.sleep(.1)
+        self.browser.find_by_id('previous_section_button').first.click()
+        time.sleep(.1)
+
+        for pregunta in preguntas:
+            respuestas = Respuesta.objects.filter(pregunta=pregunta, estudio=new_study)
+
+            for respuesta in respuestas:
+                num_opciones = OpcionRespuesta.objects.filter(pregunta=pregunta).count()
+
+                if num_opciones > 0:
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-eleccion_' + str(num_opciones-1))
+
+                    self.assertTrue(answer_input.checked)
+                else:
+                    answer_input = self.browser.find_by_id(
+                        'id_respuesta-' + str(respuesta.id) + '-respuesta').first
+                    self.assertEqual(answer_input.value, random_texts[respuesta.id])
+
     def test_passing_all_sections(self):
         """ Test going through all possible sections.
         """
@@ -553,7 +666,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         test_url_name = 'captura:estudios'
         self.browser.visit(self.live_server_url + reverse(test_url_name))
         # Check for nav_bar partial
-        self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
+        # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts are present in the dashboard
         self.assertTrue(self.browser.is_text_present('Mis estudios socioeconómicos'))
@@ -562,7 +675,6 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         self.assertFalse(self.browser.is_text_present('No hay registro'))
         # Check that the following texts are present if exists any socio-economic study
         self.assertTrue(self.browser.is_text_present('Editar'))
-        self.assertTrue(self.browser.is_text_present('Ver Retroalimentación'))
 
 
 class TestViewsFotos(StaticLiveServerTestCase):
