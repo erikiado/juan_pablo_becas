@@ -236,7 +236,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
 
         # Check the user effectively logged in.
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
-        # self.assertTrue(self.browser.is_text_present('Administración'))#
+        # self.assertTrue(self.browser.is_text_present('Administración'))
 
     def test_delete_user_dashboard(self):
         """ Test for delete user from dashboard form.

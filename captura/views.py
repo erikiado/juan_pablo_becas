@@ -27,6 +27,7 @@ from indicadores.serializers import OficioSerializer
 from indicadores.models import Transaccion, Ingreso
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
+from .models import Retroalimentacion
 
 
 @login_required
@@ -192,7 +193,7 @@ def capture_study(request, id_estudio, numero_seccion):
             if form.is_valid():
                 form.save()
 
-        if request.POST.get('next') == 'next' and seccion.numero == 8:
+        if request.POST.get('next') == 'next' and seccion.numero == 7:
             return redirect(reverse(
                 'captura:save_upload_study',
                 kwargs={'id_estudio': id_estudio}))
@@ -664,7 +665,12 @@ def save_upload_study(request, id_estudio):
 
             return redirect('captura:estudios')
 
+    if estudio.status == Estudio.RECHAZADO:
+
+        context['retroalimentacion'] = Retroalimentacion.objects.filter(estudio=estudio)
+
     context['estudio'] = estudio
+    context['status_options'] = Estudio.get_options_status()
     return render(request, 'captura/save_upload_study.html', context)
 
 

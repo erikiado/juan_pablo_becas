@@ -19,7 +19,10 @@
         <label for="formPassword">Contraseña</label>
         <input type="password" class="required form-control col-sm-2 col-md-4 col-form-label" name="password" id="formPassword" placeholder="Contraseña" id="login-password" oninvalid="this.setCustomValidity('Introduzca una contraseña')" oninput="setCustomValidity('')" required="true" required>
       </div>
-
+      
+      <a href="{% url 'password_reset' %}">
+        Olvide mi contraseña
+      </a>
       <br>
       <br>
       <br>
