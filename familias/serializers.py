@@ -17,6 +17,7 @@ class OficioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Oficio
         fields = ('id', 'nombre')
+        extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
 
 class ComentarioSerializer(serializers.ModelSerializer):
@@ -161,7 +162,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
     """
     alumno_integrante = AlumnoSerializer(allow_null=True)
     tutor_integrante = TutorSerializer(allow_null=True)
-    oficio = OficioSerializer(allow_null=True, read_only=True)
+    oficio = OficioSerializer(allow_null=True)
 
     class Meta:
         model = Integrante
@@ -214,6 +215,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
 
         alumno = self.validated_data.pop('alumno_integrante')
         tutor = self.validated_data.pop('tutor_integrante')
+        self.validated_data['oficio'] = Oficio.objects.get(pk=self.validated_data['oficio']['id'])
         integrante = Integrante.objects.create(**self.validated_data)
 
         save_foreign_relationship([alumno], AlumnoSerializer, Alumno, integrante)
@@ -234,6 +236,7 @@ class IntegranteSerializer(serializers.ModelSerializer):
         """
         alumno = self.validated_data.pop('alumno_integrante')
         tutor = self.validated_data.pop('tutor_integrante')
+        self.validated_data['oficio'] = Oficio.objects.get(pk=self.validated_data['oficio']['id'])
 
         save_foreign_relationship([alumno], AlumnoSerializer, Alumno, self.instance)
         save_foreign_relationship([tutor], TutorSerializer, Tutor, self.instance)

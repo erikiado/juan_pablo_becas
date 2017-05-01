@@ -218,7 +218,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'rol': 'na',
                         'sacramentos_faltantes': '',
                         'apellidos': 'Tse',
-                        'oficio': self.oficio.id,
+                        'oficio': {
+                            'id': self.oficio.id,
+                            'nombre': self.oficio.nombre
+                        },
                         'telefono': '',
                         'correo': '',
                         'nivel_estudios': '5_grado',
@@ -237,7 +240,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'nombres': 'Telma',
                         'apellidos': 'Ibarra',
                         'historial_terapia': '',
-                        'oficio': self.oficio.id,
+                        'oficio': {
+                            'id': self.oficio.id,
+                            'nombre': self.oficio.nombre
+                        },
                         'rol': 'gandul',
                         'sacramentos_faltantes': '',
                         'telefono': '',
@@ -254,7 +260,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
                         'nombres': 'Herman',
                         'apellidos': 'Hesse',
                         'historial_terapia': '',
-                        'oficio': self.oficio.id,
+                        'oficio': {
+                            'id': self.oficio.id,
+                            'nombre': self.oficio.nombre
+                        },
                         'rol': 'gandulean',
                         'sacramentos_faltantes': '',
                         'telefono': '',
@@ -501,7 +510,10 @@ class TestAPIUploadRetrieveStudy(APITestCase):
             'historial_terapia': '',
             'rol': 'pos asi',
             'sacramentos_faltantes': '',
-            'oficio': self.oficio.id,
+            'oficio': {
+                'id': self.oficio.id,
+                'nombre': self.oficio.nombre
+            },
             'telefono': '',
             'correo': '',
             'nivel_estudios': 'doctorado',
@@ -1093,3 +1105,11 @@ class TestAPIUploadRetrieveStudy(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['respuesta_estudio']), Respuesta.objects.all().count())
+
+    def test_oficio_creation(self):
+        """ Test that oficio field is being saved for integrantes created
+        """
+        study = self.create_base_study().data
+
+        for integrante in study['familia']['integrante_familia']:
+            self.assertNotEqual(integrante['oficio'], None)
