@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from estudios_socioeconomicos.utils import save_foreign_relationship
 
-from .models import Oficio, Periodo, Transaccion, Ingreso
+from .models import Periodo, Transaccion, Ingreso
+from familias.models import Oficio
 
 
 class OficioSerializer(serializers.ModelSerializer):

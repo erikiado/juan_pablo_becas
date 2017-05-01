@@ -60,7 +60,7 @@ class TestViewsAdministracion(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Usuarios'))
+        # self.assertTrue(self.browser.is_text_present('Usuarios'))
 
         # Check that the only user is displayed
         self.assertEqual(User.objects.count(), 1)
@@ -335,7 +335,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -383,7 +383,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
@@ -408,7 +408,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -456,7 +456,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
@@ -481,7 +481,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -529,7 +529,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
@@ -555,7 +555,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -603,7 +603,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(
@@ -628,7 +628,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
@@ -677,7 +677,7 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
         # Check for nav_bar partial
         # self.assertTrue(self.browser.is_text_present('Instituto Juan Pablo'))
         # Check for side_nav partial
-        self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
+        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
         self.assertEqual(Estudio.objects.count(), 2)
         # Check that the following texts aren't present in the dashboard
         self.assertFalse(self.browser.is_text_present(

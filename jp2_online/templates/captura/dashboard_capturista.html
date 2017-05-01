@@ -45,9 +45,16 @@
                   </td>
 
                   <td>
-                    <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
-                      <i class="glyphicon glyphicon-trash"></i> Borrar
-                    </a>
+                    {% if estudio.status != status_options.REVISION %}
+                      <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
+                        <i class="glyphicon glyphicon-trash"></i> Borrar
+                      </a>
+                    {% endif %}
+                    {% if estudio.status == status_options.RECHAZADO %}
+                      <button class="btn btn-info">
+                        <i class="glyphicon glyphicon-inbox"></i> Ver Retroalimentación
+                      </button>
+                    {% endif %}
                     
                    
                    {% if request.user|can_modify_study:estudio %}

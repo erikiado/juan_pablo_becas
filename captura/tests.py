@@ -334,7 +334,8 @@ class TestViewsFamilia(TestCase):
         localidad_inicial = 'salitre'
         self.familia1 = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
                                                estado_civil=estado_civil_inicial,
-                                               localidad=localidad_inicial)
+                                               localidad=localidad_inicial,
+                                               nombre_familiar='Pérez')
 
         self.estudio1 = Estudio.objects.create(capturista=self.capturista,
                                                familia=self.familia1)
@@ -352,7 +353,8 @@ class TestViewsFamilia(TestCase):
                                                   'correo': '',
                                                   'nivel_estudios': 'ninguno',
                                                   'fecha_de_nacimiento': '2017-03-22',
-                                                  'rol': 'ninguno'}
+                                                  'rol': 'ninguno',
+                                                  'oficio': '1'}
 
         self.alumno_constructor_dictionary = {'integrante': self.integrante1.id,
                                               'numero_sae': 5876,
@@ -368,7 +370,8 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:create_estudio'),
                                     {'numero_hijos_diferentes_papas': 2,
                                      'estado_civil': 'soltero',
-                                     'localidad': 'salitre'})
+                                     'localidad': 'salitre',
+                                     'nombre_familiar': 'Pérez'})
         id_familia = Familia.objects.latest('id').id
         self.assertRedirects(response, reverse('captura:list_integrantes',
                                                kwargs={'id_familia': id_familia}))
@@ -400,7 +403,8 @@ class TestViewsFamilia(TestCase):
 
         familia = Familia.objects.create(numero_hijos_diferentes_papas=numero_hijos_inicial,
                                          estado_civil=estado_civil_inicial,
-                                         localidad=localidad_inicial)
+                                         localidad=localidad_inicial,
+                                         nombre_familiar='Pérez')
 
         Estudio.objects.create(
           capturista=self.capturista,
@@ -409,7 +413,8 @@ class TestViewsFamilia(TestCase):
         response = self.client.post(reverse('captura:familia', kwargs={'id_familia': familia.id}),
                                     {'numero_hijos_diferentes_papas': numero_hijos_final,
                                      'estado_civil': estado_civil_final,
-                                     'localidad': localidad_final})
+                                     'localidad': localidad_final,
+                                     'nombre_familiar': 'Pérez'})
         familia = Familia.objects.latest('id')
         self.assertEqual(familia.numero_hijos_diferentes_papas, numero_hijos_final)
         self.assertEqual(familia.estado_civil, estado_civil_final)

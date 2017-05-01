@@ -1,6 +1,5 @@
 from django.test import TestCase
-from administracion.models import Escuela
-from .models import Familia, Integrante, Alumno
+from .models import Familia, Oficio
 
 
 class TestFamiliaModel(TestCase):
@@ -11,19 +10,10 @@ class TestFamiliaModel(TestCase):
         """ Setup required for the tests in this suite.
 
         """
-        escuela = Escuela.objects.create(nombre='Juan Pablo')
-        self.familia = Familia.objects.create(numero_hijos_diferentes_papas=2,
+        self.familia = Familia.objects.create(nombre_familiar='Molina',
+                                              numero_hijos_diferentes_papas=2,
                                               estado_civil='soltero',
                                               localidad='Nabo')
-        self.familiaNoAlumno = Familia.objects.create(numero_hijos_diferentes_papas=2,
-                                                      estado_civil='soltero',
-                                                      localidad='Nabo')
-        integrante = Integrante.objects.create(familia=self.familia,
-                                               nombres='Mario',
-                                               apellidos='Molina',
-                                               nivel_estudios='doctorado',
-                                               fecha_de_nacimiento='1943-03-19')
-        Alumno.objects.create(integrante=integrante, escuela=escuela)
 
     def test_str_familia_con_alumno(self):
         """ Checks that this method __str__ method returns the name
@@ -31,8 +21,24 @@ class TestFamiliaModel(TestCase):
         """
         self.assertEqual(str(self.familia), 'Molina')
 
-    def test_str_familia_sin_alumno(self):
-        """ Checks that this method __str__ method returns the proper
-        string in case a family has no children.
+
+class TestOficio(TestCase):
+    """ Unit test suite for testing the Oficio model in .models
+
+    """
+
+    def setUp(self):
+        """ Setup required for all the tests in this suite.
+
+        This setup creates a new Oficio object.
         """
-        self.assertEqual(str(self.familiaNoAlumno), 'Aún no se crean alumnos en el estudio')
+        self.nombre = 'Electricista'
+        Oficio.objects.create(nombre=self.nombre)
+
+    def test_str(self):
+        """ Test for the oficio __str__ method.
+
+        This tests that it returns the name of the oficio.
+        """
+        oficio = Oficio.objects.get(nombre=self.nombre)
+        self.assertEqual(str(oficio), self.nombre)

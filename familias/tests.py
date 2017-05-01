@@ -37,14 +37,6 @@ class TestIntegranteForm(TestCase):
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
 
-    def test_invalid_data_basic(self):
-        """ Test that a form without role is invalid
-
-        """
-        data_form = self.valid_data.copy()
-        form = IntegranteModelForm(data_form)
-        self.assertFalse(form.is_valid())
-
     def test_invalid_data_mixed(self):
         """ Test that a form with role and fields that don't correspond
         to that role is invalid.

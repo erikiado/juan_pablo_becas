@@ -11,5 +11,5 @@ class TestLoadEscuelas(TestCase):
         """ Checks that this method __str__ method returns the name
         of the object.
         """
-        self.assertTrue(Escuela.objects.get(nombre='San Juan Pablo II'))
-        self.assertTrue(Escuela.objects.get(nombre='Fray Luis de León'))
+        self.assertTrue(Escuela.objects.get(nombre='Plantel Jurica'))
+        self.assertTrue(Escuela.objects.get(nombre='Plantel Buenavista'))

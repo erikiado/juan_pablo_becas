@@ -12,8 +12,7 @@ from administracion.models import Escuela
 from estudios_socioeconomicos.models import Pregunta, Subseccion, Seccion, Estudio
 from estudios_socioeconomicos.models import Respuesta, Foto, OpcionRespuesta
 from estudios_socioeconomicos.load import load_data
-from familias.models import Familia, Comentario, Integrante
-from indicadores.models import Oficio
+from familias.models import Familia, Comentario, Integrante, Oficio
 from perfiles_usuario.models import Capturista
 from indicadores.models import Ingreso
 
@@ -97,7 +96,7 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Escuela.objects.all().count())
-        self.assertEqual(response.data[0]['nombre'], 'San Juan Pablo II')
+        self.assertEqual(response.data[0]['nombre'], 'Plantel Jurica')
 
     def test_oficio_retrieval(self):
         """ Test that an authenticated user can recieve information
@@ -107,7 +106,7 @@ class TestAPIStudyMetaInformationRetrieval(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Oficio.objects.all().count())
-        self.assertEqual(response.data[0]['nombre'], 'Maistro')
+        self.assertEqual(response.data[0]['nombre'], 'Empleado')
 
 
 class TestAPIUploadRetrieveStudy(APITestCase):
