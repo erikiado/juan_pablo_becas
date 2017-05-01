@@ -1,9 +1,5 @@
 from django.test import TestCase
-<<<<<<< 476215246a60ca0c80a31e884b9514a4449fea87
 from .models import Familia, Oficio
-=======
-from .models import Familia
->>>>>>> Complete corrections
 
 
 class TestFamiliaModel(TestCase):
@@ -24,7 +20,6 @@ class TestFamiliaModel(TestCase):
         of the object.
         """
         self.assertEqual(str(self.familia), 'Molina')
-<<<<<<< 476215246a60ca0c80a31e884b9514a4449fea87
 
 
 class TestOficio(TestCase):
@@ -47,5 +42,3 @@ class TestOficio(TestCase):
         """
         oficio = Oficio.objects.get(nombre=self.nombre)
         self.assertEqual(str(oficio), self.nombre)
-=======
->>>>>>> Complete corrections

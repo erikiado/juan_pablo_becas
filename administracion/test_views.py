@@ -399,11 +399,6 @@ class StudiesDashboardAdministratorTest(StaticLiveServerTestCase):
 
         self.browser.visit(self.live_server_url + reverse(test_url_name, args=['revision']))
 
-        # Check for side_nav partial
-<<<<<<< 4e689dcf13fd77c187e56009f9ef859c05ab2cb9
-=======
-        # self.assertTrue(self.browser.is_text_present('Estudios Socioeconómicos'))
->>>>>>> merge
         self.assertEqual(Estudio.objects.count(), 0)
         # Check that the following text is present in the dashboard
         self.assertTrue(self.browser.is_text_present(
