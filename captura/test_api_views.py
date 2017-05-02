@@ -1000,9 +1000,14 @@ class TestAPIUploadRetrieveStudy(APITestCase):
         request = self.factory.delete(url)
         force_authenticate(request, user=self.user, token=self.token)
         self.view(request, study_data['id'])
-        self.assertEqual(
-            Estudio.objects.get(pk=study_data['id']).status,
-            Estudio.ELIMINADO_CAPTURISTA)
+        estudio = Estudio.objects.get(pk=study_data['id'])
+        self.assertEqual(estudio.status, Estudio.ELIMINADO_CAPTURISTA)
+        # check that integrantes are inactive
+        integrantes = Integrante.objects.filter(familia=estudio.familia)
+        for integrante in integrantes:
+            self.assertFalse(integrante.activo)
+            if hasattr(integrante, 'alumno_integrante'):
+                self.assertFalse(integrante.alumno_integrante.activo)
 
     def test_non_owner_delete_study(self):
         """ Test that a capturista can't delete a study that does

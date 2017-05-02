@@ -877,6 +877,14 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
 
         if estudio.status == Estudio.BORRADOR:
             estudio.status = Estudio.ELIMINADO_CAPTURISTA
+            # soft delete integrantes and alumnos
+            integrantes = Integrante.objects.filter(familia=estudio.familia)
+            for integrante in integrantes:
+                integrante.activo = False
+                if hasattr(integrante, 'alumno_integrante'):
+                    integrante.alumno_integrante.activo = False
+                    integrante.alumno_integrante.save()
+                integrante.save()
             estudio.save()
             return Response('', status.HTTP_200_OK)
 
