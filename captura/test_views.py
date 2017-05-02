@@ -326,6 +326,7 @@ class TestViewsCapturaEstudio(StaticLiveServerTestCase):
         self.browser.find_by_id('create_estudio').click()
         time.sleep(.1)
 
+        self.browser.find_by_id('id_nombre_familiar').fill('Simpson')
         self.browser.find_by_id('id_numero_hijos_diferentes_papas').fill(2)
         self.browser.select('estado_civil', 'casado_iglesia')
         self.browser.select('localidad', 'poblado_jurica')
@@ -524,6 +525,7 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.browser.find_by_xpath(search_xpath).click()
 
         self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
+        time.sleep(.2)
         self.assertTrue(self.browser.is_text_present('Integrante Editado'))
         self.browser.find_by_css('.swal2-confirm').first.click()
         integrante = Integrante.objects.get(pk=self.integrante2.pk)

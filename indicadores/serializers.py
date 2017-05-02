@@ -3,17 +3,6 @@ from rest_framework import serializers
 from estudios_socioeconomicos.utils import save_foreign_relationship
 
 from .models import Periodo, Transaccion, Ingreso
-from familias.models import Oficio
-
-
-class OficioSerializer(serializers.ModelSerializer):
-    """ Serializer to represent a .models.Oficio instance
-        through a REST endpoint for the offline application
-        to submit information.
-    """
-    class Meta:
-        model = Oficio
-        fields = ('id', 'nombre')
 
 
 class PeriodoSerializer(serializers.ModelSerializer):
@@ -56,7 +45,8 @@ class TransaccionSerializer(serializers.ModelSerializer):
             'monto',
             'periodicidad',
             'observacion',
-            'es_ingreso')
+            'es_ingreso',
+            'offline_id')
 
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 
@@ -119,7 +109,8 @@ class IngresoSerializer(serializers.ModelSerializer):
             'id',
             'fecha',
             'tipo',
-            'transaccion')
+            'transaccion',
+            'offline_id')
 
         extra_kwargs = {'id': {'read_only': False, 'required': False}}
 

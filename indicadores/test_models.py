@@ -1,7 +1,30 @@
 import decimal
 from django.test import TestCase
-from familias.models import Familia
+
+from familias.models import Familia, Oficio
 from .models import Periodo, Transaccion, Ingreso
+
+
+class TestOficio(TestCase):
+    """ Unit test suite for testing the Oficio model in .models
+
+    """
+
+    def setUp(self):
+        """ Setup required for all the tests in this suite.
+
+        This setup creates a new Oficio object.
+        """
+        self.nombre = 'Electricista'
+        Oficio.objects.create(nombre=self.nombre)
+
+    def test_str(self):
+        """ Test for the oficio __str__ method.
+
+        This tests that it returns the name of the oficio.
+        """
+        oficio = Oficio.objects.get(nombre=self.nombre)
+        self.assertEqual(str(oficio), self.nombre)
 
 
 class TestPeriodo(TestCase):

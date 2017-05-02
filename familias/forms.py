@@ -174,7 +174,6 @@ class DeleteIntegranteForm(Form):
         integrante = Integrante.objects.get(pk=self.cleaned_data['id_integrante'])
         integrante.activo = False
         if hasattr(integrante, 'alumno_integrante'):
-            alumno = Alumno.objects.get(integrante=integrante)
-            alumno.activo = False
-            alumno.save()
+            integrante.alumno_integrante.activo = False
+            integrante.alumno_integrante.save()
         integrante.save()
