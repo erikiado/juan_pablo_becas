@@ -6,7 +6,7 @@ from captura.utils import get_study_info
 from captura.models import Retroalimentacion
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP,\
     CAPTURISTA_GROUP, is_administrador
-from familias.models import Integrante
+from familias.models import Integrante, Comentario
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from indicadores.models import Transaccion, Ingreso
 from .models import Estudio, Foto
@@ -31,7 +31,7 @@ def focus_mode(request, id_estudio):
     context['estudio'] = estudio
     context['integrantes'] = integrantes
     context['fotos'] = fotos
-
+    context['comentarios'] = Comentario.objects.filter(familia=estudio.familia)
     context['total_egresos_familia'] = total_egresos_familia(estudio.familia.id)
     context['total_ingresos_familia'] = total_ingresos_familia(estudio.familia.id)
     context['total_neto_familia'] = total_neto_familia(estudio.familia.id)

@@ -37,7 +37,6 @@
                   hacer modificaciones al estudio.
               </p>
               {% endif %}
-              
               <form method="post" action="{% url 'captura:save_upload_study' estudio.id %}">
                   {% csrf_token %}
                   <input value="revision" class="hidden" name="action" type="text">
@@ -48,14 +47,20 @@
                   </button>
 
               </form> 
-                
+              <hr>
+              <h3>Comentarios</h3>
+              {% include "captura/tabla_comentarios.html" %}
+              {% include "captura/comentario_form.html" %}
+              <hr>
+              <br>
+              
               
             </div>        
           </div>
         </div>
 
         <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 7%}" class="btn btn-danger center">
-          <i class="glyphicon glyphicon-arrow-left"></i>  Cuestionario
+          <i class="glyphicon glyphicon-arrow-left"></i>Cuestionario
         </a>
 
       </div>
