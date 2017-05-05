@@ -1,9 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+from administracion.forms import FeedbackForm
 from captura.utils import get_study_info
-from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP, CAPTURISTA_GROUP
-from familias.models import Integrante
+from captura.models import Retroalimentacion
+from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP,\
+    CAPTURISTA_GROUP, is_administrador
+from familias.models import Integrante, Comentario
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
 from indicadores.models import Transaccion, Ingreso
 from .models import Estudio, Foto
@@ -28,7 +31,7 @@ def focus_mode(request, id_estudio):
     context['estudio'] = estudio
     context['integrantes'] = integrantes
     context['fotos'] = fotos
-
+    context['comentarios'] = Comentario.objects.filter(familia=estudio.familia)
     context['total_egresos_familia'] = total_egresos_familia(estudio.familia.id)
     context['total_ingresos_familia'] = total_ingresos_familia(estudio.familia.id)
     context['total_neto_familia'] = total_neto_familia(estudio.familia.id)
@@ -38,7 +41,42 @@ def focus_mode(request, id_estudio):
     context['egresos'] = Transaccion.objects.filter(es_ingreso=False, familia=estudio.familia)
     context['cuestionario'] = get_study_info(estudio)
     context['status_options'] = Estudio.get_options_status()
+
+    if estudio.status == Estudio.REVISION:
+        feedback_form = FeedbackForm(initial={'estudio': estudio,
+                                              'usuario': request.user})
+        context['feedback_form'] = feedback_form
+
+    if estudio.status == Estudio.RECHAZADO:
+        context['retroalimentacion'] = Retroalimentacion.objects.filter(estudio=estudio)
+
     return render(
         request,
         'estudios_socioeconomicos/focus_mode.html',
         context)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def reject_study(request):
+    """ View to reject a study.
+
+    """
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('administracion:main_estudios', Estudio.RECHAZADO)
+
+
+@login_required
+@user_passes_test(is_administrador)
+def accept_study(request, id_estudio):
+    """ View to accept a study.
+    """
+    if request.method == "POST":
+        estudio = Estudio.objects.get(pk=id_estudio)
+        if estudio.status == Estudio.REVISION:
+            estudio.status = Estudio.APROBADO
+            estudio.save()
+            return redirect('administracion:main_estudios', Estudio.APROBADO)

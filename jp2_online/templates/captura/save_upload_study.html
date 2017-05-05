@@ -19,14 +19,24 @@
                 
               </div>
               <h3>Familia {{ estudio }}</h3>
-            
+
+              {% if estudio.status == status_options.RECHAZADO %}
+                
+                <h3>Retroalimentación</h3>
+                <p class="center">
+                  Este estudio ha sido rechazado. Asegurese de
+                  subirlo cuando se haya completado la retroalimentación.
+                </p>
+                {% include 'estudios_socioeconomicos/focus_mode_seccion_rechazado.html' %}
+                  
+              {% else %}
               <p class="center">
                   Hasta este punto el estudio está guardado como 
                   borrador.
                   Una vez subido a revisión no podrás
                   hacer modificaciones al estudio.
               </p>
-              
+              {% endif %}
               <form method="post" action="{% url 'captura:save_upload_study' estudio.id %}">
                   {% csrf_token %}
                   <input value="revision" class="hidden" name="action" type="text">
@@ -37,14 +47,20 @@
                   </button>
 
               </form> 
-                
+              <hr>
+              <h3>Comentarios</h3>
+              {% include "captura/tabla_comentarios.html" %}
+              {% include "captura/comentario_form.html" %}
+              <hr>
+              <br>
+              
               
             </div>        
           </div>
         </div>
 
-        <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 8%}" class="btn btn-danger center">
-          <i class="glyphicon glyphicon-arrow-left"></i>  Cuestionario
+        <a id="previous_cuestionario" href="{% url 'captura:contestar_estudio' estudio.id 7%}" class="btn btn-danger center">
+          <i class="glyphicon glyphicon-arrow-left"></i>Cuestionario
         </a>
 
       </div>

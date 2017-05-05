@@ -3,28 +3,6 @@ from django.db import models
 from familias.models import Familia, Tutor
 
 
-class Oficio(models.Model):
-    """ This model stores the list of all possible jobs.
-
-    This list of jobs stores the information related to a family
-    member, this model is used directly for the presentation and
-    creation of the indicators related to the jobs of tutors.
-
-    Attributes:
-    -----------
-    nombre : TextField
-        This field stores the name of a job.
-    """
-
-    nombre = models.TextField()
-
-    def __str__(self):
-        """ This returns the name of the Oficio
-
-        """
-        return '{}'.format(self.nombre)
-
-
 class Periodo(models.Model):
     """ This model serves to mark how often an event happens.
 
@@ -92,6 +70,7 @@ class Transaccion(models.Model):
     activo = models.BooleanField(default=True)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     periodicidad = models.ForeignKey(Periodo)
+    offline_id = models.TextField(blank=True)
     observacion = models.TextField()
     es_ingreso = models.BooleanField()
 
@@ -156,6 +135,7 @@ class Ingreso(models.Model):
                      (OPCION_COMPROBABLE, 'Comprobable'))
     transaccion = models.OneToOneField(Transaccion)
     fecha = models.DateField()
+    offline_id = models.TextField(blank=True)
     tipo = models.CharField(max_length=100, choices=OPCIONES_TIPO)
     tutor = models.ForeignKey(Tutor, null=True, blank=True, related_name='tutor_ingresos')
 

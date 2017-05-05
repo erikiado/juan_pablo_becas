@@ -134,13 +134,14 @@ class FeedbackForm(forms.ModelForm):
     Note that we expect the study and user pre-filled when
     creating this form.
     """
-
     class Meta:
         model = Retroalimentacion
         fields = ['estudio', 'usuario', 'descripcion']
+
         widgets = {
             'estudio': forms.HiddenInput(),
-            'usuario': forms.HiddenInput()
+            'usuario': forms.HiddenInput(),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
     def save(self, *args, **kwargs):
