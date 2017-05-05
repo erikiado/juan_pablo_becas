@@ -1,7 +1,7 @@
 from django.forms import ModelForm, ChoiceField, HiddenInput, ModelChoiceField, CharField, \
                          ValidationError, Form, IntegerField
 from administracion.models import Escuela
-from .models import Familia, Integrante, Alumno, Tutor
+from .models import Familia, Integrante, Alumno, Tutor, Comentario
 
 
 class FamiliaForm(ModelForm):
@@ -12,6 +12,7 @@ class FamiliaForm(ModelForm):
     class Meta:
         model = Familia
         fields = ('nombre_familiar',
+                  'direccion',
                   'numero_hijos_diferentes_papas',
                   'estado_civil',
                   'localidad')
@@ -49,10 +50,12 @@ class IntegranteForm(ModelForm):
                   'nombres',
                   'apellidos',
                   'oficio',
+                  'especificacion_oficio',
                   'telefono',
                   'correo',
-                  'nivel_estudios',
                   'fecha_de_nacimiento',
+                  'nivel_estudios',
+                  'especificacion_estudio',
                   'sacramentos_faltantes',
                   'historial_terapia')
         widgets = {
@@ -177,3 +180,25 @@ class DeleteIntegranteForm(Form):
             integrante.alumno_integrante.activo = False
             integrante.alumno_integrante.save()
         integrante.save()
+
+class ComentarioForm(ModelForm):
+    """ Form to create a new comentario for a family
+    """
+
+    class Meta:
+        model = Comentario
+        fields = ('familia',
+                  'texto')
+
+        widgets = {
+            'familia': HiddenInput()
+        }
+
+        labels = {
+            'texto': 'Comentario*'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ComentarioForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

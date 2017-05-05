@@ -10,7 +10,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Periodo.objects.using(db_alias).bulk_create([
         Periodo(periodicidad='Diario', factor=30, multiplica=True),
-        Periodo(periodicidad='Semanal', factor=4, multiplica=True),
+        Periodo(periodicidad='Semanal', factor=4.3, multiplica=True),
         Periodo(periodicidad='Quincenal', factor=2, multiplica=True),
         Periodo(periodicidad='Mensual', factor=1, multiplica=True),
         Periodo(periodicidad='Bimensual', factor=2, multiplica=False),

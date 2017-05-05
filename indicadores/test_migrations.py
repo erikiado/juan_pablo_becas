@@ -12,7 +12,7 @@ class TestLoadPeriodos(TestCase):
         of the object.
         """
         self.assertTrue(Periodo.objects.get(periodicidad='Diario', factor=30, multiplica=True))
-        self.assertTrue(Periodo.objects.get(periodicidad='Semanal', factor=4, multiplica=True))
+        self.assertTrue(Periodo.objects.get(periodicidad='Semanal', factor=4.3, multiplica=True))
         self.assertTrue(Periodo.objects.get(periodicidad='Quincenal', factor=2, multiplica=True))
         self.assertTrue(Periodo.objects.get(periodicidad='Mensual', factor=1, multiplica=True))
         self.assertTrue(Periodo.objects.get(periodicidad='Bimensual', factor=2, multiplica=False))

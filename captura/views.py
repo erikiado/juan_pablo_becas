@@ -18,8 +18,9 @@ from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSeria
 from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.forms import FotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
-from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
-from familias.models import Familia, Integrante, Oficio
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm, \
+                           ComentarioForm
+from familias.models import Familia, Integrante, Oficio, Comentario
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
 from familias.serializers import EscuelaSerializer, OficioSerializer
@@ -668,6 +669,8 @@ def save_upload_study(request, id_estudio):
 
         context['retroalimentacion'] = Retroalimentacion.objects.filter(estudio=estudio)
 
+    context['comentarios'] = Comentario.objects.filter(familia=estudio.familia)
+    context['form'] = ComentarioForm(initial={'familia': estudio.familia})
     context['estudio'] = estudio
     context['status_options'] = Estudio.get_options_status()
     return render(request, 'captura/save_upload_study.html', context)
@@ -707,6 +710,19 @@ def list_photos(request, id_estudio):
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
 
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+def create_comentario(request, id_familia):
+    """ Allows a capturista to add a comment about a family via a POST request.
+    """
+    if request.POST:
+        context = {}
+        familia = get_object_or_404(Familia, pk=id_familia)
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:save_upload_study', id_estudio=familia.estudio.pk)
+    return HttpResponseBadRequest()
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.

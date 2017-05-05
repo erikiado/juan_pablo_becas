@@ -5,7 +5,7 @@
         {% csrf_token %}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Creacion de Egreso</h4>
+          <h4 class="modal-title">Creación de Egreso</h4>
         </div>
         <div class="modal-body">
           {{ create_egreso_form.errors }}
@@ -20,6 +20,7 @@
             </div>
           </div>
           {% endfor %}
+          {% include "captura/tabla_opciones_egreso.html" %}
           {% for field in create_egreso_form.hidden_fields %}
             {{ field }}
           {% endfor %}
