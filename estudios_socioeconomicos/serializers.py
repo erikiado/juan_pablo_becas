@@ -93,7 +93,8 @@ class RespuestaSerializer(serializers.ModelSerializer):
             'estudio',
             'pregunta',
             'eleccion',
-            'respuesta')
+            'respuesta',
+            'offline_id')
 
         read_only_fields = ('estudio', )
 

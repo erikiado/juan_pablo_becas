@@ -217,7 +217,7 @@ class Respuesta(models.Model):
     pregunta = models.ForeignKey(Pregunta, related_name='respuesta_pregunta')
     eleccion = models.ForeignKey(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
-
+    offline_id = models.TextField(blank=True)
     respuesta = models.TextField(blank=True)
 
     def __str__(self):
