@@ -18,8 +18,8 @@ from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSeria
 from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.forms import FotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
-from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm, \
-                           ComentarioForm
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, \
+                           DeleteIntegranteForm, ComentarioForm
 from familias.models import Familia, Integrante, Oficio, Comentario
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
@@ -710,19 +710,20 @@ def list_photos(request, id_estudio):
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
 
+
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def create_comentario(request, id_familia):
     """ Allows a capturista to add a comment about a family via a POST request.
     """
     if request.POST:
-        context = {}
         familia = get_object_or_404(Familia, pk=id_familia)
         form = ComentarioForm(request.POST)
         if form.is_valid():
             form.save()
         return redirect('captura:save_upload_study', id_estudio=familia.estudio.pk)
     return HttpResponseBadRequest()
+
 
 class APIQuestionsInformation(generics.ListAPIView):
     """ API to get all information for question, section and subsections.
