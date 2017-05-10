@@ -181,6 +181,7 @@ class DeleteIntegranteForm(Form):
             integrante.alumno_integrante.save()
         integrante.save()
 
+
 class ComentarioForm(ModelForm):
     """ Form to create a new comentario for a family
     """
