@@ -1,0 +1,131 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+          <div class="x_title">
+            <h3>Asignación de Beca <small>Familia {{ estudio }}</small></h3>
+            <div class="clearfix"></div>
+          </div>
+
+          <p class="text-muted font-13 m-b-30">
+            Condensado económico y fotos vivienda
+          </p>
+
+          <div class="row">
+            {% include 'captura/tabla_economic_status.html' %}
+          </div> 
+          <div class="row"> 
+            {% include 'estudios_socioeconomicos/focus_mode_seccion_vivienda.html' %}
+          </div>
+          <div class="x_title">
+            <h4>Alumnos en la familia</h4>
+            <div class="clearfix"></div>
+          </div>
+          <table id="tabla_alumnos" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Nivel de Estudios</th>
+                <th>Número Sae</th>
+                <th>Ver Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for integrante in integrantes %}
+                  <tr>
+                    <td>{{ integrante.nombres }}</td>
+                    <td>{{ integrante.apellidos }}</td>
+                    <td>{{ integrante.get_nivel_estudios_display }}</td>
+                    <td>{{ integrante.alumno_integrante.numero_sae }}</td>
+                    <td>
+                      <a class="btn btn-success btn-circle-sm" href="{% url 'administracion:detail_student' integrante.alumno_integrante.pk %}">
+                        <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                      </a>
+                    </td>
+                  </tr>                          
+                {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="x_title">
+            <h2>Beca calculada</h2>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="row">
+            <form action="{% url 'becas:asignar_beca' estudio.pk %}" method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="form-group col-md-4 col-sm-12">
+                  <center>
+                    <label for="{{ form.tabulador.id_for_label }}">Tabulador</label>
+                  </center>
+                  {{ form.tabulador }}
+                  {{ form.tabulador.errors }}
+                </div>
+
+                <div class="form-group col-md-4 col-sm-12">
+                  <center>
+                    <label for="{{ form.porcentaje.id_for_label }}">Porcentaje asignado</label>
+                  </center>
+                  {{ form.porcentaje }}
+                  {{ form.porcentaje.errors }}
+                </div>
+
+                <div class="form-group col-md-4 col-sm-12">
+                  <center>
+                    <label for="monto_beca">Aportación a Pagar</label>
+                    <h2 id="id_monto">
+                    </h2>
+                  </center>
+                </div>
+              </div>
+              
+              <div class="ln_solid"></div>
+              <div class="form-group">
+                <center>
+                  <button type="submit" class="btn btn-primary" id="btn_asignar_beca">Asignar Beca</button>
+                </center>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_page_js %}
+  <script type="text/javascript" src="{% static 'js/becas/asignar_beca.js' %}"></script>
+  <script>
+    $(document).ready(function() {
+      {% if form.errors %}
+        swal({
+              title: 'Error!',
+              text: 'El porcentaje o el indicador están incorrectos.', 
+              type: 'error',
+              confirmButtonText: 'OK'
+            });
+      {% endif %}
+      
+      recalculateFromTabulador(parseFloat({{colegiatura}}));
+      $('#id_tabulador option')['7'].disabled = true; // disable option 'fuera_rango'
+    });
+
+    $('#id_tabulador').change(function() {
+      recalculateFromTabulador(parseFloat({{colegiatura}}));
+    });
+
+    $('#id_porcentaje').change(function() {
+      recalculateFromPercentage(parseFloat($(this).val()), parseFloat({{colegiatura}}));
+    });
+  </script>
+{% endblock %}

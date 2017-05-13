@@ -1,3 +1,5 @@
+{% load permissions_extras %}
+
 <div class="nav_menu">
   <nav>
     <div class="nav toggle">
@@ -19,6 +21,13 @@
               Ayuda
             </a>
           </li>
+          {% if request.user|has_group:'Administrador' %}
+          <li>
+            <a href="{% url 'estudios_socioeconomicos:download_studies' %}">
+              Respaldo base datos
+            </a>
+          </li>
+          {% endif %}
           <li>
             <a href="{% url 'tosp_auth:logout' %}">
               <i class="fa fa-sign-out pull-right"></i>

@@ -25,7 +25,7 @@ class Retroalimentacion(models.Model):
     activo : BooleanField
         Boolean indicating whether this feedback should be shown or not.
     """
-    estudio = models.ForeignKey(Estudio)
+    estudio = models.ForeignKey(Estudio, related_name='retroalimentacion_estudio')
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     fecha = models.DateTimeField(null=True, blank=True, auto_now_add=True)

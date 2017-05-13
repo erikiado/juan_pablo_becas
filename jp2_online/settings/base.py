@@ -154,6 +154,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+# DJANGO EXCELL
+FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
+                        "django_excel.TemporaryExcelFileUploadHandler")
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

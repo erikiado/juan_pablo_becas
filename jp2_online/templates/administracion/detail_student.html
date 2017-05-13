@@ -76,14 +76,14 @@
             <thead>
               <tr>
                 <th>Fecha de Asignación</th>
-                <th>Monto</th>
+                <th>Porcentaje</th>
               </tr>
             </thead>
             <tbody>
               {% for beca in becas %}
                 <tr>
                   <td> {{beca.fecha_de_asignacion}} </td>
-                  <td> {{beca.monto}} </td>
+                  <td> {{beca}} </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -92,6 +92,44 @@
           <p class="text font 17 m-b-30">
             El alumno no tiene ninguna beca asignada
           </p> 
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_content">
+        <h2> 
+          Carta de Beca
+        </h2>
+
+        <p class="text-muted font-13 m-b-30">
+          Genera una carta de Beca para el alumno.
+        </p>
+
+        {% if becas %}
+          <form id="form-genera-carta" class="form-horizontal" method="POST" action="{% url 'administracion:detail_student' student.pk  %}">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+              <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-3">
+                  {{ field.errors }}
+                  <strong>{{field.label}}:</strong>
+                </div>
+                <div class="col-sm-offset-1 col-sm-7">
+                  {{ field }}
+                </div>
+              </div>
+            {% endfor %}
+            <center>
+              <button type="submit" class="btn btn-primary">Descarga Carta</button>
+            </center>
+          </form>
+        {% else %}
+          <p class="text font 17 m-b-30">
+            No se puede generar una carta para un alumno sin beca asignada.
+          </p>
         {% endif %}
       </div>
     </div>

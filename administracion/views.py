@@ -1,21 +1,15 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.http import HttpResponse
 
-from .forms import UserForm, DeleteUserForm, FeedbackForm
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
 from familias.models import Alumno
 from becas.models import Beca
-
-
-@login_required
-@user_passes_test(is_administrador)
-def admin_main_dashboard(request):
-    """View to render the main control dashboard.
-
-    """
-    return render(request, 'administracion/dashboard_administrador.html')
+from becas.forms import CartaForm
+from becas.utils import generate_letter
+from .forms import UserForm, DeleteUserForm, FeedbackForm
 
 
 @login_required
@@ -130,19 +124,6 @@ def focus_mode(request, study_id):
 
 @login_required
 @user_passes_test(is_administrador)
-def reject_study(request):
-    """ View to reject a study.
-
-    """
-    if request.method == 'POST':
-        form = FeedbackForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return redirect('administracion:main_estudios', Estudio.RECHAZADO)
-
-
-@login_required
-@user_passes_test(is_administrador)
 def search_students(request):
     """ View to list all active students.
 
@@ -154,13 +135,36 @@ def search_students(request):
 @login_required
 @user_passes_test(is_administrador)
 def detail_student(request, id_alumno):
-    """ View to show the complete information of a student.
+    """ View to show the complete information of a student, and to
+    generate the letter of scholarship in case of POST.
 
+    GET: return information of student and form to generate letter
+    POST: validate information in form and return pdf
     """
-    student = get_object_or_404(Alumno, pk=id_alumno)
-    becas = Beca.objects.filter(alumno=student).order_by('-fecha_de_asignacion')
+    alumno = get_object_or_404(Alumno, pk=id_alumno, activo=True)
+    becas = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')
     context = {
-        'student': student,
+        'student': alumno,
         'becas': becas
     }
+    if request.method == 'GET':
+        context['form'] = CartaForm()
+    else:
+        form = CartaForm(request.POST)
+        if form.is_valid():
+            response = HttpResponse(content_type='application/pdf')
+            filename = 'carta_beca_{}.pdf'.format(alumno)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+            # obtain last scholarship
+            beca_actual = Beca.objects.filter(alumno=alumno).order_by('-fecha_de_asignacion')[0]
+
+            generate_letter(response, nombre=str(alumno.integrante),
+                            ciclo=form.cleaned_data['ciclo'],
+                            grado=form.cleaned_data['grado'],
+                            porcentaje=str(beca_actual),
+                            compromiso=form.cleaned_data['compromiso'],
+                            a_partir=form.cleaned_data['a_partir'])
+            return response
+        else:
+            context['form'] = form
     return render(request, 'administracion/detail_student.html', context)

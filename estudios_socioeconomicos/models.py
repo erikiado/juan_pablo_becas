@@ -215,7 +215,7 @@ class Respuesta(models.Model):
     """
     estudio = models.ForeignKey(Estudio, related_name='respuesta_estudio')
     pregunta = models.ForeignKey(Pregunta, related_name='respuesta_pregunta')
-    eleccion = models.OneToOneField(OpcionRespuesta, null=True, blank=True)
+    eleccion = models.ForeignKey(OpcionRespuesta, null=True, blank=True)
     integrante = models.ForeignKey(Integrante, null=True, blank=True)
 
     respuesta = models.TextField(blank=True)

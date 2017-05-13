@@ -1,7 +1,7 @@
 from django.forms import ModelForm, ChoiceField, HiddenInput, ModelChoiceField, CharField, \
                          ValidationError, Form, IntegerField
 from administracion.models import Escuela
-from .models import Familia, Integrante, Alumno, Tutor
+from .models import Familia, Integrante, Alumno, Tutor, Comentario
 
 
 class FamiliaForm(ModelForm):
@@ -11,7 +11,9 @@ class FamiliaForm(ModelForm):
     """
     class Meta:
         model = Familia
-        fields = ('numero_hijos_diferentes_papas',
+        fields = ('nombre_familiar',
+                  'direccion',
+                  'numero_hijos_diferentes_papas',
                   'estado_civil',
                   'localidad')
 
@@ -29,21 +31,33 @@ class IntegranteForm(ModelForm):
     OPCION_ROL_NINGUNO = 'ninguno'
     OPCION_ROL_TUTOR = 'tutor'
     OPCION_ROL_ALUMNO = 'alumno'
+    OPCION_ROL_HERMANO = 'hermano'
+    OPCION_ROL_ABUELO = 'abuelo'
+    OPCION_ROL_TIO = 'tio'
     OPCIONES_ROL = ((OPCION_ROL_NINGUNO, 'Ninguno'),
                     (OPCION_ROL_TUTOR, 'Tutor'),
-                    (OPCION_ROL_ALUMNO, 'Alumno'))
+                    (OPCION_ROL_ALUMNO, 'Alumno'),
+                    (OPCION_ROL_HERMANO, 'Hermano/a'),
+                    (OPCION_ROL_ABUELO, 'Abuelo/a'),
+                    (OPCION_ROL_TIO, 'Tío/a'))
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
 
     class Meta:
         model = Integrante
-        fields = ('familia',
+        fields = ('rol',
+                  'familia',
                   'nombres',
                   'apellidos',
+                  'oficio',
+                  'especificacion_oficio',
                   'telefono',
                   'correo',
+                  'fecha_de_nacimiento',
                   'nivel_estudios',
-                  'fecha_de_nacimiento')
+                  'especificacion_estudio',
+                  'sacramentos_faltantes',
+                  'historial_terapia')
         widgets = {
             'familia': HiddenInput()
         }
@@ -97,7 +111,8 @@ class IntegranteModelForm(IntegranteForm):
                 raise ValidationError('El tutor no tiene número sae ni escuela')
             return cleaned_data
 
-        if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_NINGUNO:
+        if cleaned_data['rol'] != IntegranteForm.OPCION_ROL_ALUMNO and \
+           cleaned_data['rol'] != IntegranteForm.OPCION_ROL_TUTOR:
             if cleaned_data['numero_sae'] or cleaned_data['escuela'] or cleaned_data['relacion']:
                 raise ValidationError('El integrante no tiene número sae, escuela o relación')
             return cleaned_data
@@ -162,7 +177,29 @@ class DeleteIntegranteForm(Form):
         integrante = Integrante.objects.get(pk=self.cleaned_data['id_integrante'])
         integrante.activo = False
         if hasattr(integrante, 'alumno_integrante'):
-            alumno = Alumno.objects.get(integrante=integrante)
-            alumno.activo = False
-            alumno.save()
+            integrante.alumno_integrante.activo = False
+            integrante.alumno_integrante.save()
         integrante.save()
+
+
+class ComentarioForm(ModelForm):
+    """ Form to create a new comentario for a family
+    """
+
+    class Meta:
+        model = Comentario
+        fields = ('familia',
+                  'texto')
+
+        widgets = {
+            'familia': HiddenInput()
+        }
+
+        labels = {
+            'texto': 'Comentario*'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ComentarioForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

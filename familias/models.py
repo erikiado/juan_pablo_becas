@@ -3,6 +3,28 @@ from core.validators import PHONE_REGEX
 from administracion.models import Escuela
 
 
+class Oficio(models.Model):
+    """ This model stores the list of all possible jobs.
+
+    This list of jobs stores the information related to a family
+    member, this model is used directly for the presentation and
+    creation of the indicators related to the jobs of tutors.
+
+    Attributes:
+    -----------
+    nombre : TextField
+        This field stores the name of a job.
+    """
+
+    nombre = models.CharField(max_length=200)
+
+    def __str__(self):
+        """ This returns the name of the Oficio
+
+        """
+        return '{}'.format(self.nombre)
+
+
 class Familia(models.Model):
     """ Main model of the family app.
 
@@ -22,6 +44,10 @@ class Familia(models.Model):
         The content of this field needs to be clarified with the stakeholder, whether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
+    nombre_familiar: TextField
+        This field will be used as an alias for the capturista to easily find the family.
+    direccion: TextField
+        This field should be filed with the home address for the family.
     explicacion_solvencia : TextField
         This field should be filled in their net mensual income is negative. It serves as an
         explanation on how the family deals with the deficit.
@@ -65,8 +91,9 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
     numero_hijos_diferentes_papas = models.IntegerField()
-
+    nombre_familiar = models.CharField(max_length=300)
     explicacion_solvencia = models.TextField(blank=True)
+    direccion = models.TextField(blank=True)
     estado_civil = models.CharField(max_length=100,
                                     choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
@@ -77,13 +104,7 @@ class Familia(models.Model):
         in case the family has no related students the legend
         "Aún no se crean alumnos en el estudio" will appear.
         """
-        integrantes = Integrante.objects.filter(familia=self).values_list('id', flat=True)
-        alumnos = Alumno.objects.filter(integrante__in=integrantes)
-        if alumnos:
-            alumno = alumnos[0]
-            return alumno.integrante.apellidos
-        else:
-            return 'Aún no se crean alumnos en el estudio'
+        return self.nombre_familiar
 
 
 class Comentario(models.Model):
@@ -187,12 +208,22 @@ class Integrante(models.Model):
     familia = models.ForeignKey(Familia, related_name='integrante_familia')
     nombres = models.CharField(max_length=200)
     apellidos = models.CharField(max_length=200)
+    oficio = models.ForeignKey(Oficio, null=True, blank=True)
     telefono = models.CharField(validators=[PHONE_REGEX], blank=True, max_length=16)
     correo = models.EmailField(blank=True)
+    offline_id = models.TextField(blank=True)
+    especificacion_oficio = models.TextField(blank=True)
+    especificacion_estudio = models.TextField(blank=True)
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
+    sacramentos = 'Sacramentos que le falten… bautizo, comunion, confirmación, matrimnio iglesia'
+    sacramentos_faltantes = models.TextField(blank=True,
+                                             verbose_name=sacramentos)
+    hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
+    historial_terapia = models.TextField(blank=True, verbose_name=hist)
     activo = models.BooleanField(default=True)
+    rol = models.CharField(max_length=150, verbose_name='Relación en la familia')
 
     def __str__(self):
         """ Returns the concatenation of nombres and apellidos.

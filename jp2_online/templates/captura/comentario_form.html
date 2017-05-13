@@ -1,0 +1,23 @@
+<div>
+  <form id="form-create-comentario" class="form-horizontal" method="POST" action="{% url 'captura:create_comentario' estudio.familia.id %}">
+    {% csrf_token %}
+    <h4>Agregar un comentario a la familia</h4>
+    {{ form.errors }}
+    {% for field in form.visible_fields %}
+    <div class="form-group">
+      <div class="col-sm-12">
+        {{ field.errors }}
+        <strong>{{field.label}}:</strong>
+      </div>
+      <div class="col-sm-12">
+        {{field}}
+      </div>
+    </div>
+    {% endfor %}
+    {% for field in form.hidden_fields %}
+    {{ field }}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary" id="btn_send_create_photo">Añadir comentario</button>
+  </form>
+    
+</div>

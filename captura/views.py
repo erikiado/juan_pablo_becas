@@ -18,15 +18,16 @@ from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSeria
 from estudios_socioeconomicos.serializers import FotoSerializer
 from estudios_socioeconomicos.forms import FotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
-from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, DeleteIntegranteForm
-from familias.models import Familia, Integrante
+from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, \
+                           DeleteIntegranteForm, ComentarioForm
+from familias.models import Familia, Integrante, Oficio, Comentario
 from familias.utils import total_egresos_familia, total_ingresos_familia, \
                            total_neto_familia
-from familias.serializers import EscuelaSerializer
-from indicadores.serializers import OficioSerializer
-from indicadores.models import Transaccion, Ingreso, Oficio
+from familias.serializers import EscuelaSerializer, OficioSerializer
+from indicadores.models import Transaccion, Ingreso
 from indicadores.forms import TransaccionForm, IngresoForm, DeleteTransaccionForm
 from .utils import SECTIONS_FLOW, get_study_info_for_section, user_can_modify_study
+from .models import Retroalimentacion
 
 
 @login_required
@@ -192,7 +193,7 @@ def capture_study(request, id_estudio, numero_seccion):
             if form.is_valid():
                 form.save()
 
-        if request.POST.get('next') == 'next' and seccion.numero == 8:
+        if request.POST.get('next') == 'next' and seccion.numero == 7:
             return redirect(reverse(
                 'captura:save_upload_study',
                 kwargs={'id_estudio': id_estudio}))
@@ -664,7 +665,14 @@ def save_upload_study(request, id_estudio):
 
             return redirect('captura:estudios')
 
+    if estudio.status == Estudio.RECHAZADO:
+
+        context['retroalimentacion'] = Retroalimentacion.objects.filter(estudio=estudio)
+
+    context['comentarios'] = Comentario.objects.filter(familia=estudio.familia)
+    context['form'] = ComentarioForm(initial={'familia': estudio.familia})
     context['estudio'] = estudio
+    context['status_options'] = Estudio.get_options_status()
     return render(request, 'captura/save_upload_study.html', context)
 
 
@@ -701,6 +709,20 @@ def list_photos(request, id_estudio):
     context['form'] = FotoForm(initial={'estudio': estudio.pk})
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+def create_comentario(request, id_familia):
+    """ Allows a capturista to add a comment about a family via a POST request.
+    """
+    if request.POST:
+        familia = get_object_or_404(Familia, pk=id_familia)
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:save_upload_study', id_estudio=familia.estudio.pk)
+    return HttpResponseBadRequest()
 
 
 class APIQuestionsInformation(generics.ListAPIView):
@@ -851,6 +873,37 @@ class APIUploadRetrieveStudy(viewsets.ViewSet):
             return Response(EstudioSerializer(update).data)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        """ Soft deletes a specific instance of a Study.
+
+            Raises
+            ------
+            HTTP STATUS 404
+            If the study does not exist or it does not belong to the capturista.
+
+            Returns
+            -------
+            On Success
+                Response 200
+            On Error
+                Response 404
+        """
+        queryset = Estudio.objects.filter(capturista=request.user.capturista)
+        estudio = get_object_or_404(queryset, pk=pk)
+
+        if estudio.status == Estudio.BORRADOR:
+            estudio.status = Estudio.ELIMINADO_CAPTURISTA
+            # soft delete integrantes and alumnos
+            integrantes = Integrante.objects.filter(familia=estudio.familia)
+            for integrante in integrantes:
+                integrante.activo = False
+                if hasattr(integrante, 'alumno_integrante'):
+                    integrante.alumno_integrante.activo = False
+                    integrante.alumno_integrante.save()
+                integrante.save()
+            estudio.save()
+            return Response('', status.HTTP_200_OK)
 
 
 class APIUploadRetrieveImages(viewsets.ViewSet):

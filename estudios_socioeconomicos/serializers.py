@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from familias.serializers import FamiliaSerializer
 from familias.models import Familia
+from captura.serializers import RetroalimentacionSerializer
 
 from .models import Pregunta, Subseccion, Seccion, OpcionRespuesta
 from .models import Estudio, Respuesta, Foto
@@ -103,6 +104,10 @@ class EstudioSerializer(serializers.ModelSerializer):
         to submit information.
     """
     respuesta_estudio = RespuestaSerializer(many=True, allow_null=True)
+    retroalimentacion_estudio = RetroalimentacionSerializer(
+        many=True,
+        allow_null=True,
+        read_only=True)
     familia = FamiliaSerializer()
 
     class Meta:
@@ -112,9 +117,10 @@ class EstudioSerializer(serializers.ModelSerializer):
             'familia',
             'status',
             'capturista',
+            'retroalimentacion_estudio',
             'respuesta_estudio')
 
-        read_only_fields = ('id', 'status', 'capturista')
+        read_only_fields = ('id', 'capturista')
 
     @atomic
     def create(self, capturista):
@@ -156,7 +162,11 @@ class EstudioSerializer(serializers.ModelSerializer):
         self.validated_data['familia'] = family_instance[0]
         self.validated_data['capturista'] = capturista
         estudio = Estudio(**self.validated_data)
-        estudio.save_base(raw=True)  # Do not call Trigger (.models)
+
+        if estudio.status == Estudio.BORRADOR or estudio.status == Estudio.REVISION:
+            estudio.save_base(raw=True)  # Do not call Trigger (.models)
+        else:
+            raise serializers.ValidationError('Invalid status')
 
         for respuesta in respuestas:
             respuesta['estudio'] = estudio
@@ -185,7 +195,11 @@ class EstudioSerializer(serializers.ModelSerializer):
 
         save_foreign_relationship([familia], FamiliaSerializer, Familia)
 
-        Estudio.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+        if self.instance.status == Estudio.REVISION or self.instance.status == Estudio.BORRADOR \
+                or self.instance.status == Estudio.RECHZADO:
+            Estudio.objects.filter(pk=self.instance.pk).update(**self.validated_data)
+        else:
+            raise serializers.ValidationError('Invalid change of status')
 
         Respuesta.objects.filter(estudio=self.instance).delete()
 

@@ -55,6 +55,9 @@
                           <a id="delete_estudio_{{ estudio.id }}" class="delete_estudio_link mouseClick btn btn-danger" data-form="{% url 'captura:estudio_delete_modal' estudio.id %}">
                             <i class="glyphicon glyphicon-trash"></i> Borrar
                           </a>
+                          <a class="btn btn-info" href="{% url 'becas:asignar_beca' estudio.id %}">
+                            <i class="glyphicon glyphicon-asterisk"></i> Asignar Beca
+                          </a>
                         {% elif estudio.status == status_options.ELIMINADO_ADMIN %}
                           <a id="recover_estudio_{{ estudio.id }}" class="recover_estudio_link mouseClick btn btn-success" data-form="{% url 'captura:estudio_recover_modal' estudio.pk %}">
                             <i class="glyphicon glyphicon-plus"></i> Recuperar
