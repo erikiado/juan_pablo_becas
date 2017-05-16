@@ -1,0 +1,67 @@
+{% extends "layouts/basic.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}
+Ayuda
+{% endblock %}
+
+
+
+{% block content %}
+<h1>Página de ayuda</h1>
+
+{% for section in sections %}
+<div class="row">       
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>{{ section.1 }} <small></small></h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				{% for tutorial in tutorials %}
+				{% if tutorial.seccion == section.0 %}
+				<div class="panel-group" id="accordion">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ tutorial.id }}">
+									{{ tutorial.titulo }}
+								</a>
+							</h4>
+						</div>
+						<div id="collapse{{ tutorial.id }}" class="panel-collapse collapse">
+							<div class="panel-body">
+								<p>
+									{{ tutorial.descripcion }}
+								</p>
+								<div class="text-center">
+									<iframe width="560" height="315" src="{{ tutorial.video }}" frameborder="0" allowfullscreen></iframe>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+				
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block footer_content %}
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src={% static "js/administracion/dashboard.js" %}></script>
+
+{% block extra_page_js %}{% endblock %}
+
+{% endblock %}

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from estudios_socioeconomicos.models import Estudio
 from perfiles_usuario.utils import is_administrador, is_capturista,\
                                  is_directivo, is_servicios_escolares
+from .models import Tutorial
 
 
 @login_required
@@ -26,6 +27,20 @@ def home(request):
     raise Http404()
 
 
+@login_required
+def documentation(request):
+    """ This view displays all of the tutorial created for the page.
+
+    """
+    context = {}
+    context['sections'] = Tutorial.SECTION_OPTIONS
+    context['tutorials'] = Tutorial.objects.all()
+    return render(request, 'base/help.html', context)
+
+
 def base_files(request, filename):
+    """ This view serves basic files that are standard for every
+    single website.
+    """
     location = 'base/' + filename
     return render(request, location, {}, content_type='text/plain')

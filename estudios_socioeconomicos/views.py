@@ -1,15 +1,39 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+import django_excel as excel
+
 from administracion.forms import FeedbackForm
+from administracion.models import Escuela, Colegiatura
+from becas.models import Beca
 from captura.utils import get_study_info
 from captura.models import Retroalimentacion
 from perfiles_usuario.utils import is_capturista, is_member, ADMINISTRADOR_GROUP,\
     CAPTURISTA_GROUP, is_administrador
-from familias.models import Integrante, Comentario
+from familias.models import Integrante, Familia, Comentario, Alumno, Tutor, Oficio
 from familias.utils import total_egresos_familia, total_ingresos_familia, total_neto_familia
-from indicadores.models import Transaccion, Ingreso
-from .models import Estudio, Foto
+from indicadores.models import Transaccion, Ingreso, Periodo
+
+from .models import Estudio, Foto, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta
+
+
+@login_required
+@user_passes_test(is_administrador)
+def download_studies(request):
+    """ View for an administrator to make a database dump into an excell
+        sheet. Each table will be emptied to a page inside the excell
+        document.
+    """
+    return excel.make_response_from_tables(
+        [
+            Transaccion, Ingreso, Oficio, Periodo,
+            Integrante, Familia, Comentario, Alumno, Tutor,
+            Estudio, Seccion, Subseccion, Pregunta, OpcionRespuesta, Respuesta,
+            Retroalimentacion, Beca, Escuela, Colegiatura
+
+        ],
+        'xls',
+        file_name="JP2_ESTUDIOS_SOCIOECONOMICOS")
 
 
 @login_required
