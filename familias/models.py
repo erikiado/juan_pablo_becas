@@ -189,7 +189,13 @@ class Integrante(models.Model):
     OPCION_ESTUDIOS_UNIVERSIDAD = 'universidad'
     OPCION_ESTUDIOS_MAESTRIA = 'maestria'
     OPCION_ESTUDIOS_DOCTORADO = 'doctorado'
+    OPCION_ESTUDIOS_PREESCOLAR_1 = 'kinder_1'
+    OPCION_ESTUDIOS_PREESCOLAR_2 = 'kinder_2'
+    OPCION_ESTUDIOS_PREESCOLAR_3 = 'kinder_3'
     OPCIONES_NIVEL_ESTUDIOS = ((OPCION_ESTUDIOS_NINGUNO, 'Ninguno'),
+                               (OPCION_ESTUDIOS_PREESCOLAR_1, 'Primero de Preescolar'),
+                               (OPCION_ESTUDIOS_PREESCOLAR_2, 'Segundo de Preescolar'),
+                               (OPCION_ESTUDIOS_PREESCOLAR_3, 'Tercero de Preescolar'),
                                (OPCION_ESTUDIOS_1, 'Primero de Primaria'),
                                (OPCION_ESTUDIOS_2, 'Segundo de Primaria'),
                                (OPCION_ESTUDIOS_3, 'Tercero de Primaria'),
