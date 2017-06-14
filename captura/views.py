@@ -722,10 +722,12 @@ def delete_photo(request, id_foto):
     """ This view receives the id of a photo, checks if can be erased and
     do it, also from the filesystem.
     """
+    
     photo = get_object_or_404(Foto, pk=id_foto)
+    id_estudio = photo.estudio.id
     photo.delete()
 
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect('captura:list_photos', id_estudio=id_estudio)
 
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))

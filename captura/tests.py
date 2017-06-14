@@ -877,3 +877,33 @@ class TestViewsFotos(TestCase):
                       kwargs={'id_estudio': self.estudio1.pk})
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
+
+    def test_upload_and_delete_photo(self):
+        """ This test checks that the view 'captura:upload_photo', allows
+        the upload of a new family photo.
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = settings.BASE_DIR + static('test_files/borrosa.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            response = self.client.post(url, form)
+            self.assertEqual(302, response.status_code)
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+
+            path = image.upload.path
+            pk_foto = image.pk
+
+            # Check that the object and file exist
+            self.assertTrue(os.path.isfile(path))
+            self.assertTrue(Foto.objects.filter(pk=pk_foto).exists())
+
+            url = reverse('captura:delete_photo',
+                          kwargs={'id_foto': pk_foto})
+            response = self.client.get(url)
+
+            # Check that the object and file exist
+            self.assertFalse(os.path.isfile(path))
+            self.assertFalse(Foto.objects.filter(pk=pk_foto).exists())
