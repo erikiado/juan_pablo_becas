@@ -9,7 +9,7 @@ from familias.models import Alumno
 from becas.models import Beca
 from becas.forms import CartaForm
 from becas.utils import generate_letter
-from .forms import UserForm, DeleteUserForm, FeedbackForm
+from .forms import UserForm, DeleteUserForm
 
 
 @login_required
@@ -104,22 +104,6 @@ def list_studies(request, status_study):
     contexto = {'estudios': estudios, 'estado': status_study,
                 'status_options': Estudio.get_options_status()}
     return render(request, 'estudios_socioeconomicos/listado_estudios.html', contexto)
-
-
-@login_required
-@user_passes_test(is_administrador)
-def focus_mode(request, study_id):
-    """ View to show the detail of a study.
-
-    TODO: This should be filled with all the info of the study.
-    """
-    context = {}
-    estudio = Estudio.objects.get(pk=study_id)
-    if estudio.status == Estudio.REVISION:
-        feedback_form = FeedbackForm(initial={'estudio': estudio,
-                                              'usuario': request.user})
-        context['feedback_form'] = feedback_form
-    return render(request, 'administracion/focus_mode.html', context)
 
 
 @login_required
