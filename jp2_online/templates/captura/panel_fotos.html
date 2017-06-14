@@ -5,13 +5,37 @@
 	  Agregar Foto
 	</a>
 </div>
+<style>
+
+.delete-picture {
+  position: absolute;;
+  right: -10px;
+  top: 20px;
+  font-size: 1.4rem !important;
+
+}
+
+div:hover .delete-picture {
+  opacity: 1;
+  color: red;
+}
+
+.delete-picture:active {
+  box-shadow: none;
+}
+</style>
 <div class="row">
 	{% for foto in fotos %}
 		<div class="col-xs-12 col-sm-6 col-lg-4 text-center">
-			
+
 			<h3>{{ foto.file_name }}<h3>
-			<img class="img-responsive center-block" src="{{foto.upload.url}}">
-		
+      <div>
+        <a class="delete-picture btn-floating btn waves-effect waves-light red"
+          href="{% url 'captura:delete_photo' foto.id %}"
+          onclick="return confirm('¿Desea borrar esta imagen?')">✖</a>
+        <img class="img-responsive center-block" src="{{foto.upload.url}}">
+      </div>
+
 		</div>
 	{% endfor %}
 </div>

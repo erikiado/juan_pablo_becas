@@ -1,3 +1,13 @@
+import os
+
+def _delete_file(path):
+   """ Deletes file from filesystem.
+   Parameters:
+   -----------
+     path : A string that specify the location of the file.
+   """
+   if os.path.isfile(path):
+       os.remove(path)
 
 def save_foreign_relationship(objects, serializer_class, model_class, foreign_instance=None):
     """ Updated nested relashionships in serializer of objects.

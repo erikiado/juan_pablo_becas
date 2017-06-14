@@ -710,6 +710,16 @@ def list_photos(request, id_estudio):
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
 
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+def delete_photo(request, id_foto):
+    """ This view receives the id of a photo, checks if can be erased and
+    do it, also from the filesystem.
+    """
+    photo = get_object_or_404(Foto, pk=id_foto)
+    photo.delete()
+
+    return redirect(request.META['HTTP_REFERER'])
 
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
