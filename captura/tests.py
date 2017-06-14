@@ -904,6 +904,9 @@ class TestViewsFotos(TestCase):
                           kwargs={'id_foto': pk_foto})
             response = self.client.get(url)
 
+            # Check redirect
+            self.assertEqual(302, response.status_code)
+
             # Check that the object and file exist
             self.assertFalse(os.path.isfile(path))
             self.assertFalse(Foto.objects.filter(pk=pk_foto).exists())
