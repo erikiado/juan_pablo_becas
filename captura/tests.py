@@ -863,12 +863,12 @@ class TestViewsFotos(TestCase):
             self.assertTrue(os.path.isfile(path))
             self.assertTrue(Foto.objects.filter(pk=pk_foto).exists())
 
-            url = reverse('captura:delete_photo',
-                          kwargs={'id_foto': pk_foto})
-            response = self.client.get(url)
 
-            # Check redirect
-            self.assertEqual(302, response.status_code)
+            response = self.client.post(reverse('captura:delete_foto',
+                                                kwargs={'id_foto': pk_foto}),
+                                        {'id_foto': pk_foto})
+            self.assertRedirects(response, reverse('captura:list_photos',
+                                                   kwargs={'id_estudio': image.estudio.pk}))
 
             # Check that the object and file exist
             self.assertFalse(os.path.isfile(path))
