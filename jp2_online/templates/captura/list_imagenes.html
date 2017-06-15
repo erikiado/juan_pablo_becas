@@ -42,6 +42,14 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_foto">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_foto_content">
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% include "captura/foto_form.html" %}
 
 
@@ -57,4 +65,9 @@
     swal("Error", '', "error");
   {% endif %}
 </script>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src={% static 'js/captura/captura_fotos.js' %}> </script>
 {% endblock %}

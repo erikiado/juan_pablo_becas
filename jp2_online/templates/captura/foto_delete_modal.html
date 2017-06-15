@@ -1,0 +1,18 @@
+<form class="form-horizontal edit_form" method="POST" action="{% url 'captura:delete_foto' foto.pk%}">
+  {% csrf_token %}
+  {{ delete_form }}
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Borrar foto</h4>
+  </div>
+
+  <div class="modal-body">
+    <p>¿Está seguro que desea borrar esta foto? Esta acción no se puede revertir.</p>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary" id="btn_send_delete_user">Borrar Foto</button>
+  </div>
+
+</form>

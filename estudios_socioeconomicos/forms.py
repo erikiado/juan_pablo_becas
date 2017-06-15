@@ -150,3 +150,27 @@ class FotoForm(forms.ModelForm):
         super(FotoForm, self).__init__(*args, **kwargs)
         # for field_name, field in self.fields.items():
         #     field.widget.attrs['class'] = 'form-control'
+
+class DeleteFotoForm(forms.Form):
+    """Form to delete photo from dashboard which is used to validate the post information.
+
+    """
+    id_foto = forms.IntegerField(widget=forms.HiddenInput())
+
+    def clean(self):
+        """ Override clean data to validate the id corresponds
+        to a real integrante.
+        """
+        cleaned_data = super(DeleteFotoForm, self).clean()
+        photo = Foto.objects.filter(pk=cleaned_data['id_foto'])
+        if not photo:
+            raise ValidationError('La foto no existe')
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        """ Override save to soft delete the integrante.
+        We also take care of the case in which there's
+        an alumno related to it.
+        """
+        foto = Foto.objects.get(pk=self.cleaned_data['id_foto'])
+        foto.delete()
