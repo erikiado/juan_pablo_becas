@@ -151,6 +151,7 @@ class FotoForm(forms.ModelForm):
         # for field_name, field in self.fields.items():
         #     field.widget.attrs['class'] = 'form-control'
 
+
 class DeleteFotoForm(forms.Form):
     """Form to delete photo from dashboard which is used to validate the post information.
 
@@ -164,7 +165,7 @@ class DeleteFotoForm(forms.Form):
         cleaned_data = super(DeleteFotoForm, self).clean()
         photo = Foto.objects.filter(pk=cleaned_data['id_foto'])
         if not photo:
-            raise ValidationError('La foto no existe')
+            raise forms.ValidationError('La foto no existe')
         return cleaned_data
 
     def save(self, *args, **kwargs):

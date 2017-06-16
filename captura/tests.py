@@ -878,6 +878,34 @@ class TestViewsFotos(TestCase):
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
 
+    def test_delete_modal_photo(self):
+        """ This test checks that the view 'captura:upload_photo', allows
+        the upload of a new family photo.
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = settings.BASE_DIR + static('test_files/borrosa.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            response = self.client.post(url, form)
+            self.assertEqual(302, response.status_code)
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+
+            # Check that the object and file exist
+            response = self.client.get(reverse('captura:form_delete_foto',
+                                               kwargs={'id_foto': image.pk}),
+                                       HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual(200, response.status_code)
+            self.assertTrue(b'seguro que desea borrar esta foto' in response.content)
+
+            response = self.client.post(reverse('captura:delete_foto',
+                                                kwargs={'id_foto': image.pk}),
+                                        {'id_foto': image.pk})
+            self.assertRedirects(response, reverse('captura:list_photos',
+                                                   kwargs={'id_estudio': image.estudio.pk}))
+
     def test_upload_and_delete_photo(self):
         """ This test checks that the view 'captura:upload_photo', allows
         the upload of a new family photo.
@@ -893,20 +921,16 @@ class TestViewsFotos(TestCase):
             self.assertEqual(302, response.status_code)
             image = Foto.objects.filter(estudio=self.estudio1).last()
 
-            path = image.upload.path
-            pk_foto = image.pk
-
             # Check that the object and file exist
-            self.assertTrue(os.path.isfile(path))
-            self.assertTrue(Foto.objects.filter(pk=pk_foto).exists())
-
+            self.assertTrue(os.path.isfile(image.upload.path))
+            self.assertTrue(Foto.objects.filter(pk=image.pk).exists())
 
             response = self.client.post(reverse('captura:delete_foto',
-                                                kwargs={'id_foto': pk_foto}),
-                                        {'id_foto': pk_foto})
+                                                kwargs={'id_foto': image.pk}),
+                                        {'id_foto': image.pk})
             self.assertRedirects(response, reverse('captura:list_photos',
                                                    kwargs={'id_estudio': image.estudio.pk}))
 
             # Check that the object and file exist
-            self.assertFalse(os.path.isfile(path))
-            self.assertFalse(Foto.objects.filter(pk=pk_foto).exists())
+            self.assertFalse(os.path.isfile(image.upload.path))
+            self.assertFalse(Foto.objects.filter(pk=image.pk).exists())
