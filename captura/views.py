@@ -743,6 +743,7 @@ def delete_foto(request, id_foto):
         return redirect('captura:list_photos', id_estudio=foto.estudio.id)
     return HttpResponseBadRequest()
 
+
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def create_comentario(request, id_familia):
