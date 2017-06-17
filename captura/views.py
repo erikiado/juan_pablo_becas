@@ -523,11 +523,17 @@ def update_create_transaccion(request, id_familia):
     """
     if request.is_ajax() and request.method == 'POST':
         response_data = {}
+
+        # Cleaning dor possible commas
+        post = request.POST.copy()
+        if 'monto' in post:
+            post['monto'] = post['monto'].replace(',', '')
+
         if request.POST.get('id_transaccion', None):  # In case of updating
             transaccion = get_object_or_404(Transaccion, pk=request.POST['id_transaccion'])
-            transaccion_form = TransaccionForm(request.POST, instance=transaccion)
+            transaccion_form = TransaccionForm(post, instance=transaccion)
         else:  # In case of creation
-            transaccion_form = TransaccionForm(request.POST)
+            transaccion_form = TransaccionForm(post)
         if transaccion_form.is_valid():
             transaccion_form.save()
             if transaccion_form.cleaned_data['es_ingreso']:
