@@ -129,6 +129,23 @@ class TestViewsTransacciones(TestCase):
         self.assertEqual(content['msg'], 'Egreso guardado con éxito')
         self.assertEqual(r.status_code, 200)
 
+    def test_create_egreso_with_comma(self):
+        """ Test that validate that the amount of an egreso can be contains
+        commas and if the other information is correctly provided it will to
+        create successfuly the transaction.
+        """
+        self.transaccion_constructor_dictionary['monto'] = '2,500.00'
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.transaccion_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Egreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+        transaccion = Transaccion.objects.filter(familia=self.familia1).last()
+        self.assertEqual(transaccion.monto, 2500)
+
     def test_create_egreso_incomplete(self):
         """ Test that an egreso won't be created if required information is
         incomplete.
@@ -158,6 +175,26 @@ class TestViewsTransacciones(TestCase):
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
         self.assertEqual(r.status_code, 200)
+
+    def test_create_ingreso_with_comma(self):
+        """ Test that validate that the amount of an ingreso can be contains
+        commas and if the other information is correctly provided it will to
+        create successfuly the transaction.
+        """
+        self.transaccion_constructor_dictionary['es_ingreso'] = True
+        self.transaccion_constructor_dictionary['monto'] = '2,500.00'
+        self.ingreso_constructor_dictionary.update(self.transaccion_constructor_dictionary)
+
+        r = self.client.post(reverse('captura:create_transaccion',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.ingreso_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Ingreso guardado con éxito')
+        self.assertEqual(r.status_code, 200)
+
+        transaccion = Transaccion.objects.filter(familia=self.familia1).last()
+        self.assertEqual(transaccion.monto, 2500)
 
     def test_create_ingreso_incomplete(self):
         """ Test that an ingreso won't be created if the required information is
