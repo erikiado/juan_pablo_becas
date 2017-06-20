@@ -26,7 +26,7 @@ def reverse_func(apps, schema_editor):
     Periodo = apps.get_model('indicadores', 'Periodo')
     db_alias = schema_editor.connection.alias
     Periodo.objects.using(db_alias).filter(periodicidad='Diario', factor=30, multiplica=True).delete()
-    Periodo.objects.using(db_alias).filter(periodicidad='Semanal', factor=4, multiplica=True).delete()
+    Periodo.objects.using(db_alias).filter(periodicidad='Semanal', factor=4.3, multiplica=True).delete()
     Periodo.objects.using(db_alias).filter(periodicidad='Quincenal', factor=2, multiplica=True).delete()
     Periodo.objects.using(db_alias).filter(periodicidad='Mensual', factor=1, multiplica=True).delete()
     Periodo.objects.using(db_alias).filter(periodicidad='Bimensual', factor=2, multiplica=False).delete()

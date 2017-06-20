@@ -293,16 +293,6 @@ class TestFeedBack(TestCase):
         self.study = Estudio.objects.create(capturista=self.capturista, familia=f1,
                                             status=Estudio.REVISION)
 
-    def test_url(self):
-        """ Check that the url for focus mode of the study exists.
-
-        """
-        self.client.login(username='thelma', password='junipero')
-        test_url_name = 'administracion:focus_mode'
-        response = self.client.get(reverse(test_url_name,
-                                           kwargs={'study_id': self.study.id}), follow=True)
-        self.assertEqual(200, response.status_code)
-
     def test_valid_form(self):
         """ Check that the form is valid with correct data.
 
