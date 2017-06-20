@@ -54,6 +54,9 @@ class Familia(models.Model):
     estado_civil : TextField
         This field stores the information regarding the legal relationship status of the
         parents in a family.
+    escuela : TextField
+        This field stores an optional value for the school, in case that the integrante is
+        a student.
     localidad : Text Field
         This field stores the town in which a family resides.
 
@@ -222,6 +225,7 @@ class Integrante(models.Model):
                                              verbose_name=sacramentos)
     hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
     historial_terapia = models.TextField(blank=True, verbose_name=hist)
+    escuela = models.TextField(max_length=200, blank=True)
     activo = models.BooleanField(default=True)
     rol = models.CharField(max_length=150, verbose_name='Relación en la familia')
 

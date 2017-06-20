@@ -2,9 +2,9 @@
 function changeSubmitToAjax(id_modal) {
   $('.form-create-integrante').submit(function(e){
     e.preventDefault();
-    $.ajax({ 
-      type: $(this).attr('method'), 
-      url: this.action, 
+    $.ajax({
+      type: $(this).attr('method'),
+      url: this.action,
       data: $(this).serialize(),
       context: this,
       success: function(data, status_code) {
@@ -39,7 +39,7 @@ $(document).ready(function() {
     changeYear: true}
   );
   // hide inputs from creation form
-  $('#modal_create_integrante #_id_escuela').hide();
+  $('#modal_create_integrante #_id_plantel').hide();
   $('#modal_create_integrante #_id_numero_sae').hide();
   $('#modal_create_integrante #_id_relacion').hide();
   // change to ajax
@@ -80,17 +80,17 @@ $.ajaxSetup({
 // hide or show certain fields based on the rol for the creation form
 $('#modal_create_integrante #id_rol').change(function(e) {
   if (e.target.value == 'tutor') {
-    $('#modal_create_integrante #_id_escuela').hide();
+    $('#modal_create_integrante #_id_plantel').hide();
     $('#modal_create_integrante #_id_numero_sae').hide();
     $('#modal_create_integrante #_id_relacion').show();
   }
   else if (e.target.value == 'alumno') {
-    $('#modal_create_integrante #_id_escuela').show();
+    $('#modal_create_integrante #_id_plantel').show();
     $('#modal_create_integrante #_id_numero_sae').show();
     $('#modal_create_integrante #_id_relacion').hide();
   }
   else if (e.target.value == 'ninguno') {
-    $('#modal_create_integrante #_id_escuela').hide();
+    $('#modal_create_integrante #_id_plantel').hide();
     $('#modal_create_integrante #_id_numero_sae').hide();
     $('#modal_create_integrante #_id_relacion').hide();
   }
@@ -105,14 +105,14 @@ since we can't edit the role of a created integrante.
 function initEditForm() {
   // hide everything
   $('#modal_edit_integrante #_id_rol').hide();
-  $('#modal_edit_integrante #_id_escuela').hide();
+  $('#modal_edit_integrante #_id_plantel').hide();
   $('#modal_edit_integrante #_id_numero_sae').hide();
   $('#modal_edit_integrante #_id_relacion').hide();
 
 
-  // show sae, escuela, or relacion depending on the role.
+  // show sae, plantel, or relacion depending on the role.
   if ($('#modal_edit_integrante #id_rol').val() == 'alumno') {
-    $('#modal_edit_integrante #_id_escuela').show();
+    $('#modal_edit_integrante #_id_plantel').show();
     $('#modal_edit_integrante #_id_numero_sae').show()
   }
   else if ($('#modal_edit_integrante #id_rol').val()  == 'tutor') {
