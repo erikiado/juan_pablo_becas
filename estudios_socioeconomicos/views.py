@@ -50,7 +50,7 @@ def focus_mode(request, id_estudio):
             Estudio.objects.filter(pk=id_estudio),
             capturista=request.user.capturista)
 
-    integrantes = Integrante.objects.filter(familia=estudio.familia).select_related()
+    integrantes = Integrante.objects.filter(familia=estudio.familia, activo=True).select_related()
     fotos = Foto.objects.filter(estudio=id_estudio)
     context['estudio'] = estudio
     context['integrantes'] = integrantes
