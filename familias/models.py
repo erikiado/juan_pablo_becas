@@ -93,6 +93,12 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
+    OPCION_REGADERA = 'regadera'
+    OPCION_JICARA = 'jicarasos'
+    OPCIONES_BANIO = ((OPCION_REGADERA, 'Regadera'),
+                      (OPCION_JICAEA, 'Jicarasos'),
+                      (OPCION_OTRO, 'Otro'))
+
     numero_hijos_diferentes_papas = models.IntegerField()
     nombre_familiar = models.CharField(max_length=300)
     explicacion_solvencia = models.TextField(blank=True)
