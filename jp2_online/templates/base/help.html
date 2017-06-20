@@ -11,6 +11,35 @@ Ayuda
 {% block content %}
 <h1>Página de ayuda</h1>
 
+<div class="row">       
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="x_panel">
+			<div class="x_content">
+				<div class="panel-group" id="accordion">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a data-toggle="collapse" data-parent="#accordion" href="#collapseLinks">
+									Aplicación Offline
+								</a>
+							</h4>
+						</div>
+						<div id="collapseLinks" class="panel-collapse collapse">
+							<div class="panel-body">
+								<p>
+									Descarga la aplicación offline siguiendo estos enlaces
+								</p>
+								<div class="text-center">
+									<a href="https://www.dropbox.com/sh/8iwu2i50jo9fu1q/AAARCIytTM_EixhNDPGKcmP6a?dl=0">Descargar desde Dropbox</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% for section in sections %}
 <div class="row">       
 	<div class="col-md-12 col-sm-12 col-xs-12">
