@@ -3,7 +3,7 @@ import string
 import decimal
 from datetime import date
 
-from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
 from reportlab.lib import pagesizes
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -33,7 +33,7 @@ def generate_letter(response, nombre='Juan Perez', ciclo='2016-2017',
 
     doc = SimpleDocTemplate(response, pagesize=pagesizes.letter,
                             rightMargin=72, leftMargin=72,
-                            topMargin=72, bottomMargin=18)
+                            topMargin=117, bottomMargin=18)
     letter = []
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
@@ -44,13 +44,14 @@ def generate_letter(response, nombre='Juan Perez', ciclo='2016-2017',
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
     styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
 
     ptext = '<font size=12>%s</font>' % formatted_time
-    letter.append(Paragraph(ptext, styles['Normal']))
+    letter.append(Paragraph(ptext, styles['Right']))
     letter.append(Spacer(1, 12))
 
     letter.append(Spacer(1, 12))
-    ptext = '<font size=12><b>Instituto San Juan Pablo II</b></font>'
+    ptext = '<font size=12><b>Carta de Comunicación de Beca Otorgada</b></font>'
     letter.append(Paragraph(ptext, styles['Normal']))
     letter.append(Spacer(1, 12))
 
