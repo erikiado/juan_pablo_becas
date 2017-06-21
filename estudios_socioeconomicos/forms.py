@@ -132,7 +132,6 @@ class FotoForm(forms.ModelForm):
     class Meta:
         model = Foto
         fields = ('estudio',
-                  'file_name',
                   'upload')
 
         widgets = {
@@ -150,3 +149,4 @@ class FotoForm(forms.ModelForm):
         super(FotoForm, self).__init__(*args, **kwargs)
         # for field_name, field in self.fields.items():
         #     field.widget.attrs['class'] = 'form-control'
+        self.fields['upload'].widget.attrs['multiple'] = True

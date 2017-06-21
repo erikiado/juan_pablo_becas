@@ -686,8 +686,11 @@ def upload_photo(request, id_estudio):
         context = {}
         estudio = get_object_or_404(Estudio, pk=id_estudio)
         form = FotoForm(request.POST, request.FILES)
+        files = request.FILES.getlist('upload')
         if form.is_valid():
-            form.save()
+            for f in files:
+                picture = Foto(upload=f, estudio=estudio)
+                picture.save()
             return redirect('captura:list_photos', id_estudio=estudio.pk)
         else:
             context['fotos'] = Foto.objects.filter(estudio=estudio)
