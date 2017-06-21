@@ -33,7 +33,7 @@ def generate_letter(response, nombre='Juan Perez', ciclo='2016-2017',
 
     doc = SimpleDocTemplate(response, pagesize=pagesizes.letter,
                             rightMargin=72, leftMargin=72,
-                            topMargin=117, bottomMargin=18)
+                            topMargin=110, bottomMargin=18)
     letter = []
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
