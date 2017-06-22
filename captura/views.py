@@ -467,7 +467,7 @@ def get_form_edit_integrante(request, id_integrante):
         if hasattr(integrante, 'alumno_integrante'):  # check reverse relation w/alumno
             rol = IntegranteForm.OPCION_ROL_ALUMNO
             initial_data['numero_sae'] = integrante.alumno_integrante.numero_sae
-            initial_data['escuela'] = integrante.alumno_integrante.escuela
+            initial_data['plantel'] = integrante.alumno_integrante.escuela
         elif hasattr(integrante, 'tutor_integrante'):  # check reverse relation w/tutor
             rol = IntegranteForm.OPCION_ROL_TUTOR
             initial_data['relacion'] = integrante.tutor_integrante.relacion
@@ -523,11 +523,17 @@ def update_create_transaccion(request, id_familia):
     """
     if request.is_ajax() and request.method == 'POST':
         response_data = {}
+
+        # Cleaning dor possible commas
+        post = request.POST.copy()
+        if 'monto' in post:
+            post['monto'] = post['monto'].replace(',', '')
+
         if request.POST.get('id_transaccion', None):  # In case of updating
             transaccion = get_object_or_404(Transaccion, pk=request.POST['id_transaccion'])
-            transaccion_form = TransaccionForm(request.POST, instance=transaccion)
+            transaccion_form = TransaccionForm(post, instance=transaccion)
         else:  # In case of creation
-            transaccion_form = TransaccionForm(request.POST)
+            transaccion_form = TransaccionForm(post)
         if transaccion_form.is_valid():
             transaccion_form.save()
             if transaccion_form.cleaned_data['es_ingreso']:

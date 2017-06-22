@@ -187,7 +187,7 @@ class TestFocusMode(TestCase):
         self.test_url = 'estudios_socioeconomicos:focus_mode'
 
     def test_view_study(self):
-        """ Test that a study can be viewed in focus mode.ew
+        """ Test that a study can be viewed in focus mode.
         """
         self.client.login(username=self.test_username, password=self.test_password)
 
@@ -235,3 +235,23 @@ class TestFocusMode(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTemplateUsed(response, 'estudios_socioeconomicos/focus_mode.html')
+
+    def test_non_active_family_members_invisible(self):
+        """ Test that an inactive family member can't appear inside the focus mode.
+        """
+
+        inactive_member = Integrante.objects.create(
+            familia=self.familia,
+            nombres='Inactive',
+            apellidos='Oddjob',
+            nivel_estudios='doctorado',
+            fecha_de_nacimiento='1996-02-26',
+            activo=False)
+
+        self.client.login(username=self.test_username, password=self.test_password)
+
+        response = self.client.get(reverse(self.test_url, kwargs={'id_estudio': self.estudio.id}))
+        response_text = response.content.decode('utf-8')
+
+        self.assertNotIn(inactive_member.nombres, response_text)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
