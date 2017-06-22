@@ -721,7 +721,7 @@ def list_photos(request, id_estudio):
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def get_form_delete_foto(request, id_foto):
     """ View that is called via ajax to render the modal
-    to confirm the deletion of an Foto.
+    to confirm the deletion of a Foto.
 
     """
     if request.is_ajax() and request.method == 'GET':
@@ -738,8 +738,8 @@ def get_form_delete_foto(request, id_foto):
 @login_required
 @user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
 def delete_foto(request, id_foto):
-    """ This view receives the form to delete an foto
-    and redirects to the listing of fotos.
+    """ This view receives the form to delete a foto
+    and redirects to the list of fotos.
     """
     if request.method == 'POST':
         form = DeleteFotoForm(request.POST)
