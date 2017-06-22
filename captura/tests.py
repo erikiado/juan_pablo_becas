@@ -509,7 +509,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
-        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        self.integrante_constructor_dictionary['plantel'] = self.escuela.id
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -525,19 +525,19 @@ class TestViewsFamilia(TestCase):
 
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
-        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        self.integrante_constructor_dictionary['plantel'] = self.escuela.id
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y la escuela')
+                         'El estudiante necesita el número sae y el plantel')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete2(self):
         """ Test that an alumno can't be created if we don't provide
-        escuela.
+        escuela (plantel).
         """
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
@@ -548,7 +548,7 @@ class TestViewsFamilia(TestCase):
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y la escuela')
+                         'El estudiante necesita el número sae y el plantel')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete3(self):
@@ -559,7 +559,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['relacion'] = 'padre'
-        self.integrante_constructor_dictionary['escuela'] = self.escuela.id
+        self.integrante_constructor_dictionary['plantel'] = self.escuela.id
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -613,7 +613,7 @@ class TestViewsFamilia(TestCase):
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El tutor no tiene número sae ni escuela')
+                         'El tutor no tiene número sae ni plantel')
         self.assertEqual(r.status_code, 400)
 
     def test_edit_integrante(self):
