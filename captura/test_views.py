@@ -498,7 +498,7 @@ class TestViewsFamiliaLive(StaticLiveServerTestCase):
         self.browser.find_by_css('#modal_edit_integrante #id_numero_sae').first.fill('')
         self.browser.find_by_css('#modal_edit_integrante #btn_send_create_user').first.click()
         self.assertTrue(
-            self.browser.is_text_present('El estudiante necesita el número sae y la escuela'))
+            self.browser.is_text_present('El estudiante necesita el número sae y el plantel'))
         self.browser.find_by_css('.swal2-confirm').first.click()
         #  con sae
         self.browser.find_by_css('#modal_edit_integrante #id_nombres').first.fill(new_name)
