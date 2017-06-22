@@ -842,8 +842,8 @@ class TestViewsFotos(TestCase):
         self.assertEqual(400, response.status_code)
 
     def test_delete_modal_photo(self):
-        """ This test checks that the view 'captura:upload_photo', allows
-        the upload of a new family photo.
+        """ This test checks that the form requested on 'captura:form_delete_foto', is
+        successfully received.
         """
         url = reverse('captura:upload_photo',
                       kwargs={'id_estudio': self.estudio1.pk})
@@ -870,8 +870,8 @@ class TestViewsFotos(TestCase):
                                                    kwargs={'id_estudio': image.estudio.pk}))
 
     def test_upload_and_delete_photo(self):
-        """ This test checks that the view 'captura:upload_photo', allows
-        the upload of a new family photo.
+        """ This test checks that a valid request to 'captura:delete_foto',
+        allows delete a foto.
         """
         url = reverse('captura:upload_photo',
                       kwargs={'id_estudio': self.estudio1.pk})
@@ -894,6 +894,6 @@ class TestViewsFotos(TestCase):
             self.assertRedirects(response, reverse('captura:list_photos',
                                                    kwargs={'id_estudio': image.estudio.pk}))
 
-            # Check that the object and file exist
+            # Check that the object and file no longer exist
             self.assertFalse(os.path.isfile(image.upload.path))
             self.assertFalse(Foto.objects.filter(pk=image.pk).exists())
