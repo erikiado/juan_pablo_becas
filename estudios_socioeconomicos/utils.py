@@ -13,7 +13,7 @@ def _delete_file(path):
     """
     if os.path.isfile(path):
         os.remove(path)
-        return os.path.isfile(path)
+        return (not os.path.isfile(path))
     return False
 
 
