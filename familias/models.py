@@ -40,31 +40,36 @@ class Familia(models.Model):
         estado_civil field.
     OPCIONES_LOCALIDAD : tuple(tuple())
         This is a field that stores the list of options to be stored in the localidad field.
+    OPCIONES_BANIO : tuple(tuple())
+        This is a field that stores the list of options to be stored in the banio field.
+    OPCIONES_SANITARIAS : tuple(tuple())
+        This is a field that stores the list of options to be stored in the sanitarios field.
     numero_hijos_diferentes_papas : IntegerField
         The content of this field needs to be clarified with the stakeholder, whether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
-    nombre_familiar: TextField
+    nombre_familiar: CharField
         This field will be used as an alias for the capturista to easily find the family.
     direccion: TextField
         This field should be filed with the home address for the family.
     explicacion_solvencia : TextField
         This field should be filled in their net mensual income is negative. It serves as an
         explanation on how the family deals with the deficit.
-    estado_civil : TextField
+    estado_civil : CharField
         This field stores the information regarding the legal relationship status of the
         parents in a family.
     escuela : TextField
         This field stores an optional value for the school, in case that the integrante is
         a student.
-    localidad : Text Field
+    localidad : CharField
         This field stores the town in which a family resides.
-
+    banio : CharField
+        This field stores the information related to the shower instalation in a house.
+    sanitarios : CharField
+        This field stores the information related to the W.C instalation in a house.
+    
     TODO:
     -----
-
-    - Implement total_neto field, total_egresos, and total_ingresos, once the ingresos and
-    egresos tables are created.
     - Clarify the contents of the number_hijos_diferentes_papas field
     """
 
