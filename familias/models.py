@@ -67,7 +67,7 @@ class Familia(models.Model):
         This field stores the information related to the shower instalation in a house.
     sanitarios : CharField
         This field stores the information related to the W.C instalation in a house.
-    
+
     TODO:
     -----
     - Clarify the contents of the number_hijos_diferentes_papas field
