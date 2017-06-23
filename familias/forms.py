@@ -16,6 +16,7 @@ class FamiliaForm(ModelForm):
                   'numero_hijos_diferentes_papas',
                   'estado_civil',
                   'localidad',
+                  'banio',
                   'sanitarios')
 
     def __init__(self, *args, **kwargs):
