@@ -93,11 +93,18 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
-    OPCION_REGADERA = 'regadera'
-    OPCION_JICARA = 'jicarasos'
+    OPCION_REGADERA = 'Regadera'
+    OPCION_JICARA = 'Jicarasos'
+    OPCION_OTRO = 'Otro'
     OPCIONES_BANIO = ((OPCION_REGADERA, 'Regadera'),
-                      (OPCION_JICAEA, 'Jicarasos'),
+                      (OPCION_JICARA, 'Jicarasos'),
                       (OPCION_OTRO, 'Otro'))
+
+    OPCION_ESCUSADO = 'Escusado'
+    OPCION_LETRINA = 'Letrina'
+    OPCIONES_SANITARIAS = ((OPCION_ESCUSADO, 'Escusado'),
+                           (OPCION_LETRINA, 'Letrina'),
+                           (OPCION_OTRO, 'Otro'))
 
     numero_hijos_diferentes_papas = models.IntegerField()
     nombre_familiar = models.CharField(max_length=300)
@@ -107,6 +114,14 @@ class Familia(models.Model):
                                     choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
                                  choices=OPCIONES_LOCALIDAD)
+    banio = models.CharField(max_length=100,
+                             choices=OPCIONES_BANIO,
+                             verbose_name='Tipo de instalación de baño',
+                             blank=True)
+    sanitarios = models.CharField(max_length=100,
+                                  choices=OPCIONES_SANITARIAS,
+                                  verbose_name='Tipo de instalación sanitaria',
+                                  blank=True)
 
     def __str__(self):
         """ Prints the apellido of one of the students of the family,
