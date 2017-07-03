@@ -13,7 +13,7 @@
   </a>
 </div>
 
-<div class="row">       
+<div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_title">
@@ -68,7 +68,7 @@
                       <i class="glyphicon glyphicon-pencil"></i> Editar
                     </a>
                     <a id="delete_integrante_{{ integrante.id }}" class="delete_integrante_link mouseClick btn btn-danger" data-form="{% url 'captura:form_delete_integrante' integrante.id %}">
-                      <i class="glyphicon glyphicon-trash"></i> 
+                      <i class="glyphicon glyphicon-trash"></i>
                       Borrar
                     </a>
                   </td>
@@ -105,7 +105,7 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_edit_integrante">
   <div class="modal-dialog" role="document">
     <div class="modal-content" id="modal_edit_integrante_content">
-      
+
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -114,11 +114,24 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_integrante">
   <div class="modal-dialog" role="document">
     <div class="modal-content" id="modal_delete_integrante_content">
-      
+
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<style>
+#id_sacramentos {
+  list-style-type: none;
+  padding: 0;
+}
+
+#id_sacramentos input {
+  display: inline-flex;
+  height: auto;
+  width: auto;
+  margin-top: 4px;
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}

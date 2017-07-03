@@ -12,7 +12,7 @@ from django.conf import settings
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Foto
 from indicadores.models import Periodo, Transaccion, Ingreso
-from familias.models import Familia, Integrante, Tutor
+from familias.models import Familia, Integrante, Tutor, Sacramento
 from perfiles_usuario.models import Capturista
 
 
@@ -383,6 +383,14 @@ class TestViewsFamilia(TestCase):
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
 
+        self.integrante2 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='David',
+                                                     apellidos='Bowie',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1992-02-26', )
+        self.integrante2.sacramentos.add(Sacramento.objects.get(nombre='Bautismo'))
+        self.integrante2.sacramentos.add(Sacramento.objects.get(nombre='Confirmación'))
+
         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
                                                   'nombres': 'Arturo',
                                                   'apellidos': 'Herrera Rosas',
@@ -616,6 +624,25 @@ class TestViewsFamilia(TestCase):
                          'El tutor no tiene número sae ni plantel')
         self.assertEqual(r.status_code, 400)
 
+    def test_create_integrante_with_sacramentos(self):
+        """ Tests that sacramentos are successfuly created on a new integrante
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Confirmación').pk, ]
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Creado')
+        self.assertEqual(r.status_code, 200)
+
+        integrante = Integrante.objects.filter(familia=self.familia1).last()
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
     def test_edit_integrante(self):
         """ Test that an already existing integrante can be edited, through the
         edit_integrante view and form.
@@ -632,6 +659,79 @@ class TestViewsFamilia(TestCase):
         self.assertEqual(r.status_code, 200)
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)
+
+    def test_add_sacramentos_to_integrante(self):
+        """ Test that a sacramento can be added in an already existing integrante,
+         through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Comunión').pk,
+                       Sacramento.objects.get(nombre='Confirmación').pk, ]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(self.integrante2.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
+    def test_update_sacramentos_of_integrante(self):
+        """ Test that sacramentos can be added and anothers can be deleted of an
+        already existing integrante, through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Comunión').pk, ]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(self.integrante2.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Comunión').exists())
+        self.assertFalse(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
+    def test_delete_sacramentos_of_integrante(self):
+        """ Test that sacramentos can be deleted of an already existing integrante,
+        through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(integrante.sacramentos.filter(nombre='Confirmación').exists())
 
     def test_delete_integrante(self):
         """ Test that we get redirected after deleting the integrante.
