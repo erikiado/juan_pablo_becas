@@ -25,6 +25,28 @@ class Oficio(models.Model):
         return '{}'.format(self.nombre)
 
 
+class Sacramento(models.Model):
+    """ This model stores a list of sacraments of the Catholic Church.
+
+    This list of sacraments stores the information related to a family
+    member, this model is used directly for the presentation and
+    creation of the indicators related to the sacraments of each family members.
+
+    Attributes:
+    -----------
+    nombre : TextField
+        This field stores the name of the sacrament.
+    """
+
+    nombre = models.CharField(max_length=200)
+
+    def __str__(self):
+        """ This returns the name of the Sacramento
+
+        """
+        return '{}'.format(self.nombre)
+
+
 class Familia(models.Model):
     """ Main model of the family app.
 
@@ -254,9 +276,11 @@ class Integrante(models.Model):
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
-    sacramentos = 'Sacramentos que le falten… bautizo, comunion, confirmación, matrimnio iglesia'
+    sacramentos = models.ManyToManyField(Sacramento, blank=True)
+    sacramentos_text = \
+        'Sacramentos que le falten… bautizo, comunion, confirmación, matrimonio iglesia'
     sacramentos_faltantes = models.TextField(blank=True,
-                                             verbose_name=sacramentos)
+                                             verbose_name=sacramentos_text)
     hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
     historial_terapia = models.TextField(blank=True, verbose_name=hist)
     escuela = models.CharField(max_length=200, blank=True)

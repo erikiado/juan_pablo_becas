@@ -1,5 +1,5 @@
 from django.forms import ModelForm, ChoiceField, HiddenInput, ModelChoiceField, CharField, \
-                         ValidationError, Form, IntegerField
+                         ValidationError, Form, IntegerField, CheckboxSelectMultiple
 from administracion.models import Escuela
 from .models import Familia, Integrante, Alumno, Tutor, Comentario
 
@@ -61,11 +61,12 @@ class IntegranteForm(ModelForm):
                   'nivel_estudios',
                   'ciclo_escolar',
                   'especificacion_estudio',
-                  'sacramentos_faltantes',
+                  'sacramentos',
                   'historial_terapia',
-                  'escuela')
+                  'escuela',)
         widgets = {
-            'familia': HiddenInput()
+            'familia': HiddenInput(),
+            'sacramentos': CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -135,6 +136,7 @@ class IntegranteModelForm(IntegranteForm):
         if self.instance.pk is None:   # create integrante
             integrante = super(IntegranteModelForm, self).save(*args, **kwargs)
             data = self.cleaned_data
+
             if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
             elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
@@ -147,7 +149,11 @@ class IntegranteModelForm(IntegranteForm):
             # filter fields which belong to integrante and are in cleaned_data.
             for field in filter(lambda x: x in data, Integrante._meta.get_fields()):
                 integrante[field.name] = data[field.name]
+
             integrante.save()
+
+            sacramentos = list(data['sacramentos'])
+            integrante.sacramentos.set(sacramentos)
 
             if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 tutor = Tutor.objects.get(integrante=integrante)
