@@ -16,7 +16,7 @@ from estudios_socioeconomicos.forms import DeleteEstudioForm, RespuestaForm, \
                                            RecoverEstudioForm
 from estudios_socioeconomicos.serializers import SeccionSerializer, EstudioSerializer
 from estudios_socioeconomicos.serializers import FotoSerializer
-from estudios_socioeconomicos.forms import FotoForm
+from estudios_socioeconomicos.forms import FotoForm, DeleteFotoForm
 from estudios_socioeconomicos.models import Respuesta, Pregunta, Seccion, Estudio, Foto
 from familias.forms import FamiliaForm, IntegranteForm, IntegranteModelForm, \
                            DeleteIntegranteForm, ComentarioForm
@@ -715,6 +715,39 @@ def list_photos(request, id_estudio):
     context['form'] = FotoForm(initial={'estudio': estudio.pk})
     context['familia'] = estudio.familia
     return render(request, 'captura/list_imagenes.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+def get_form_delete_foto(request, id_foto):
+    """ View that is called via ajax to render the modal
+    to confirm the deletion of a Foto.
+
+    """
+    if request.is_ajax() and request.method == 'GET':
+        foto = get_object_or_404(Foto, pk=id_foto)
+        form = DeleteFotoForm(initial={'id_foto': foto.pk})
+        context = {
+            'foto': foto,
+            'delete_form': form
+        }
+        return render(request, 'captura/foto_delete_modal.html', context)
+    return HttpResponseBadRequest()
+
+
+@login_required
+@user_passes_test(lambda u: is_member(u, [ADMINISTRADOR_GROUP, CAPTURISTA_GROUP]))
+def delete_foto(request, id_foto):
+    """ This view receives the form to delete a foto
+    and redirects to the list of fotos.
+    """
+    if request.method == 'POST':
+        form = DeleteFotoForm(request.POST)
+        foto = get_object_or_404(Foto, pk=id_foto)
+        if form.is_valid():
+            form.save()
+        return redirect('captura:list_photos', id_estudio=foto.estudio.id)
+    return HttpResponseBadRequest()
 
 
 @login_required
