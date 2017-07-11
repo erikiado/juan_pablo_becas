@@ -9,7 +9,7 @@ class BecaForm(forms.Form):
     """
 
     OPCIONES_TABULADOR = [
-        (x, 'Asignar {}%'.format(x)) for x in map(lambda x: str(x), range(14, 21))
+        (x, 'Asignar {}%'.format(x)) for x in map(lambda x: str(x), range(10, 21))
     ]
 
     OPCIONES_TABULADOR += [('fuera_rango', 'Fuera del rango')]
