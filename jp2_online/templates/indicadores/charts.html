@@ -1,0 +1,69 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<h1>Estado Civil</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col col-md-8 col-md-offset-2">
+                {% for localidad, info in  data.items %}
+    <h2>{{ localidad }}</h2>
+        <canvas id="chart_{{ localidad.split|join:"_" }}" width="400" height="400"></canvas>
+    {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+
+
+{% endblock %}
+
+
+{% block extra_page_js %}
+	<script type="text/javascript" src={% static "node_modules/chart.js/dist/Chart.js" %}></script>
+{% for localidad, info in data.items %}
+<script>
+var ctx_{{ localidad.split|join:"_" }} = document.getElementById("chart_{{ localidad.split|join:'_' }}");
+var chart_{{ localidad.split|join:"_" }} = new Chart(ctx_{{ localidad.split|join:"_" }}, {
+    type: 'bar',
+    data: {
+        labels: [{% for key, value in info.items %}
+                   "{{ key }}",
+                 {% endfor %}],
+        datasets: [{
+            label: '# of Votes',
+            data: [{% for key, value in info.items %}
+                     "{{ value }}",
+                   {% endfor %}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+{% endfor %}
+{% endblock %}
