@@ -44,6 +44,7 @@ class IntegranteForm(ModelForm):
                     (OPCION_ROL_TIO, 'Tío/a'))
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
+    edad = IntegerField(required=False, min_value=0)
 
     class Meta:
         model = Integrante
@@ -56,6 +57,7 @@ class IntegranteForm(ModelForm):
                   'telefono',
                   'correo',
                   'fecha_de_nacimiento',
+                  'edad',
                   'nivel_estudios',
                   'especificacion_estudio',
                   'sacramentos_faltantes',
