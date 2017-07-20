@@ -9,12 +9,12 @@
       <h3>Información de Alumno</h3>
     </div>
   </div>
-  
+
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_content">
 
-        <h2> 
+        <h2>
           Información General
         </h2>
 
@@ -63,7 +63,7 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_content">
-        <h2> 
+        <h2>
           Becas
         </h2>
 
@@ -77,6 +77,7 @@
               <tr>
                 <th>Fecha de Asignación</th>
                 <th>Porcentaje</th>
+                <th>Aportación</th>
               </tr>
             </thead>
             <tbody>
@@ -84,6 +85,7 @@
                 <tr>
                   <td> {{beca.fecha_de_asignacion}} </td>
                   <td> {{beca}} </td>
+                  <td> {{beca.aportacion}} </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -91,7 +93,7 @@
         {% else %}
           <p class="text font 17 m-b-30">
             El alumno no tiene ninguna beca asignada
-          </p> 
+          </p>
         {% endif %}
       </div>
     </div>
@@ -100,7 +102,7 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
       <div class="x_content">
-        <h2> 
+        <h2>
           Carta de Beca
         </h2>
 
