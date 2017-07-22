@@ -291,15 +291,25 @@ class Alumno(models.Model):
     escuela : ForeignKey
         This field stores the actual school in which the student is enrolled, or is
         planned to attend once the inscription process is over.
+    ciclo_escolar : CharField
+        This field stores the schoolar cycle (i.e. 2017 - 2018) in which the student
+        was enrolled.
 
     TODO: activate the ManyToOne with Escuela once the model is declared in the
     administracion app.
     """
 
+    OPCIONES_CICLOS_ESCOLARES = [
+        (str(x), "%d - %d" % (x, x + 1)) for x in map(lambda x: x, range(2010, 2051))
+    ]
+
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
     numero_sae = models.CharField(max_length=30)
     escuela = models.ForeignKey(Escuela, related_name='escuela_alumno')
+    ciclo_escolar = models.CharField(max_length=6,
+                                     choices=OPCIONES_CICLOS_ESCOLARES,
+                                     default='2017')
 
     def __str__(self):
         """ Returns the name of the student

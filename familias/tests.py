@@ -75,6 +75,7 @@ class TestIntegranteForm(TestCase):
         data_form['rol'] = 'alumno'
         data_form['numero_sae'] = '123456'
         data_form['plantel'] = self.escuela.id
+        data_form['ciclo_escolar'] = '2017'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
 
@@ -97,6 +98,17 @@ class TestIntegranteForm(TestCase):
         data_form['plantel'] = self.escuela.id
         data_form['numero_sae'] = '123456'
         data_form['relacion'] = 'padre'
+        form = IntegranteModelForm(data_form)
+        self.assertFalse(form.is_valid())
+
+    def test_invalid_student3(self):
+        """ Test form with the valid data of a student.
+
+        """
+        data_form = self.valid_data.copy()
+        data_form['rol'] = 'alumno'
+        data_form['numero_sae'] = '123456'
+        data_form['plantel'] = self.escuela.id
         form = IntegranteModelForm(data_form)
         self.assertFalse(form.is_valid())
 
@@ -143,6 +155,7 @@ class TestIntegranteForm(TestCase):
         data_form['rol'] = 'alumno'
         data_form['numero_sae'] = '123456'
         data_form['plantel'] = self.escuela.id
+        data_form['ciclo_escolar'] = '2016'
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
         integrante = form.save()
