@@ -59,7 +59,6 @@ class IntegranteForm(ModelForm):
                   'fecha_de_nacimiento',
                   'edad',
                   'nivel_estudios',
-                  'ciclo_escolar',
                   'especificacion_estudio',
                   'sacramentos',
                   'historial_terapia',
