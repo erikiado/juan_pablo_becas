@@ -32,3 +32,10 @@ def specific_indicador(request, indicador):
     context = {'data': f(indicador),
                'titulo': indicador}
     return render(request, 'indicadores/charts.html', context)
+
+@login_required
+def numero_alumnos(request):
+    pass:
+
+@login_required
+def estado_civil(request):
