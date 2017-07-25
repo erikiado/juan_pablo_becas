@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Familia, Integrante, Oficio
+from .models import Familia, Integrante, Oficio, Sacramento
 
 
 class TestFamiliaModel(TestCase):
@@ -42,6 +42,28 @@ class TestOficio(TestCase):
         """
         oficio = Oficio.objects.get(nombre=self.nombre)
         self.assertEqual(str(oficio), self.nombre)
+
+
+class TestSacramento(TestCase):
+    """ Unit test suite for testing the Sacramento model in .models
+
+    """
+
+    def setUp(self):
+        """ Setup required for all the tests in this suite.
+
+        This setup creates a new Sacramento object.
+        """
+        self.nombre = 'Confesión'
+        Sacramento.objects.create(nombre=self.nombre)
+
+    def test_str(self):
+        """ Test for the Sacramento __str__ method.
+
+        This tests that it returns the name of the sacramento.
+        """
+        sacramento = Sacramento.objects.get(nombre=self.nombre)
+        self.assertEqual(str(sacramento), self.nombre)
 
 
 class TestIntegranteModel(TestCase):

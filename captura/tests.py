@@ -12,7 +12,7 @@ from django.conf import settings
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Foto
 from indicadores.models import Periodo, Transaccion, Ingreso
-from familias.models import Familia, Integrante, Tutor
+from familias.models import Familia, Integrante, Tutor, Sacramento
 from perfiles_usuario.models import Capturista
 
 
@@ -383,6 +383,14 @@ class TestViewsFamilia(TestCase):
                                                      nivel_estudios='doctorado',
                                                      fecha_de_nacimiento='1996-02-26')
 
+        self.integrante2 = Integrante.objects.create(familia=self.familia1,
+                                                     nombres='David',
+                                                     apellidos='Bowie',
+                                                     nivel_estudios='doctorado',
+                                                     fecha_de_nacimiento='1992-02-26', )
+        self.integrante2.sacramentos.add(Sacramento.objects.get(nombre='Bautismo'))
+        self.integrante2.sacramentos.add(Sacramento.objects.get(nombre='Confirmación'))
+
         self.integrante_constructor_dictionary = {'familia': self.familia1.id,
                                                   'nombres': 'Arturo',
                                                   'apellidos': 'Herrera Rosas',
@@ -510,6 +518,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -526,13 +535,14 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y el plantel')
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete2(self):
@@ -542,16 +552,35 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y el plantel')
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete3(self):
+        """ Test that an alumno can be created if we provide
+        the correct data: numero_sae and escuela.
+        """
+
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_alumno_incomplete4(self):
         """ Test that an alumno can't be created if we provide
         a relation.
         """
@@ -560,6 +589,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['relacion'] = 'padre'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -616,6 +646,25 @@ class TestViewsFamilia(TestCase):
                          'El tutor no tiene número sae ni plantel')
         self.assertEqual(r.status_code, 400)
 
+    def test_create_integrante_with_sacramentos(self):
+        """ Tests that sacramentos are successfuly created on a new integrante
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Confirmación').pk, ]
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Creado')
+        self.assertEqual(r.status_code, 200)
+
+        integrante = Integrante.objects.filter(familia=self.familia1).last()
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
     def test_edit_integrante(self):
         """ Test that an already existing integrante can be edited, through the
         edit_integrante view and form.
@@ -632,6 +681,79 @@ class TestViewsFamilia(TestCase):
         self.assertEqual(r.status_code, 200)
         integrante = Integrante.objects.get(id=self.integrante1.id)
         self.assertEqual(new_name, integrante.nombres)
+
+    def test_add_sacramentos_to_integrante(self):
+        """ Test that a sacramento can be added in an already existing integrante,
+         through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Comunión').pk,
+                       Sacramento.objects.get(nombre='Confirmación').pk, ]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(self.integrante2.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
+    def test_update_sacramentos_of_integrante(self):
+        """ Test that sacramentos can be added and anothers can be deleted of an
+        already existing integrante, through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk,
+                       Sacramento.objects.get(nombre='Comunión').pk, ]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(self.integrante2.sacramentos.filter(nombre='Comunión').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(integrante.sacramentos.filter(nombre='Comunión').exists())
+        self.assertFalse(integrante.sacramentos.filter(nombre='Confirmación').exists())
+
+    def test_delete_sacramentos_of_integrante(self):
+        """ Test that sacramentos can be deleted of an already existing integrante,
+        through the edit_integrante view and form.
+        """
+        sacramentos = [Sacramento.objects.get(nombre='Bautismo').pk]
+        self.integrante_constructor_dictionary['id_integrante'] = self.integrante2.pk
+        self.integrante_constructor_dictionary['sacramentos'] = sacramentos
+
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertTrue(self.integrante2.sacramentos.filter(nombre='Confirmación').exists())
+
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['msg'], 'Integrante Editado')
+        self.assertEqual(r.status_code, 200)
+        integrante = Integrante.objects.get(id=self.integrante2.id)
+        self.assertTrue(integrante.sacramentos.filter(nombre='Bautismo').exists())
+        self.assertFalse(integrante.sacramentos.filter(nombre='Confirmación').exists())
 
     def test_delete_integrante(self):
         """ Test that we get redirected after deleting the integrante.
@@ -877,3 +999,60 @@ class TestViewsFotos(TestCase):
                       kwargs={'id_estudio': self.estudio1.pk})
         response = self.client.get(url)
         self.assertEqual(400, response.status_code)
+
+    def test_delete_modal_photo(self):
+        """ This test checks that the form requested on 'captura:form_delete_foto', is
+        successfully received.
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = settings.BASE_DIR + static('test_files/borrosa.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            response = self.client.post(url, form)
+            self.assertEqual(302, response.status_code)
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+
+            # Check that the object and file exist
+            response = self.client.get(reverse('captura:form_delete_foto',
+                                               kwargs={'id_foto': image.pk}),
+                                       HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual(200, response.status_code)
+            self.assertTrue(b'seguro que desea borrar esta foto' in response.content)
+
+            response = self.client.post(reverse('captura:delete_foto',
+                                                kwargs={'id_foto': image.pk}),
+                                        {'id_foto': image.pk})
+            self.assertRedirects(response, reverse('captura:list_photos',
+                                                   kwargs={'id_estudio': image.estudio.pk}))
+
+    def test_upload_and_delete_photo(self):
+        """ This test checks that a valid request to 'captura:delete_foto',
+        allows delete a foto.
+        """
+        url = reverse('captura:upload_photo',
+                      kwargs={'id_estudio': self.estudio1.pk})
+        test_image = settings.BASE_DIR + static('test_files/borrosa.jpeg')
+        with open(test_image, 'r+b') as testing:
+            form = {'estudio': self.estudio1.pk,
+                    'file_name': 'prueba',
+                    'upload': testing}
+            response = self.client.post(url, form)
+            self.assertEqual(302, response.status_code)
+            image = Foto.objects.filter(estudio=self.estudio1).last()
+
+            # Check that the object and file exist
+            self.assertTrue(os.path.isfile(image.upload.path))
+            self.assertTrue(Foto.objects.filter(pk=image.pk).exists())
+
+            response = self.client.post(reverse('captura:delete_foto',
+                                                kwargs={'id_foto': image.pk}),
+                                        {'id_foto': image.pk})
+            self.assertRedirects(response, reverse('captura:list_photos',
+                                                   kwargs={'id_estudio': image.estudio.pk}))
+
+            # Check that the object and file no longer exist
+            self.assertFalse(os.path.isfile(image.upload.path))
+            self.assertFalse(Foto.objects.filter(pk=image.pk).exists())

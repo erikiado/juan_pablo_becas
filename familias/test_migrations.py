@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Oficio
+from .models import Oficio, Sacramento
 
 
 class TestLoadOficios(TestCase):
@@ -33,3 +33,17 @@ class TestLoadOficios(TestCase):
         """
 
         self.assertTrue(Oficio.objects.get(nombre='Estudiante'))
+
+
+class TestLoadSacramentos(TestCase):
+    """ Unit test suite for testing that initial data of
+    sacramentos is created
+    """
+
+    def test_sacramentos_created(self):
+        """ Checks that all the original sacramentos where loaded correctly.
+        """
+        self.assertTrue(Sacramento.objects.get(nombre='Bautismo'))
+        self.assertTrue(Sacramento.objects.get(nombre='Comunión'))
+        self.assertTrue(Sacramento.objects.get(nombre='Confirmación'))
+        self.assertTrue(Sacramento.objects.get(nombre='Matrimonio'))

@@ -25,6 +25,28 @@ class Oficio(models.Model):
         return '{}'.format(self.nombre)
 
 
+class Sacramento(models.Model):
+    """ This model stores a list of sacraments of the Catholic Church.
+
+    This list of sacraments stores the information related to a family
+    member, this model is used directly for the presentation and
+    creation of the indicators related to the sacraments of each family members.
+
+    Attributes:
+    -----------
+    nombre : TextField
+        This field stores the name of the sacrament.
+    """
+
+    nombre = models.CharField(max_length=200)
+
+    def __str__(self):
+        """ This returns the name of the Sacramento
+
+        """
+        return '{}'.format(self.nombre)
+
+
 class Familia(models.Model):
     """ Main model of the family app.
 
@@ -40,31 +62,36 @@ class Familia(models.Model):
         estado_civil field.
     OPCIONES_LOCALIDAD : tuple(tuple())
         This is a field that stores the list of options to be stored in the localidad field.
+    OPCIONES_BANIO : tuple(tuple())
+        This is a field that stores the list of options to be stored in the banio field.
+    OPCIONES_SANITARIAS : tuple(tuple())
+        This is a field that stores the list of options to be stored in the sanitarios field.
     numero_hijos_diferentes_papas : IntegerField
         The content of this field needs to be clarified with the stakeholder, whether this
         is the number of unique parents, the children of a mother have, or just the total
         number of children.
-    nombre_familiar: TextField
+    nombre_familiar: CharField
         This field will be used as an alias for the capturista to easily find the family.
     direccion: TextField
         This field should be filed with the home address for the family.
     explicacion_solvencia : TextField
         This field should be filled in their net mensual income is negative. It serves as an
         explanation on how the family deals with the deficit.
-    estado_civil : TextField
+    estado_civil : CharField
         This field stores the information regarding the legal relationship status of the
         parents in a family.
     escuela : TextField
         This field stores an optional value for the school, in case that the integrante is
         a student.
-    localidad : Text Field
+    localidad : CharField
         This field stores the town in which a family resides.
+    banio : CharField
+        This field stores the information related to the shower instalation in a house.
+    sanitarios : CharField
+        This field stores the information related to the W.C instalation in a house.
 
     TODO:
     -----
-
-    - Implement total_neto field, total_egresos, and total_ingresos, once the ingresos and
-    egresos tables are created.
     - Clarify the contents of the number_hijos_diferentes_papas field
     """
 
@@ -93,6 +120,19 @@ class Familia(models.Model):
                           (OPCION_LOCALIDAD_CAMPANA, 'La Campana'),
                           (OPCION_LOCALIDAD_OTRO, 'Otro'))
 
+    OPCION_REGADERA = 'Regadera'
+    OPCION_JICARA = 'Jicarasos'
+    OPCION_OTRO = 'Otro'
+    OPCIONES_BANIO = ((OPCION_REGADERA, 'Regadera'),
+                      (OPCION_JICARA, 'Jicarasos'),
+                      (OPCION_OTRO, 'Otro'))
+
+    OPCION_ESCUSADO = 'Escusado'
+    OPCION_LETRINA = 'Letrina'
+    OPCIONES_SANITARIAS = ((OPCION_ESCUSADO, 'Escusado'),
+                           (OPCION_LETRINA, 'Letrina'),
+                           (OPCION_OTRO, 'Otro'))
+
     numero_hijos_diferentes_papas = models.IntegerField()
     nombre_familiar = models.CharField(max_length=300)
     explicacion_solvencia = models.TextField(blank=True)
@@ -101,6 +141,14 @@ class Familia(models.Model):
                                     choices=OPCIONES_ESTADO_CIVIL)
     localidad = models.CharField(max_length=100,
                                  choices=OPCIONES_LOCALIDAD)
+    banio = models.CharField(max_length=100,
+                             choices=OPCIONES_BANIO,
+                             verbose_name='Tipo de instalación de baño',
+                             blank=True)
+    sanitarios = models.CharField(max_length=100,
+                                  choices=OPCIONES_SANITARIAS,
+                                  verbose_name='Tipo de instalación sanitaria',
+                                  blank=True)
 
     def __str__(self):
         """ Prints the apellido of one of the students of the family,
@@ -228,9 +276,11 @@ class Integrante(models.Model):
     nivel_estudios = models.CharField(max_length=200,
                                       choices=OPCIONES_NIVEL_ESTUDIOS)
     fecha_de_nacimiento = models.DateField()
-    sacramentos = 'Sacramentos que le falten… bautizo, comunion, confirmación, matrimnio iglesia'
+    sacramentos = models.ManyToManyField(Sacramento, blank=True)
+    sacramentos_text = \
+        'Sacramentos que le falten… bautizo, comunion, confirmación, matrimonio iglesia'
     sacramentos_faltantes = models.TextField(blank=True,
-                                             verbose_name=sacramentos)
+                                             verbose_name=sacramentos_text)
     hist = '¿Asiste o asistió a terapia por alguna situación de AA, psicología, psiquiatría, etc.?'
     historial_terapia = models.TextField(blank=True, verbose_name=hist)
     escuela = models.CharField(max_length=200, blank=True)
@@ -265,15 +315,25 @@ class Alumno(models.Model):
     escuela : ForeignKey
         This field stores the actual school in which the student is enrolled, or is
         planned to attend once the inscription process is over.
+    ciclo_escolar : CharField
+        This field stores the schoolar cycle (i.e. 2017 - 2018) in which the student
+        was enrolled.
 
     TODO: activate the ManyToOne with Escuela once the model is declared in the
     administracion app.
     """
 
+    OPCIONES_CICLOS_ESCOLARES = [
+        (str(x), "%d - %d" % (x, x + 1)) for x in map(lambda x: x, range(2010, 2051))
+    ]
+
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
     numero_sae = models.CharField(max_length=30)
     escuela = models.ForeignKey(Escuela, related_name='escuela_alumno')
+    ciclo_escolar = models.CharField(max_length=6,
+                                     choices=OPCIONES_CICLOS_ESCOLARES,
+                                     default='2017')
 
     def __str__(self):
         """ Returns the name of the student

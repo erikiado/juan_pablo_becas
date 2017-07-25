@@ -1,5 +1,5 @@
 from django.forms import ModelForm, ChoiceField, HiddenInput, ModelChoiceField, CharField, \
-                         ValidationError, Form, IntegerField
+                         ValidationError, Form, IntegerField, CheckboxSelectMultiple
 from administracion.models import Escuela
 from .models import Familia, Integrante, Alumno, Tutor, Comentario
 
@@ -15,7 +15,9 @@ class FamiliaForm(ModelForm):
                   'direccion',
                   'numero_hijos_diferentes_papas',
                   'estado_civil',
-                  'localidad')
+                  'localidad',
+                  'banio',
+                  'sanitarios')
 
     def __init__(self, *args, **kwargs):
         super(FamiliaForm, self).__init__(*args, **kwargs)
@@ -42,6 +44,8 @@ class IntegranteForm(ModelForm):
                     (OPCION_ROL_TIO, 'Tío/a'))
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
+    ciclo_escolar = ChoiceField(choices=Alumno.OPCIONES_CICLOS_ESCOLARES,
+                                required=False, initial='2017')
 
     class Meta:
         model = Integrante
@@ -55,12 +59,14 @@ class IntegranteForm(ModelForm):
                   'correo',
                   'fecha_de_nacimiento',
                   'nivel_estudios',
+                  'ciclo_escolar',
                   'especificacion_estudio',
-                  'sacramentos_faltantes',
+                  'sacramentos',
                   'historial_terapia',
-                  'escuela')
+                  'escuela',)
         widgets = {
-            'familia': HiddenInput()
+            'familia': HiddenInput(),
+            'sacramentos': CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -99,8 +105,10 @@ class IntegranteModelForm(IntegranteForm):
         cleaned_data = super(IntegranteModelForm, self).clean()
 
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
-            if not cleaned_data['numero_sae'] or not cleaned_data['plantel']:
-                raise ValidationError('El estudiante necesita el número sae y el plantel')
+            if not cleaned_data['numero_sae'] or not cleaned_data['plantel'] \
+               or not cleaned_data['ciclo_escolar']:
+                raise ValidationError('El estudiante necesita el número sae, ' +
+                                      'su plantel y ciclo escolar')
             if cleaned_data['relacion']:
                 raise ValidationError('El estudiante no tiene relación')
             return cleaned_data
@@ -128,6 +136,7 @@ class IntegranteModelForm(IntegranteForm):
         if self.instance.pk is None:   # create integrante
             integrante = super(IntegranteModelForm, self).save(*args, **kwargs)
             data = self.cleaned_data
+
             if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
             elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
@@ -140,7 +149,11 @@ class IntegranteModelForm(IntegranteForm):
             # filter fields which belong to integrante and are in cleaned_data.
             for field in filter(lambda x: x in data, Integrante._meta.get_fields()):
                 integrante[field.name] = data[field.name]
+
             integrante.save()
+
+            sacramentos = list(data['sacramentos'])
+            integrante.sacramentos.set(sacramentos)
 
             if data['rol'] == IntegranteForm.OPCION_ROL_TUTOR:
                 tutor = Tutor.objects.get(integrante=integrante)
@@ -150,6 +163,7 @@ class IntegranteModelForm(IntegranteForm):
                 alumno = Alumno.objects.get(integrante=integrante)
                 alumno.numero_sae = data['numero_sae']
                 alumno.escuela = data['plantel']
+                alumno.ciclo_escolar = data['ciclo_escolar']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
 

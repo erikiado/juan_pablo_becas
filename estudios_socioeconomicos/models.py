@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 
 from familias.models import Familia, Integrante
 from perfiles_usuario.models import Capturista
+from .utils import _delete_file
 
 
 class Estudio(models.Model):
@@ -108,6 +109,27 @@ def create_answers_for_study(sender, instance=None, created=False, **kwargs):
         preguntas = Pregunta.objects.all()
         for pregunta in preguntas:
             Respuesta.objects.create(estudio=instance, pregunta=pregunta)
+
+
+@receiver(models.signals.post_delete, sender=Foto)
+def delete_file(sender, instance, *args, **kwargs):
+    """ Signal for delete the photo's file from the filesystem, when the
+    record will be deleted.
+
+    Parameters:
+    -----------
+      instance : estudios_socioeconomicos.models.Foto
+          The instance of the object whose creation triggered the signal. In this case a
+          Foto.
+      created : BooleanField
+          A value indicating if this instance is being created for the first time. Or if set
+          to false if it is being edited.
+
+      kwargs['raw']: BooleanField
+        A value indicating us if we can skip the trigger.
+    """
+    if instance.upload:
+        _delete_file(instance.upload.path)
 
 
 class Seccion(models.Model):

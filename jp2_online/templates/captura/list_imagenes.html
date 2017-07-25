@@ -7,27 +7,27 @@
 
 <div class="row">
   <div class="col-md-12">
-    
+
     <div>
       <h1 class="">Fotos de la Vivienda</h1>
     </div>
 
     <div class="row">
-              
+
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
           <div class="x_content">
             {% include "captura/panel_fotos.html" %}
           </div>
         </div>
-      </div>                
+      </div>
     </div>
   </div>
 </div>
 
 <div class="text-center">
   <a id="previous_transacciones" href="{% url 'captura:list_transacciones' familia.id %}" class="btn btn-danger">
-    <i class="glyphicon glyphicon-arrow-left"></i>Ingresos y Egresos 
+    <i class="glyphicon glyphicon-arrow-left"></i>Ingresos y Egresos
   </a>
   <a id="next_preguntas" href="{% url 'captura:contestar_estudio' familia.estudio.id 1%}" class="btn btn-danger">
     Preguntas <i class="glyphicon glyphicon-arrow-right"></i>
@@ -37,10 +37,18 @@
 <div class="row">
     <div class="col-md-12 panel-warning">
         <div class="content-box-large">
-         
+
         </div>
     </div>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_delete_foto">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" id="modal_delete_foto_content">
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% include "captura/foto_form.html" %}
 
@@ -57,4 +65,9 @@
     swal("Error", '', "error");
   {% endif %}
 </script>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src={% static 'js/captura/captura_fotos.js' %}> </script>
 {% endblock %}

@@ -8,10 +8,15 @@
 <div class="row">
 	{% for foto in fotos %}
 		<div class="col-xs-12 col-sm-6 col-lg-4 text-center">
-			
-			{# <h3>{{ foto.file_name }}<h3> #}
-			<img class="img-responsive center-block" src="{{foto.upload.url}}">
-		
+			<h3>{{ foto.file_name }}<h3>
+      <div>
+        <img class="img-responsive center-block" src="{{foto.upload.url}}">
+        <br>
+        <a id="delete_foto_{{ integrante.id }}" class="delete_photo mouseClick btn btn-danger" data-form="{% url 'captura:form_delete_foto' foto.id %}">
+          <i class="glyphicon glyphicon-trash"></i>
+          Borrar
+        </a>
+      </div>
 		</div>
 	{% endfor %}
 </div>
