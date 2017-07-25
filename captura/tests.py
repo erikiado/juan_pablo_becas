@@ -510,6 +510,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -526,13 +527,14 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y el plantel')
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete2(self):
@@ -542,16 +544,35 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['id_integrante'] = ''
         self.integrante_constructor_dictionary['rol'] = 'alumno'
         self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
                              HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
         content = json.loads(r.content.decode('utf-8'))
         self.assertEqual(content['__all__'][0]['message'],
-                         'El estudiante necesita el número sae y el plantel')
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
         self.assertEqual(r.status_code, 400)
 
     def test_create_integrante_with_rol_alumno_incomplete3(self):
+        """ Test that an alumno can be created if we provide
+        the correct data: numero_sae and escuela.
+        """
+
+        self.integrante_constructor_dictionary['id_integrante'] = ''
+        self.integrante_constructor_dictionary['rol'] = 'alumno'
+        self.integrante_constructor_dictionary['numero_sae'] = '123'
+        self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        r = self.client.post(reverse('captura:create_integrante',
+                                     kwargs={'id_familia': self.familia1.id}),
+                             data=self.integrante_constructor_dictionary,
+                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')  # ajax request
+        content = json.loads(r.content.decode('utf-8'))
+        self.assertEqual(content['__all__'][0]['message'],
+                         'El estudiante necesita el número sae, su plantel y ciclo escolar')
+        self.assertEqual(r.status_code, 400)
+
+    def test_create_integrante_with_rol_alumno_incomplete4(self):
         """ Test that an alumno can't be created if we provide
         a relation.
         """
@@ -560,6 +581,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['relacion'] = 'padre'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
+        self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
