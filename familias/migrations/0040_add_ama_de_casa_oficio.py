@@ -22,7 +22,7 @@ def reverse_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('familias', '0039_alumno_ciclo_escolar.py'),
+        ('familias', '0039_alumno_ciclo_escolar'),
     ]
 
     operations = [
