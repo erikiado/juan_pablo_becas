@@ -44,8 +44,7 @@ class IntegranteForm(ModelForm):
                     (OPCION_ROL_TIO, 'Tío/a'))
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
-    ciclo_escolar = ChoiceField(choices=Alumno.OPCIONES_CICLOS_ESCOLARES,
-                                required=False, initial='2017')
+    edad = IntegerField(required=False, min_value=0)
 
     class Meta:
         model = Integrante
@@ -58,6 +57,7 @@ class IntegranteForm(ModelForm):
                   'telefono',
                   'correo',
                   'fecha_de_nacimiento',
+                  'edad',
                   'nivel_estudios',
                   'ciclo_escolar',
                   'especificacion_estudio',
