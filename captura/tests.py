@@ -981,12 +981,12 @@ class TestViewsFotos(TestCase):
         test_image = settings.BASE_DIR + static('test_files/cocina.jpeg')
         with open(test_image, 'r+b') as testing:
             form = {'estudio': self.estudio1.pk,
-                    'file_name': 'prueba',
                     'upload': testing}
             response = self.client.post(url, form)
             self.assertEqual(302, response.status_code)
             image = Foto.objects.filter(estudio=self.estudio1).last()
-            self.assertEqual('prueba', image.file_name)
+            image_count = Foto.objects.filter(estudio=self.estudio1).count()
+            self.assertEqual(1, image_count)
             image_url = image.upload.url[1:]
             os.remove(os.path.join(os.path.dirname(settings.BASE_DIR), image_url))
 

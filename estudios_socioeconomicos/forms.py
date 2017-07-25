@@ -132,7 +132,6 @@ class FotoForm(forms.ModelForm):
     class Meta:
         model = Foto
         fields = ('estudio',
-                  'file_name',
                   'upload')
 
         widgets = {
