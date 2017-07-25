@@ -41,7 +41,8 @@ $(document).ready(function() {
     onSelect: function(){
       var birthday = $(this).datepicker('getDate');
       var yearsApart = new Date(new Date - birthday).getFullYear()-1970;
-      if(yearsApart > 0)
+
+      if(yearsApart >= 0)
         $("#id_edad").val(yearsApart);
     }
   });
