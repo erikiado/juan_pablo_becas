@@ -468,6 +468,7 @@ def get_form_edit_integrante(request, id_integrante):
             rol = IntegranteForm.OPCION_ROL_ALUMNO
             initial_data['numero_sae'] = integrante.alumno_integrante.numero_sae
             initial_data['plantel'] = integrante.alumno_integrante.escuela
+            initial_data['ciclo_escolar'] = integrante.alumno_integrante.ciclo_escolar
         elif hasattr(integrante, 'tutor_integrante'):  # check reverse relation w/tutor
             rol = IntegranteForm.OPCION_ROL_TUTOR
             initial_data['relacion'] = integrante.tutor_integrante.relacion

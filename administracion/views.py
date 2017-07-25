@@ -8,7 +8,7 @@ from estudios_socioeconomicos.models import Estudio
 from familias.models import Alumno
 from becas.models import Beca
 from becas.forms import CartaForm
-from becas.utils import generate_letter
+from becas.utils import generate_letter, aportacion_por_beca
 from .forms import UserForm, DeleteUserForm
 
 
@@ -132,6 +132,8 @@ def detail_student(request, id_alumno):
         'becas': becas
     }
     if request.method == 'GET':
+        for beca in becas:
+            beca.aportacion = aportacion_por_beca(beca)
         context['form'] = CartaForm()
     else:
         form = CartaForm(request.POST)

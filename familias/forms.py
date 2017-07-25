@@ -59,6 +59,7 @@ class IntegranteForm(ModelForm):
                   'fecha_de_nacimiento',
                   'edad',
                   'nivel_estudios',
+                  'ciclo_escolar',
                   'especificacion_estudio',
                   'sacramentos_faltantes',
                   'historial_terapia',
@@ -103,8 +104,10 @@ class IntegranteModelForm(IntegranteForm):
         cleaned_data = super(IntegranteModelForm, self).clean()
 
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
-            if not cleaned_data['numero_sae'] or not cleaned_data['plantel']:
-                raise ValidationError('El estudiante necesita el número sae y el plantel')
+            if not cleaned_data['numero_sae'] or not cleaned_data['plantel'] \
+               or not cleaned_data['ciclo_escolar']:
+                raise ValidationError('El estudiante necesita el número sae, ' +
+                                      'su plantel y ciclo escolar')
             if cleaned_data['relacion']:
                 raise ValidationError('El estudiante no tiene relación')
             return cleaned_data
@@ -154,6 +157,7 @@ class IntegranteModelForm(IntegranteForm):
                 alumno = Alumno.objects.get(integrante=integrante)
                 alumno.numero_sae = data['numero_sae']
                 alumno.escuela = data['plantel']
+                alumno.ciclo_escolar = data['ciclo_escolar']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
 
