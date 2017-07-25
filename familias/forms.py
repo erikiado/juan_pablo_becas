@@ -92,6 +92,7 @@ class IntegranteModelForm(IntegranteForm):
     plantel = ModelChoiceField(required=False, queryset=Escuela.objects.all(), label='Plantel')
     numero_sae = CharField(required=False, max_length=30)
     relacion = ChoiceField(required=False, choices=OPCIONES_RELACION)
+    estatus_ingreso = ChoiceField(required=False, choices=Alumno.OPCIONES_ESTATUS_INGRESO)
 
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
@@ -108,7 +109,7 @@ class IntegranteModelForm(IntegranteForm):
 
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
             if not cleaned_data['numero_sae'] or not cleaned_data['plantel'] \
-               or not cleaned_data['ciclo_escolar']:
+               or not cleaned_data['ciclo_escolar'] or not cleaned_data['estatus_ingreso']:
                 raise ValidationError('El estudiante necesita el número sae, ' +
                                       'su plantel y ciclo escolar')
             if cleaned_data['relacion']:

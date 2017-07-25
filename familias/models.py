@@ -318,6 +318,9 @@ class Alumno(models.Model):
     ciclo_escolar : CharField
         This field stores the schoolar cycle (i.e. 2017 - 2018) in which the student
         was enrolled.
+    entry_status : CharField
+        This field stores the information about whether the studen is new or is
+        re-entry
 
     TODO: activate the ManyToOne with Escuela once the model is declared in the
     administracion app.
@@ -327,6 +330,13 @@ class Alumno(models.Model):
         (str(x), "%d - %d" % (x, x + 1)) for x in map(lambda x: x, range(2010, 2051))
     ]
 
+    OPCION_REINGRESO = 'reingreso'
+    OPCION_NUEVO = 'nuevo'
+    OPCIONES_ESTATUS_INGRESO = (
+        (OPCION_REINGRESO, 'Reingreso'),
+        (OPCION_NUEVO, 'Nuevo')
+    )
+
     integrante = models.OneToOneField(Integrante, related_name='alumno_integrante')
     activo = models.BooleanField(default=True)
     numero_sae = models.CharField(max_length=30)
@@ -334,6 +344,9 @@ class Alumno(models.Model):
     ciclo_escolar = models.CharField(max_length=6,
                                      choices=OPCIONES_CICLOS_ESCOLARES,
                                      default='2017')
+    estatus_ingreso = models.CharField(max_length=10,
+                                       choices=OPCIONES_ESTATUS_INGRESO,
+                                       default=OPCION_REINGRESO)
 
     def __str__(self):
         """ Returns the name of the student
