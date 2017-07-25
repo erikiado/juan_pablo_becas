@@ -76,6 +76,7 @@ class TestIntegranteForm(TestCase):
         data_form['numero_sae'] = '123456'
         data_form['plantel'] = self.escuela.id
         data_form['ciclo_escolar'] = '2017'
+        data_form['estatus_ingreso'] = Alumno.OPCION_REINGRESO
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
 
@@ -156,6 +157,7 @@ class TestIntegranteForm(TestCase):
         data_form['numero_sae'] = '123456'
         data_form['plantel'] = self.escuela.id
         data_form['ciclo_escolar'] = '2016'
+        data_form['estatus_ingreso'] = Alumno.OPCION_REINGRESO
         form = IntegranteModelForm(data_form)
         self.assertTrue(form.is_valid())
         integrante = form.save()
