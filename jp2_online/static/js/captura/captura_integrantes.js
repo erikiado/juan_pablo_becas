@@ -36,8 +36,25 @@ $(document).ready(function() {
   $('#tablaCapturista').dataTable();
   $('#id_fecha_de_nacimiento').datepicker({
     changeMonth: true,
-    changeYear: true}
-  );
+    changeYear: true,
+    maxDate: '0',
+    onSelect: function(){
+      var birthday = $(this).datepicker('getDate');
+      var yearsApart = new Date(new Date - birthday).getFullYear()-1970;
+      if(yearsApart > 0)
+        $("#id_edad").val(yearsApart);
+    }
+  });
+  $("#id_edad").on("change paste keyup", function() {
+    var edad = Number($(this).val());
+
+    if(isNaN(edad) || edad < 0)
+      return;
+
+    var date = new Date();
+    date.setFullYear( date.getFullYear() - edad );
+    $("#id_fecha_de_nacimiento").datepicker('setDate', date);
+  });
   // hide inputs from creation form
   $('#modal_create_integrante #_id_plantel').hide();
   $('#modal_create_integrante #_id_numero_sae').hide();
