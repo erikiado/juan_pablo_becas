@@ -144,7 +144,8 @@ class IntegranteModelForm(IntegranteForm):
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
             elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
                 Alumno.objects.create(integrante=integrante, numero_sae=data['numero_sae'],
-                                      escuela=data['plantel'], ciclo_escolar=data['ciclo_escolar'])
+                                      escuela=data['plantel'], ciclo_escolar=data['ciclo_escolar'],
+                                      estatus_ingreso=data['estatus_ingreso'])
             return integrante
         else:  # edit integrante
             integrante = self.instance
@@ -167,6 +168,7 @@ class IntegranteModelForm(IntegranteForm):
                 alumno.numero_sae = data['numero_sae']
                 alumno.escuela = data['plantel']
                 alumno.ciclo_escolar = data['ciclo_escolar']
+                alumno.estatus_ingreso = data['estatus_ingreso']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
 
