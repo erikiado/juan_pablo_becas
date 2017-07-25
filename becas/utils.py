@@ -144,3 +144,12 @@ def generate_letter(response, nombre='Juan Perez', ciclo='2016-2017',
     letter.append(Paragraph(ptext, styles['Normal']))
 
     doc.build(letter)
+
+
+def aportacion_por_beca(beca):
+    colegiatura = Colegiatura.objects.all()[0]
+    porcentaje = beca.porcentaje
+
+    aportacion = (100.0 - float(porcentaje)) * float(colegiatura.monto) / 100.0
+
+    return '${:.2f}'.format(aportacion)
