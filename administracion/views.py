@@ -100,9 +100,12 @@ def list_studies(request, status_study):
     """ View to list the studies with a specific status according to the button pushed
 
     """
+    total_estudios = Estudio.objects.count()
     estudios = Estudio.objects.filter(status=status_study)
-    contexto = {'estudios': estudios, 'estado': status_study,
-                'status_options': Estudio.get_options_status()}
+    contexto = {'estudios': estudios,
+                'estado': status_study,
+                'status_options': Estudio.get_options_status(),
+                'total_estudios': total_estudios}
     return render(request, 'estudios_socioeconomicos/listado_estudios.html', contexto)
 
 
