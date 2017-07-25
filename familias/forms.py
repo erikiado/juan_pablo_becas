@@ -45,6 +45,8 @@ class IntegranteForm(ModelForm):
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
     edad = IntegerField(required=False, min_value=0)
+    ciclo_escolar = ChoiceField(choices=Alumno.OPCIONES_CICLOS_ESCOLARES,
+                                required=False, initial='2017')
 
     class Meta:
         model = Integrante
@@ -59,6 +61,7 @@ class IntegranteForm(ModelForm):
                   'fecha_de_nacimiento',
                   'edad',
                   'nivel_estudios',
+                  'ciclo_escolar',
                   'especificacion_estudio',
                   'sacramentos',
                   'historial_terapia',
@@ -140,7 +143,7 @@ class IntegranteModelForm(IntegranteForm):
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
             elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
                 Alumno.objects.create(integrante=integrante, numero_sae=data['numero_sae'],
-                                      escuela=data['plantel'])
+                                      escuela=data['plantel'], ciclo_escolar=data['ciclo_escolar'])
             return integrante
         else:  # edit integrante
             integrante = self.instance
