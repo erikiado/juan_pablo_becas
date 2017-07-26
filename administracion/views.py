@@ -5,7 +5,7 @@ from django.http import HttpResponse
 
 from perfiles_usuario.utils import is_administrador
 from estudios_socioeconomicos.models import Estudio
-from familias.models import Alumno
+from familias.models import Alumno, Integrante
 from becas.models import Beca
 from becas.forms import CartaForm
 from becas.utils import generate_letter, aportacion_por_beca
@@ -100,9 +100,12 @@ def list_studies(request, status_study):
     """ View to list the studies with a specific status according to the button pushed
 
     """
+    total_estudios = Estudio.objects.count()
     estudios = Estudio.objects.filter(status=status_study)
-    contexto = {'estudios': estudios, 'estado': status_study,
-                'status_options': Estudio.get_options_status()}
+    contexto = {'estudios': estudios,
+                'estado': status_study,
+                'status_options': Estudio.get_options_status(),
+                'total_estudios': total_estudios}
     return render(request, 'estudios_socioeconomicos/listado_estudios.html', contexto)
 
 
@@ -134,7 +137,12 @@ def detail_student(request, id_alumno):
     if request.method == 'GET':
         for beca in becas:
             beca.aportacion = aportacion_por_beca(beca)
-        context['form'] = CartaForm()
+
+        context['form'] = CartaForm(initial={
+            'grado': dict(Integrante.OPCIONES_NIVEL_ESTUDIOS)[alumno.integrante.nivel_estudios],
+            'ciclo': dict(Alumno.OPCIONES_CICLOS_ESCOLARES)[alumno.ciclo_escolar],
+            'a_partir': "Agosto %d" % int(alumno.ciclo_escolar)
+        })
     else:
         form = CartaForm(request.POST)
         if form.is_valid():

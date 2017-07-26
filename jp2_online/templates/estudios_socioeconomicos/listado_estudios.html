@@ -2,7 +2,8 @@
 {% load staticfiles %}
 
 {% block content %}
-  <h2>Estudios Socioeconómicos</h2>
+  <h3>Estudios Socioeconómicos</h3>
+  <h4>Total de Estudios Capturados {{ total_estudios }}</h4>
   <p class="text-muted font-13 m-b-30">
     {% if estado == status_options.REVISION %}
       Pendientes
@@ -25,10 +26,10 @@
             <table id="datatable" class="table table-striped table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>Número</th>
+                  <th>No. de Estudio</th>
                   <th>Nombre del Capturista</th>
-                  <th>Familia</th>
                   <th>Estado del estudio</th>
+                  <th>Alumnos</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -42,10 +43,16 @@
                       <td>
                         {{estudio.capturista.user.first_name}} {{estudio.capturista.user.last_name}}
                       </td>
-
-                      <td>{{estudio.familia.id}}</td>
                       <td>
                         {{ estudio.get_status_display }}
+                      </td>
+                      <td>
+
+                        {% for integrante in estudio.familia.integrante_familia.all %}
+                          {% if integrante.alumno_integrante %}
+                            {{integrante}},<br>
+                          {% endif %}
+                        {% endfor %}
                       </td>
                       <td>
                         <a class="btn btn-success btn-circle-sm" href="{% url 'estudios_socioeconomicos:focus_mode' estudio.id%}" >

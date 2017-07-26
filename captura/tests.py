@@ -12,7 +12,7 @@ from django.conf import settings
 from administracion.models import Escuela
 from estudios_socioeconomicos.models import Estudio, Foto
 from indicadores.models import Periodo, Transaccion, Ingreso
-from familias.models import Familia, Integrante, Tutor, Sacramento
+from familias.models import Familia, Integrante, Tutor, Sacramento, Alumno
 from perfiles_usuario.models import Capturista
 
 
@@ -519,6 +519,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['numero_sae'] = '123'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
         self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
+        self.integrante_constructor_dictionary['estatus_ingreso'] = Alumno.OPCION_REINGRESO
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,
@@ -590,6 +591,7 @@ class TestViewsFamilia(TestCase):
         self.integrante_constructor_dictionary['relacion'] = 'padre'
         self.integrante_constructor_dictionary['plantel'] = self.escuela.id
         self.integrante_constructor_dictionary['ciclo_escolar'] = '2016'
+        self.integrante_constructor_dictionary['estatus_ingreso'] = Alumno.OPCION_REINGRESO
         r = self.client.post(reverse('captura:create_integrante',
                                      kwargs={'id_familia': self.familia1.id}),
                              data=self.integrante_constructor_dictionary,

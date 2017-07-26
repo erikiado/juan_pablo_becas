@@ -41,7 +41,8 @@ $(document).ready(function() {
     onSelect: function(){
       var birthday = $(this).datepicker('getDate');
       var yearsApart = new Date(new Date - birthday).getFullYear()-1970;
-      if(yearsApart > 0)
+
+      if(yearsApart >= 0)
         $("#id_edad").val(yearsApart);
     }
   });
@@ -60,6 +61,7 @@ $(document).ready(function() {
   $('#modal_create_integrante #_id_numero_sae').hide();
   $('#modal_create_integrante #_id_relacion').hide();
   $('#modal_create_integrante #_id_ciclo_escolar').hide();
+  $('#modal_create_integrante #_id_estatus_ingreso').hide();
   // change to ajax
   changeSubmitToAjax('#modal_create_integrante');
 });
@@ -101,18 +103,21 @@ $('#modal_create_integrante #id_rol').change(function(e) {
     $('#modal_create_integrante #_id_plantel').hide();
     $('#modal_create_integrante #_id_numero_sae').hide();
     $('#modal_create_integrante #_id_ciclo_escolar').hide();
+    $('#modal_create_integrante #_id_estatus_ingreso').hide();
     $('#modal_create_integrante #_id_relacion').show();
   }
   else if (e.target.value == 'alumno') {
     $('#modal_create_integrante #_id_plantel').show();
     $('#modal_create_integrante #_id_numero_sae').show();
     $('#modal_create_integrante #_id_ciclo_escolar').show();
+    $('#modal_create_integrante #_id_estatus_ingreso').show();
     $('#modal_create_integrante #_id_relacion').hide();
   }
   else if (e.target.value == 'ninguno') {
     $('#modal_create_integrante #_id_plantel').hide();
     $('#modal_create_integrante #_id_numero_sae').hide();
     $('#modal_create_integrante #_id_relacion').hide();
+    $('#modal_create_integrante #_id_estatus_ingreso').hide();
     $('#modal_create_integrante #_id_ciclo_escolar').hide();
   }
 });
@@ -128,6 +133,7 @@ function initEditForm() {
   $('#modal_edit_integrante #_id_rol').hide();
   $('#modal_edit_integrante #_id_plantel').hide();
   $('#modal_edit_integrante #_id_numero_sae').hide();
+  $('#modal_create_integrante #_id_estatus_ingreso').hide();
   $('#modal_edit_integrante #_id_relacion').hide();
 
 
@@ -135,6 +141,7 @@ function initEditForm() {
   if ($('#modal_edit_integrante #id_rol').val() == 'alumno') {
     $('#modal_edit_integrante #_id_plantel').show();
     $('#modal_edit_integrante #_id_numero_sae').show()
+    $('#modal_create_integrante #_id_estatus_ingreso').show();
     $('#modal_create_integrante #_id_ciclo_escolar').show();
   }
   else if ($('#modal_edit_integrante #id_rol').val()  == 'tutor') {

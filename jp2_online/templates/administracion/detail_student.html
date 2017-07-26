@@ -52,6 +52,14 @@
               <td> <strong>Escuela</strong> </td>
               <td>{{student.escuela}}</td>
             </tr>
+            <tr>
+              <td> <strong>Ciclo Escolar</strong> </td>
+              <td>{{student.get_ciclo_escolar_display}}</td>
+            </tr>
+            <tr>
+              <td> <strong>Nuevo o reingreso</strong> </td>
+              <td>{{student.get_estatus_ingreso_display}}</td>
+            </tr>
           </tbody>
 
         </table>

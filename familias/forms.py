@@ -45,6 +45,8 @@ class IntegranteForm(ModelForm):
 
     rol = ChoiceField(choices=OPCIONES_ROL, required=False)
     edad = IntegerField(required=False, min_value=0)
+    ciclo_escolar = ChoiceField(choices=Alumno.OPCIONES_CICLOS_ESCOLARES,
+                                required=False, initial='2017')
 
     class Meta:
         model = Integrante
@@ -59,6 +61,7 @@ class IntegranteForm(ModelForm):
                   'fecha_de_nacimiento',
                   'edad',
                   'nivel_estudios',
+                  'ciclo_escolar',
                   'especificacion_estudio',
                   'sacramentos',
                   'historial_terapia',
@@ -89,6 +92,7 @@ class IntegranteModelForm(IntegranteForm):
     plantel = ModelChoiceField(required=False, queryset=Escuela.objects.all(), label='Plantel')
     numero_sae = CharField(required=False, max_length=30)
     relacion = ChoiceField(required=False, choices=OPCIONES_RELACION)
+    estatus_ingreso = ChoiceField(required=False, choices=Alumno.OPCIONES_ESTATUS_INGRESO)
 
     def __init__(self, *args, **kwargs):
         # This adds the class form control to every single input field.
@@ -105,7 +109,7 @@ class IntegranteModelForm(IntegranteForm):
 
         if cleaned_data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
             if not cleaned_data['numero_sae'] or not cleaned_data['plantel'] \
-               or not cleaned_data['ciclo_escolar']:
+               or not cleaned_data['ciclo_escolar'] or not cleaned_data['estatus_ingreso']:
                 raise ValidationError('El estudiante necesita el número sae, ' +
                                       'su plantel y ciclo escolar')
             if cleaned_data['relacion']:
@@ -140,7 +144,8 @@ class IntegranteModelForm(IntegranteForm):
                 Tutor.objects.create(integrante=integrante, relacion=data['relacion'])
             elif data['rol'] == IntegranteForm.OPCION_ROL_ALUMNO:
                 Alumno.objects.create(integrante=integrante, numero_sae=data['numero_sae'],
-                                      escuela=data['plantel'])
+                                      escuela=data['plantel'], ciclo_escolar=data['ciclo_escolar'],
+                                      estatus_ingreso=data['estatus_ingreso'])
             return integrante
         else:  # edit integrante
             integrante = self.instance
@@ -163,6 +168,7 @@ class IntegranteModelForm(IntegranteForm):
                 alumno.numero_sae = data['numero_sae']
                 alumno.escuela = data['plantel']
                 alumno.ciclo_escolar = data['ciclo_escolar']
+                alumno.estatus_ingreso = data['estatus_ingreso']
                 alumno.save()
             return Integrante.objects.get(pk=self.instance.pk)
 
