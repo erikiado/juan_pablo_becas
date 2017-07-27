@@ -34,8 +34,32 @@ def specific_indicador(request, indicador):
     return render(request, 'indicadores/charts.html', context)
 
 @login_required
-def numero_alumnos(request):
+def breakdown_alumnos(request):
     pass:
 
 @login_required
 def estado_civil(request):
+    pass
+
+@login_required
+def estudios_padres(request):
+    pass
+
+
+def edad_padres(request):
+    pass
+
+def ocupaciones(request):
+    pass
+
+def ingreso_mensual(request):
+    pass
+
+def localidad(request):
+    pass
+
+def sacramentos(request):
+    pass
+
+def becas(request):
+    pass
