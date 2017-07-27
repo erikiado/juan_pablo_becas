@@ -1,0 +1,106 @@
+{% extends "indicadores/charts.html" %}
+{% load staticfiles %}
+
+{% block charts %}
+<h1>{{ titulo }}</h1>
+<div class="container">
+    <div class="row">
+        <div class="col col-md-8 col-md-offset-2">
+            {% for localidad, info in  data.items %}
+            <h2>{{ localidad }}</h2>
+            <canvas id="chart_{{ localidad.split|join:"_" }}" width="400" height="400"></canvas>
+            {% endfor %}
+        </div>
+        <div class="col col-md-8 col-md-offset-2">
+            <h2>Total</h2>
+            <canvas id="UnifiedChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock charts %}
+
+{% block charts_javascript %}
+{% for localidad, info in data.items %}
+<script>
+    var ctx_{{ localidad.split|join:"_" }} = document.getElementById("chart_{{ localidad.split|join:'_' }}");
+    var chart_{{ localidad.split|join:"_" }} = new Chart(ctx_{{ localidad.split|join:"_" }}, {
+        type: 'pie',
+        data: {
+            labels: [{% for key, value in info.items %}
+            "{{ key }}",
+            {% endfor %}],
+            datasets: [{
+                label: '# de Familias',
+                data: [{% for key, value in info.items %}
+                "{{ value }}",
+                {% endfor %}],
+                backgroundColor: [
+                '#F44336',
+                '#E91E63',
+                '#9C27B0',
+                '#673AB7',
+                '#3F51B5',
+                '#2196F3',
+                '#03A9F4',
+                '#00BCD4',
+                '#009688',
+                '#4CAF50',
+                '#8BC34A',
+                '#CDDC39',
+                '#FFEB3B',
+                '#FFC107',
+                '#FF9800',
+                '#FF5722',
+                '#795548',
+                '#9E9E9E',
+                '#607D8B'
+                ],
+                borderWidth: 1
+            }]
+        },
+    });
+</script>
+{% endfor %}
+
+<script type="text/javascript">
+    var ctx = document.getElementById("UnifiedChart");
+    data = {
+        labels: [{% for key, value in unified_total.items %}
+                    "{{ key }}",
+                 {% endfor %}],
+        datasets: [{
+            data: [{% for key, value in unified_total.items %}
+                    "{{ value }}",
+                   {% endfor %}],
+            backgroundColor: [
+                '#F44336',
+                '#E91E63',
+                '#9C27B0',
+                '#673AB7',
+                '#3F51B5',
+                '#2196F3',
+                '#03A9F4',
+                '#00BCD4',
+                '#009688',
+                '#4CAF50',
+                '#8BC34A',
+                '#CDDC39',
+                '#FFEB3B',
+                '#FFC107',
+                '#FF9800',
+                '#FF5722',
+                '#795548',
+                '#9E9E9E',
+                '#607D8B'
+                ],
+            borderWidth: 1
+        }],
+    };
+
+    var LocalidadChart = new Chart(ctx,{
+        type: 'pie',
+        data: data,
+        // options: {responsive: true}
+    });
+</script>
+{% endblock %}

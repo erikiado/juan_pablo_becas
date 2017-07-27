@@ -21,7 +21,7 @@ def home(request):
     if is_capturista(request.user):
         return redirect('captura:estudios')
     if is_directivo(request.user):
-        return redirect('indicadores:all')
+        return redirect('indicadores:estado_civil')
     if is_servicios_escolares(request.user):
         return redirect('becas:services')
     raise Http404()
