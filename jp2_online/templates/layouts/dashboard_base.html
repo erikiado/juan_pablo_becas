@@ -9,7 +9,7 @@
 
 
 {% block content %}
-  
+
 {% endblock %}
 
 {% block footer_content %}
@@ -20,6 +20,11 @@
 {% block extra_js %}
     <script type="text/javascript" src={% static "js/administracion/dashboard.js" %}></script>
     
-  {% block extra_page_js %}{% endblock %}
+  {% block extra_page_js %}
+  	<script type="text/javascript" src={% static "node_modules/chart.js/dist/Chart.js" %}></script>
+
+
+
+  {% endblock %}
 
 {% endblock %}

@@ -17,6 +17,7 @@
     "doc": "docs"
   },
   "dependencies": {
+    "chart.js": "^2.6.0",
     "gentelella": "^1.3.0",
     "sweetalert2": "^6.5.5"
   }

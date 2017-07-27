@@ -258,7 +258,7 @@ class Integrante(models.Model):
                                (OPCION_ESTUDIOS_7, 'Primero de Secundaria'),
                                (OPCION_ESTUDIOS_8, 'Segundo de Secundaria'),
                                (OPCION_ESTUDIOS_9, 'Tercero de Secundaria'),
-                               (OPCION_ESTUDIOS_10, 'Primero de Pecundaria'),
+                               (OPCION_ESTUDIOS_10, 'Primero de Preparatoria'),
                                (OPCION_ESTUDIOS_11, 'Segundo de Preparatoria'),
                                (OPCION_ESTUDIOS_12, 'Tercero de Preparatoria'),
                                (OPCION_ESTUDIOS_UNIVERSIDAD, 'Universidad'),

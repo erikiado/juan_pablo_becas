@@ -1,0 +1,19 @@
+{% extends "layouts/dashboard_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  {% block charts %}
+
+  {% endblock %}
+
+
+{% endblock %}
+
+
+{% block extra_page_js %}
+	<script type="text/javascript" src={% static "node_modules/chart.js/dist/Chart.js" %}></script>
+
+    {% block charts_javascript %}
+        
+    {% endblock charts_javascript %}
+{% endblock %}
