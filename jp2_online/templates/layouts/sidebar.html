@@ -67,4 +67,69 @@
     </li>
 
   {% endif %}
+
+  {% if request.user|has_group:'Directivo' %}
+      <h3>Indicadores</h3>
+      
+      <li>
+        <a href="{% url 'administracion:users' %}">
+          <i class="fa fa-users"></i> Usuarios
+        </a>
+      </li>
+      
+      <li>
+        <a>
+          <i class="fa fa-home"></i> Estudios 
+          <span class="fa fa-chevron-down"></span>
+        </a>
+        <ul class="nav child_menu">
+          <!--<li><a href="">Todos</a></li>-->
+          <li>
+            <a href="{% url 'indicadores:estado_civil'%}">
+              Estado Civil
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:breakdown_alumnos'%}">
+              Alumnos
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:estudios_padres'%}">
+              Nivel de Estudios Padres
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:edad_padres'%}">
+              Edad Padres
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:ocupaciones'%}">
+              Ocupaciones
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:ingreso_mensual'%}">
+              Ingreso Mensual
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:localidad'%}">
+              Localidad
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:sacramentos'%}">
+              Sacramentos
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'indicadores:becas'%}">
+              Becas
+            </a>
+          </li>
+      </ul>
+    </li>
+  {% endif %}
 </ul>
