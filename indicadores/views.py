@@ -91,6 +91,7 @@ def ocupaciones(request):
     return render(request, 'indicadores/ocupaciones.html', context)
 
 def ingreso_mensual(request):
+    pass
     # unified_total = {}
     # all_results = {}
     # familias = Familia.objects.filter(estudio__status__contains='aprobado')
