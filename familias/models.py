@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from core.validators import PHONE_REGEX
 from administracion.models import Escuela
@@ -286,6 +287,12 @@ class Integrante(models.Model):
     escuela = models.CharField(max_length=200, blank=True)
     activo = models.BooleanField(default=True)
     rol = models.CharField(max_length=150, verbose_name='Relación en la familia')
+
+    def age(self):
+        """ Returns the age of an instance of integrante
+
+        """
+        return int((datetime.now().date() - self.fecha_de_nacimiento).days / 365.25)
 
     def __str__(self):
         """ Returns the concatenation of nombres and apellidos.

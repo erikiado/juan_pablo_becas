@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col col-md-8 col-md-offset-2">
             {% for localidad, info in  data.items %}
-            <h2>{{ localidad }}</h2>
+            <h1>{{ localidad }}</h1>
             <canvas id="chart_{{ localidad.split|join:"_" }}" width="400" height="400"></canvas>
             {% endfor %}
         </div>
         <div class="col col-md-8 col-md-offset-2">
-            <h2>Total</h2>
+            <h1>Total</h1>
             <canvas id="UnifiedChart" width="400" height="400"></canvas>
         </div>
     </div>
