@@ -16,5 +16,8 @@ class Beca(models.Model):
                                   default='0')
     fecha_de_asignacion = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
+    def number_percentage(self):
+        return int(self.porcentaje);
+
     def __str__(self):
         return '{}%'.format(self.porcentaje)
